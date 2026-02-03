@@ -11,6 +11,7 @@ const EXPORT_COLUMNS = [
   { key: 'type', label: 'Type' },
   { key: 'csInsights', label: 'CS Insights' },
   { key: 'aiInsights', label: 'AI Insights' },
+  { key: 'mergedInsights', label: 'Merged Insights' },
   { key: 'aiInsightStatus', label: 'AI Insight Status' },
   { key: 'aiLabel', label: 'AI Score' },
   { key: 'aiScoreReason', label: 'AI Score Reason' },
@@ -31,6 +32,7 @@ export default function ExportBar({ filteredBidders, allBidders, selected, insig
     const rows = selected.size > 0 ? allBidders.filter((b) => selected.has(b.no)) : filteredBidders;
     return rows.map((r) => ({
       ...r,
+      mergedInsights: [r.csInsights, r.aiInsights].filter(Boolean).join(' | '),
       aiInsightStatus: insightStatus[r.no] || 'pending',
     }));
   };
