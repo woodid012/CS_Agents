@@ -32,7 +32,6 @@ export default function ExportBar({ filteredBidders, allBidders, selected, insig
     const rows = selected.size > 0 ? allBidders.filter((b) => selected.has(b.no)) : filteredBidders;
     return rows.map((r) => ({
       ...r,
-      mergedInsights: [r.csInsights, r.aiInsights].filter(Boolean).join(' | '),
       aiInsightStatus: insightStatus[r.no] || 'pending',
     }));
   };

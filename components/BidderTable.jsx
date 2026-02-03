@@ -63,28 +63,14 @@ function aiScoreBadge(score, label, reason) {
 
 function MergedInsightCell({ bidder }) {
   const [expanded, setExpanded] = useState(false);
-  const cs = bidder.csInsights || '';
-  const ai = bidder.aiInsights || '';
+  const merged = bidder.mergedInsights || '';
 
-  if (!cs && !ai) return <span className="text-gray-300">-</span>;
-
-  const merged = [cs, ai].filter(Boolean).join(' | ');
+  if (!merged) return <span className="text-gray-300">-</span>;
 
   if (expanded) {
     return (
       <div className="space-y-1">
-        {cs && (
-          <div>
-            <span className="text-[9px] font-semibold text-gray-400 uppercase">CS:</span>
-            <p className="text-[10px] text-gray-700 leading-tight">{cs}</p>
-          </div>
-        )}
-        {ai && (
-          <div>
-            <span className="text-[9px] font-semibold text-indigo-400 uppercase">AI:</span>
-            <p className="text-[10px] text-indigo-700 leading-tight">{ai}</p>
-          </div>
-        )}
+        <p className="text-[10px] text-gray-700 leading-tight">{merged}</p>
         <button onClick={() => setExpanded(false)} className="text-[9px] text-gray-400 hover:text-gray-600">collapse</button>
       </div>
     );
