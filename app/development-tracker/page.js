@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import StageTransitionTracker from '../../components/StageTransitionTracker';
 
 const STAGES = [
   { key: 'announced', label: 'Early Stage / Announced', color: 'bg-slate-500' },
@@ -226,6 +227,9 @@ export default function DevelopmentTracker() {
           );
         })}
       </div>
+
+      {/* Timeline Chart */}
+      <StageTransitionTracker />
 
       {/* Kanban columns */}
       <div className="flex gap-3 overflow-x-auto pb-4">
