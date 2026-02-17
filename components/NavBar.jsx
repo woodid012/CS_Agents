@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 
 const LINKS = [
   { href: '/', label: 'Master Bidder List' },
+  { href: '/offtakers', label: 'Offtaker Engagement List' },
   { href: '/development-tracker', label: 'Development Tracker' },
   { href: '/ai-agents', label: 'AI Agents' },
 ];
