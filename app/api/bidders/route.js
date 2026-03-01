@@ -1,41 +1,36 @@
 import { NextResponse } from 'next/server';
 import { parseExcel } from '../../../lib/parseExcel';
-import fs from 'fs';
-import path from 'path';
+import { sql } from '../../../lib/db';
 
 export const dynamic = 'force-dynamic';
 
-function loadJson(filename) {
-  const filePath = path.join(process.cwd(), 'data', filename);
-  try {
-    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-  } catch {
-    return {};
-  }
-}
-
 export async function GET() {
-  // Always reload fresh data (no caching)
-  const bidders = parseExcel();
-  const insights = loadJson('ai-insights.json');
-  const contacts = loadJson('contacts.json');
-  const aiTiers = loadJson('ai-tier-scores.json');
-  const mergedInsights = loadJson('merged-insights.json');
+  const [bidders, aiRows, contactRows] = await Promise.all([
+    Promise.resolve(parseExcel()),
+    sql`SELECT * FROM bidder_ai_data`,
+    sql`SELECT * FROM contacts`,
+  ]);
+
+  const aiMap = {};
+  for (const row of aiRows) aiMap[row.bidder_no] = row;
+
+  const contactMap = {};
+  for (const row of contactRows) contactMap[row.bidder_no] = row;
 
   const result = bidders.map((b) => {
-    const c = contacts[String(b.no)] || {};
-    const t = aiTiers[String(b.no)] || {};
+    const ai = aiMap[b.no] || {};
+    const c = contactMap[b.no] || {};
     return {
       ...b,
-      aiInsights: insights[String(b.no)] || '',
       csInsights: b.commentary,
-      mergedInsights: mergedInsights[String(b.no)] || '',
+      aiInsights: ai.ai_insights || '',
+      mergedInsights: ai.merged_insights || '',
+      aiScore: ai.ai_score || 0,
+      aiLabel: ai.ai_label || '-',
+      aiScoreReason: ai.ai_score_reason || '',
       contact: c.contact || '',
       email: c.email || '',
       phone: c.phone || '',
-      aiScore: t.score || 0,
-      aiLabel: t.label || '-',
-      aiScoreReason: t.reason || '',
     };
   });
 

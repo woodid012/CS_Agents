@@ -1,35 +1,34 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { sql } from '../../../lib/db';
 
 export const dynamic = 'force-dynamic';
 
-const FILE = path.join(process.cwd(), 'data', 'offtaker-insights-status.json');
-
-function load() {
-  try {
-    return JSON.parse(fs.readFileSync(FILE, 'utf-8'));
-  } catch {
-    return {};
-  }
-}
-
-function save(data) {
-  fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
-}
-
 export async function GET() {
-  return NextResponse.json(load());
+  const rows = await sql`SELECT offtaker_no, status FROM offtaker_insight_status`;
+  const result = {};
+  for (const row of rows) {
+    result[String(row.offtaker_no)] = row.status;
+  }
+  return NextResponse.json(result);
 }
 
 export async function POST(req) {
   const { bidderNo, status } = await req.json();
-  const data = load();
+
   if (status === null) {
-    delete data[String(bidderNo)];
+    await sql`DELETE FROM offtaker_insight_status WHERE offtaker_no = ${bidderNo}`;
   } else {
-    data[String(bidderNo)] = status;
+    await sql`
+      INSERT INTO offtaker_insight_status (offtaker_no, status, updated_at)
+      VALUES (${bidderNo}, ${status}, NOW())
+      ON CONFLICT (offtaker_no) DO UPDATE SET status = EXCLUDED.status, updated_at = NOW()
+    `;
   }
-  save(data);
-  return NextResponse.json(data);
+
+  const rows = await sql`SELECT offtaker_no, status FROM offtaker_insight_status`;
+  const result = {};
+  for (const row of rows) {
+    result[String(row.offtaker_no)] = row.status;
+  }
+  return NextResponse.json(result);
 }

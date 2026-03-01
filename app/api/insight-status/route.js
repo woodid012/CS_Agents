@@ -1,35 +1,34 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { sql } from '../../../lib/db';
 
 export const dynamic = 'force-dynamic';
 
-const FILE = path.join(process.cwd(), 'data', 'ai-insights-status.json');
-
-function load() {
-  try {
-    return JSON.parse(fs.readFileSync(FILE, 'utf-8'));
-  } catch {
-    return {};
-  }
-}
-
-function save(data) {
-  fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
-}
-
 export async function GET() {
-  return NextResponse.json(load());
+  const rows = await sql`SELECT bidder_no, status FROM bidder_insight_status`;
+  const result = {};
+  for (const row of rows) {
+    result[String(row.bidder_no)] = row.status;
+  }
+  return NextResponse.json(result);
 }
 
 export async function POST(req) {
   const { bidderNo, status } = await req.json();
-  const data = load();
+
   if (status === null) {
-    delete data[String(bidderNo)];
+    await sql`DELETE FROM bidder_insight_status WHERE bidder_no = ${bidderNo}`;
   } else {
-    data[String(bidderNo)] = status;
+    await sql`
+      INSERT INTO bidder_insight_status (bidder_no, status, updated_at)
+      VALUES (${bidderNo}, ${status}, NOW())
+      ON CONFLICT (bidder_no) DO UPDATE SET status = EXCLUDED.status, updated_at = NOW()
+    `;
   }
-  save(data);
-  return NextResponse.json(data);
+
+  const rows = await sql`SELECT bidder_no, status FROM bidder_insight_status`;
+  const result = {};
+  for (const row of rows) {
+    result[String(row.bidder_no)] = row.status;
+  }
+  return NextResponse.json(result);
 }
