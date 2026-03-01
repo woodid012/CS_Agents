@@ -46,3 +46,30 @@ CREATE TABLE IF NOT EXISTS contacts (
   phone       TEXT,
   updated_at  TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Market Data: Price Curves
+CREATE TABLE IF NOT EXISTS price_curves (
+  id           SERIAL PRIMARY KEY,
+  scenario     TEXT NOT NULL DEFAULT 'Base',
+  state        TEXT NOT NULL,
+  year         INTEGER NOT NULL,
+  energy_price NUMERIC(10,2),
+  lgc_price    NUMERIC(10,2),
+  source       TEXT,
+  notes        TEXT,
+  updated_at   TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Market Data: Capex / Opex benchmarks
+CREATE TABLE IF NOT EXISTS capex_opex (
+  id              SERIAL PRIMARY KEY,
+  technology      TEXT NOT NULL,
+  scale_mw        NUMERIC(10,1),
+  capex_per_mw    NUMERIC(12,0),
+  opex_per_mw_yr  NUMERIC(10,0),
+  region          TEXT,
+  reference_year  INTEGER,
+  source          TEXT,
+  notes           TEXT,
+  updated_at      TIMESTAMPTZ DEFAULT NOW()
+);
