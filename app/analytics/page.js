@@ -591,63 +591,6 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          {/* Recent News */}
-          <SectionHeader title="Recent News & Intelligence" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-            {marketData.recentNews.slice(0, 8).map((item, i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-lg p-3">
-                <div className="flex items-start justify-between gap-2 mb-1">
-                  <span className="text-xs font-semibold text-gray-900">{item.headline}</span>
-                  <span className="text-xs text-gray-400 shrink-0">{item.date}</span>
-                </div>
-                {item.source && (
-                  <span className="inline-block text-xs text-blue-600 mb-1">— {item.source}</span>
-                )}
-                <p className="text-xs text-gray-600">{item.detail}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Capex / AUM Panel */}
-          <SectionHeader title="Investor AUM & Australia Capex" />
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-4">
-            <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
-              <p className="text-xs text-gray-500">{capexData._notes}</p>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    {['Investor', 'AUM', 'AU Capex 2024-25', 'Notes'].map((h) => (
-                      <th key={h} className="px-3 py-2.5 text-left font-medium text-gray-600 text-xs">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {Object.entries(capexData)
-                    .filter(([k]) => k !== '_notes' && k !== 'Global summary')
-                    .map(([name, data], i) => (
-                      <tr key={name} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                        <td className="px-3 py-2 font-medium text-gray-900 text-xs w-44">{name}</td>
-                        <td className="px-3 py-2 text-xs text-gray-700 w-40">
-                          {data.aum || data.revenue || data.installedCapacity || data.marketCap || '-'}
-                        </td>
-                        <td className="px-3 py-2 text-xs text-gray-700 w-44">{data.australiaCapex2024 || '-'}</td>
-                        <td className="px-3 py-2 text-xs text-gray-600 max-w-sm">{data.notes || '-'}</td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="px-3 py-2 bg-blue-50 border-t border-gray-200">
-              <div className="flex flex-wrap gap-4 text-xs text-gray-700">
-                <span><span className="font-medium">Total Foreign Capex:</span> {capexData['Global summary'].totalForeignCapexAustralia2024_2025}</span>
-                <span><span className="font-medium">Dominant Types:</span> {capexData['Global summary'].dominantInvestorTypes}</span>
-                <span><span className="font-medium">Notable Absent:</span> {capexData['Global summary'].notableAbsent}</span>
-              </div>
-            </div>
-          </div>
-
           {/* Key Transmission Projects */}
           <SectionHeader title="Key Transmission & Infrastructure" />
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
@@ -897,6 +840,91 @@ export default function AnalyticsPage() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          TAB 3: INVESTOR CAPEX
+          ═══════════════════════════════════════════════════════════════════ */}
+      {activeMainTab === 'capex' && (
+        <div>
+          <div className="flex flex-wrap items-center gap-3 mb-5">
+            <div>
+              <h2 className="text-base font-bold text-gray-900">Investor AUM & Australia Capex</h2>
+              <p className="text-xs text-gray-500 mt-0.5">
+                AUM and renewable energy capital expenditure for key investors active in Australia
+              </p>
+            </div>
+            <span className="ml-auto text-xs text-gray-400">Updated March 2026</span>
+          </div>
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-4">
+            <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
+              <p className="text-xs text-gray-500">{capexData._notes}</p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    {['Investor', 'AUM', 'AU Capex 2024-25', 'Notes'].map((h) => (
+                      <th key={h} className="px-3 py-2.5 text-left font-medium text-gray-600 text-xs">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {Object.entries(capexData)
+                    .filter(([k]) => k !== '_notes' && k !== 'Global summary')
+                    .map(([name, data], i) => (
+                      <tr key={name} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                        <td className="px-3 py-2 font-medium text-gray-900 text-xs w-44">{name}</td>
+                        <td className="px-3 py-2 text-xs text-gray-700 w-40">
+                          {data.aum || data.revenue || data.installedCapacity || data.marketCap || '-'}
+                        </td>
+                        <td className="px-3 py-2 text-xs text-gray-700 w-44">{data.australiaCapex2024 || '-'}</td>
+                        <td className="px-3 py-2 text-xs text-gray-600 max-w-sm">{data.notes || '-'}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-3 py-2 bg-blue-50 border-t border-gray-200">
+              <div className="flex flex-wrap gap-4 text-xs text-gray-700">
+                <span><span className="font-medium">Total Foreign Capex:</span> {capexData['Global summary'].totalForeignCapexAustralia2024_2025}</span>
+                <span><span className="font-medium">Dominant Types:</span> {capexData['Global summary'].dominantInvestorTypes}</span>
+                <span><span className="font-medium">Notable Absent:</span> {capexData['Global summary'].notableAbsent}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          TAB 4: MARKET NEWS
+          ═══════════════════════════════════════════════════════════════════ */}
+      {activeMainTab === 'news' && (
+        <div>
+          <div className="flex flex-wrap items-center gap-3 mb-5">
+            <div>
+              <h2 className="text-base font-bold text-gray-900">Market News & Intelligence</h2>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Recent developments in Australian renewable energy and BESS markets
+              </p>
+            </div>
+            <span className="ml-auto text-xs text-gray-400">Updated March 2026</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+            {marketData.recentNews.map((item, i) => (
+              <div key={i} className="bg-white border border-gray-200 rounded-lg p-3">
+                <div className="flex items-start justify-between gap-2 mb-1">
+                  <span className="text-xs font-semibold text-gray-900">{item.headline}</span>
+                  <span className="text-xs text-gray-400 shrink-0">{item.date}</span>
+                </div>
+                {item.source && (
+                  <span className="inline-block text-xs text-blue-600 mb-1">— {item.source}</span>
+                )}
+                <p className="text-xs text-gray-600">{item.detail}</p>
+              </div>
+            ))}
           </div>
         </div>
       )}
