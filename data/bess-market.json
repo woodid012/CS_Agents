@@ -1,48 +1,78 @@
-﻿{
-  "_source": "CS Capital internal research + public sources (Wikipedia, CEC reports, AEMO). Updated March 2026.",
+{
+  "_source": "CS Capital internal research + public sources (CEC Clean Energy Australia 2025, Wikipedia, AEMO, RenewEconomy). Updated March 2026.",
   "_context": "CS Capital specialises in Battery Energy Storage Systems (BESS) advisory and asset management. A$1bn+ track record.",
-  
+
   "marketOverview": {
     "totalGridScaleInstalled2024": "~5 GW / 11 GWh under construction or operational end-2023 (CEC 2024 Report)",
     "investment2023": "A$4.9B new BESS investment commitments in 2023 (up from A$1.9B in 2022)",
-    "investment2024": "Continued acceleration in 2024 with CIS scheme awarding storage contracts",
+    "investment2024": "A$12.7B total clean energy investment in 2024 — highest year on record (CEC Clean Energy Australia 2025 Report)",
+    "largeScaleInvestment2024": "A$9B large-scale generation commitments in 2024 — highest single year ever (CEC 2025)",
+    "windInvestment2024": "A$5.8B wind project investment in 2024 — highest since 2017 (CEC 2025)",
+    "rooftopSolar2024": "3.2 GW new rooftop solar in 2024; 4 million+ installations total; 12% of Australia's electricity supply (CEC 2025)",
+    "largeScaleSolar2024": "1.3 GW large-scale solar connected to grid in 2024",
+    "onshoreWind2024": "836 MW onshore wind added in 2024",
     "cisBESSTarget": "9 GW of new dispatchable/storage capacity contracted under CIS by 2030",
     "driverSummary": "Rapid coal retirement, high renewable penetration (39%+), and grid stability needs are driving massive BESS demand across NEM states",
     "costTrend": "BESS capex costs declined ~60% 2018-2024. Current benchmark A$700-900k/MWh installed (all-in, 2-hour BESS)",
     "dominantTech": "Lithium Iron Phosphate (LFP) - now dominant chemistry for grid-scale due to safety and cost",
-    "keyOEMs": ["Tesla Megapack", "BYD", "CATL", "Fluence (Siemens/AES)", "Sungrow", "Wärtsilä"]
+    "keyOEMs": ["Tesla Megapack", "BYD", "CATL", "Fluence (Siemens/AES)", "Sungrow", "Wärtsilä", "Hitachi Energy"]
   },
 
   "keyProjects": [
     {
+      "name": "Waratah Super Battery",
+      "location": "Muswellbrook, Hunter Valley, New South Wales",
+      "capacity": "850 MW / 1,600 MWh (Stage 1: 350 MW / 700 MWh energised Aug 2025)",
+      "owner": "Akaysha Energy (BlackRock / GIP)",
+      "technology": "Rept Battero + EVE Energy cells; 288 Hitachi inverters; 3,598 battery units",
+      "commissioned": "Stage 1 registered in NEM August 2025; full project expected 2026",
+      "capex": "~A$1B",
+      "status": "Stage 1 operational",
+      "notes": "World's largest single-site BESS at full build. Connecting to TransGrid network. CIS contract. Fastest and most flexible BESS in the world per Akaysha."
+    },
+    {
       "name": "Hornsdale Power Reserve (HPR)",
-      "location": "South Australia",
+      "location": "Hornsdale, South Australia",
       "capacity": "150 MW / 193.5 MWh",
-      "owner": "Neoen (now Brookfield)",
+      "owner": "Neoen (now Brookfield Renewable)",
       "technology": "Tesla Megapack",
       "commissioned": "December 2017 (expanded 2020)",
       "capex": "A$172M total",
-      "notes": "World's first large-scale grid battery. Proved BESS commercial model for Australia. Part of Brookfield's A$6.1B Neoen acquisition."
+      "status": "Operational",
+      "notes": "World's first large-scale grid battery. Proved BESS commercial model for Australia. Provides SIPS grid services. Part of Brookfield's EUR 6.1B Neoen acquisition (completed Apr 2025)."
     },
     {
       "name": "Victorian Big Battery (VBB)",
       "location": "Moorabool, Victoria",
       "capacity": "300 MW / 450 MWh",
-      "owner": "HMC Capital (acquired from Neoen/Brookfield)",
+      "owner": "CPP Investments (acquired via Brookfield/Neoen deal, A$950M portfolio, Aug 2025)",
       "technology": "Tesla Megapack",
       "commissioned": "December 2021",
       "capex": "~A$160M (CEFC funded A$160M)",
-      "notes": "Largest BESS in Southern Hemisphere at commissioning. Built by Neoen. Now owned by HMC Capital."
+      "status": "Operational",
+      "notes": "Southern Hemisphere's largest BESS at commissioning. Built by Neoen. Victoria portfolio acquired by CPP Investments Aug 2025 for A$950M."
     },
     {
-      "name": "Waratah Super Battery",
-      "location": "Hunter Valley, New South Wales",
-      "capacity": "700 MW / 1,400 MWh",
-      "owner": "Akaysha Energy (BlackRock)",
-      "technology": "BYD",
-      "commissioned": "Under construction, ~2025",
-      "capex": "~A$1.2B",
-      "notes": "One of the largest BESS projects globally. Akaysha Energy acquired by BlackRock. CIS contract."
+      "name": "Hanworth BESS",
+      "location": "New South Wales",
+      "capacity": "1,200 MW / 4,800 MWh (4-hour)",
+      "owner": "Octopus Energy Australia (APG-backed)",
+      "technology": "TBC",
+      "commissioned": "Development stage",
+      "capex": "A$2B+ estimated",
+      "status": "Development — Australia's largest planned BESS project",
+      "notes": "Australia's largest planned BESS. APG committed USD 650M to Octopus Australia in July 2025. CIS Tender 3 contract."
+    },
+    {
+      "name": "Origin Eraring BESS",
+      "location": "Lake Macquarie, New South Wales",
+      "capacity": "460 MW / 1,840 MWh (4-hour)",
+      "owner": "Origin Energy",
+      "technology": "TBC",
+      "commissioned": "Late 2025",
+      "capex": "~A$500M",
+      "status": "Commissioned late 2025",
+      "notes": "Coal-to-BESS repurposing at the retiring Eraring power station site. Model for future coal site BESS replacements."
     },
     {
       "name": "Torrens Island BESS",
@@ -52,80 +82,151 @@
       "technology": "Fluence",
       "commissioned": "2024-2025",
       "capex": "~A$400M",
-      "notes": "AGL's flagship BESS project replacing retiring gas plant."
+      "status": "Operational",
+      "notes": "AGL's flagship BESS project replacing retiring gas plant at Torrens Island. CIS contract."
     },
     {
-      "name": "Capital Battery",
-      "location": "ACT/NSW border",
-      "capacity": "50 MW / 50 MWh",
-      "owner": "ActewAGL / Icon Water",
-      "commissioned": "2022",
-      "capex": "~A$50M",
-      "notes": "ACT grid stability."
-    },
-    {
-      "name": "Gannawarra Solar Farm + BESS",
+      "name": "Wooreen BESS",
       "location": "Victoria",
-      "capacity": "25 MW / 50 MWh",
-      "owner": "Edify Energy / Wirsol",
-      "commissioned": "2019",
-      "notes": "Early co-located solar + BESS project in Victoria."
+      "capacity": "350 MW / 1,400 MWh",
+      "owner": "TBC (Financially committed Q1 2025)",
+      "technology": "TBC",
+      "commissioned": "Under construction",
+      "capex": "~A$350M+",
+      "status": "Financially committed Q1 2025; largest single project secured in Q1 2025",
+      "notes": "Largest single BESS project committed in Q1 2025."
     },
     {
-      "name": "Eraring BESS",
-      "location": "New South Wales",
-      "capacity": "500 MW / 2,000 MWh (proposed)",
-      "owner": "Origin Energy",
-      "status": "Approved, FID pending",
-      "notes": "Co-located with Eraring coal plant site (closing 2025). Major Origin BESS investment."
+      "name": "Western Downs BESS Stage 2",
+      "location": "Queensland",
+      "capacity": "270 MW / 540 MWh",
+      "owner": "Neoen (now Brookfield)",
+      "technology": "TBC",
+      "commissioned": "September 2025",
+      "capex": "~A$250M",
+      "status": "Operational — commissioned six weeks ahead of schedule",
+      "notes": "Commissioned Sep 2025, six weeks ahead of schedule. CIS contract."
     },
     {
-      "name": "Liddell BESS",
-      "location": "NSW Hunter Valley",
-      "capacity": "500 MW / 2,000 MWh (proposed)",
-      "owner": "AGL Energy",
-      "status": "Planning",
-      "notes": "Replacing retiring Liddell coal station."
+      "name": "Elaine BESS",
+      "location": "Victoria",
+      "capacity": "311 MW / 1,244 MWh",
+      "owner": "Akaysha Energy (BlackRock / GIP)",
+      "technology": "TBC",
+      "commissioned": "Financed Q4 2025",
+      "capex": "~A$350M+",
+      "status": "Financed Q4 2025",
+      "notes": "Part of Akaysha's 4 GWh under-construction / 13 GWh pipeline."
+    },
+    {
+      "name": "Punchs Creek Solar + BESS",
+      "location": "Queensland",
+      "capacity": "480 MWp solar + 400 MW / 1,600 MWh BESS",
+      "owner": "QIC / Macquarie GIG (JV)",
+      "technology": "TBC",
+      "commissioned": "Financial close expected 2026",
+      "capex": "~A$1B+",
+      "status": "Pre-financial close",
+      "notes": "Major Queensland JV between government-owned QIC and Macquarie GIG. CIS contract."
     }
   ],
 
   "stateBreakdown": {
-    "southAustralia": "Pioneer state. Hornsdale HPR, multiple other BESS. >70% renewables, BESS essential for grid stability. SA govt has been proactive with storage procurement.",
-    "victoria": "Victorian Big Battery (300MW/450MWh) operational. Waratah adjacent (NSW). VRET driving strong pipeline. HMC Capital, Neoen/Brookfield active.",
-    "nsw": "Largest pipeline. NSW Electricity Infrastructure Roadmap requires significant BESS. Waratah Super Battery (700MW). Eraring BESS proposed. TransGrid BESS projects.",
-    "queensland": "Strong pipeline under QLD Energy and Jobs Plan. 70% RE by 2032 requires ~5GW storage. CS Energy, Stanwell active.",
-    "westernAustralia": "Separate grid (SWIS not NEM). Alinta Energy (Sembcorp) has BESS. WA government BESS procurement active."
+    "southAustralia": "Pioneer state. Hornsdale HPR, Torrens Island BESS, multiple other projects. >70% renewables — BESS essential for grid stability. SA govt proactive with storage procurement.",
+    "victoria": "Victorian Big Battery (300MW/450MWh) operational, owned by CPP Investments. Wooreen BESS, Elaine BESS, Golden Plains BESS. VRET 95% by 2035 driving strong pipeline.",
+    "nsw": "Largest pipeline. Waratah Super Battery (850MW). Hanworth BESS (1.2GW — largest planned AU BESS). Eraring BESS commissioned. NSW Electricity Infrastructure Roadmap requires significant BESS.",
+    "queensland": "Western Downs BESS operational. Punchs Creek BESS JV (QIC/Macquarie). Strong pipeline under QLD Energy and Jobs Plan. 70% RE by 2032 requires ~5GW storage.",
+    "westernAustralia": "Separate grid (SWIS not NEM). WA government BESS procurement active via CIS Tenders 5 & 6 (2,400 MWh storage target, results expected Mar-Apr 2026)."
   },
 
   "csCapitalContext": {
     "firm": "CS Capital (cscapital.com.au)",
     "description": "Australian renewable energy advisory and asset management firm. Fully integrated advisory, strategic, and capital services.",
     "trackRecord": "A$1bn+ capital advisory track record. A$1bn+ asset management track record.",
-    "specialisation": "Battery Energy Storage Systems (BESS) - advisory and asset management.",
+    "specialisation": "Battery Energy Storage Systems (BESS) — advisory and asset management.",
     "model": "Integrated end-to-end model: M&A advisory + capital advisory + asset management",
     "experience": "Deep buy-side and sell-side experience in Australian RE and BESS transactions",
-    "relevance": "CS Capital is well-positioned as BESS becomes the dominant deal type in Australian RE market (2024-2030)"
+    "keyThemes": [
+      "CIS-contracted projects approaching FID — advisory around ~28% FID rate zombie risk",
+      "DA-approved or construction-ready BESS assets — primary M&A deal type 2025-2027",
+      "Hybrid solar+BESS platforms — solar without BESS increasingly unfinanceable",
+      "Coal-site BESS repurposing (Eraring model) — 11 GW coal closures over next decade",
+      "4-hour BESS systems dominating from 2027 — higher M&A value per MWh"
+    ],
+    "marketPosition": "CS Capital is well-positioned as BESS becomes the dominant deal type in Australian RE M&A (2024-2030). The firm's integrated advisory + asset management model mirrors how the largest players (BlackRock/Akaysha, Brookfield/Neoen) are structuring their platforms."
   },
 
   "capeXBenchmarks": {
-    "2hourBESS_2022": "A$1.2-1.5M/MWh installed (all-in)",
-    "2hourBESS_2023": "A$900k-1.1M/MWh installed",
-    "2hourBESS_2024": "A$700-900k/MWh installed",
+    "2hourBESS_2022": "A$1.8-2.4M/MWh installed (pre-LFP cost decline era)",
+    "2hourBESS_2023": "A$1.4-1.8M/MWh installed (VBB-era pricing)",
+    "2hourBESS_2024": "A$700k-1.1M/MWh installed (LFP cost decline accelerating)",
+    "2hourBESS_2025_CSIRO": "11-16% cost reduction vs 2024 (CSIRO GenCost 2025-26); global avg US$117/kWh (~A$185/kWh) turnkey, BloombergNEF 31% decline from 2024",
     "4hourBESS_2024": "A$600-800k/MWh installed (economies of scale)",
-    "trend": "~15-20% annual cost reduction continuing. Chinese LFP manufacturers (CATL, BYD) driving cost down.",
-    "note": "All-in costs include battery system, BOS, civil works, connection, development costs"
+    "2026_outlook": "Further 10-15% expected decline as LFP supply chain normalises; 4-hr systems approaching A$600-700/kWh",
+    "trend": "~15-20% annual cost reduction continuing. Chinese LFP manufacturers (CATL, BYD, Rept Battero, EVE Energy) driving costs down.",
+    "note": "All-in costs include battery system, BOS, civil works, grid connection, and development costs"
   },
 
   "keyInvestors": [
-    { "name": "BlackRock / Akaysha Energy", "notes": "Owns Waratah Super Battery. Most active BESS investor in Australia." },
-    { "name": "HMC Capital", "notes": "Owns Victorian Big Battery. ASX-listed alternative asset manager focused on RE." },
-    { "name": "Neoen / Brookfield", "notes": "Hornsdale HPR (SA). Largest historical BESS developer/owner." },
-    { "name": "AGL Energy", "notes": "Torrens Island, Liddell BESS pipeline. Major utility BESS investor." },
-    { "name": "Origin Energy", "notes": "Eraring BESS proposed. Significant BESS pipeline." },
-    { "name": "Macquarie GIG", "notes": "Active BESS developer across NEM states." },
-    { "name": "Quinbrook", "notes": "BESS development pipeline in QLD and NSW." },
-    { "name": "ATCO", "notes": "WA BESS projects." },
-    { "name": "Edify Energy", "notes": "Co-located solar+BESS developer. Multiple NEM projects." },
-    { "name": "Akaysha Energy", "notes": "BESS developer acquired by BlackRock. Key platform." }
-  ]
+    {
+      "name": "BlackRock / Akaysha Energy",
+      "aum": "USD 10T+ (BlackRock total); USD 170B+ infrastructure (incl. GIP)",
+      "notes": "Most active BESS investor in Australia. Owns Waratah Super Battery and Elaine BESS. 4 GWh under construction, 13 GWh development pipeline."
+    },
+    {
+      "name": "Brookfield Renewable (Neoen)",
+      "aum": "USD 900B+ total; USD 100B+ infrastructure",
+      "notes": "Completed EUR 6.1B Neoen acquisition Apr 2025. Owns Hornsdale Power Reserve, Western Downs BESS. Largest historical BESS portfolio in Australia."
+    },
+    {
+      "name": "CPP Investments",
+      "aum": "CAD 675B+",
+      "notes": "Acquired Neoen Victoria portfolio for A$950M (Aug 2025) — Victorian Big Battery, Bulgana Wind, Numurkah Solar."
+    },
+    {
+      "name": "Octopus Energy Australia (APG-backed)",
+      "aum": "GBP 20B+ / USD 11B portfolio",
+      "notes": "Received USD 650M from APG (Jul 2025). Developing Hanworth BESS (1.2 GW/4.8 GWh) — Australia's largest planned BESS project."
+    },
+    {
+      "name": "AGL Energy",
+      "aum": "A$5B+ market cap",
+      "notes": "Torrens Island BESS (250MW/1GWh), Liddell BESS pipeline. Major utility BESS investor transitioning coal fleet."
+    },
+    {
+      "name": "Origin Energy",
+      "aum": "A$18B+ market cap",
+      "notes": "Eraring BESS (460MW/1.84GWh) commissioned late 2025. Coal-to-BESS repurposing model."
+    },
+    {
+      "name": "Macquarie GIG",
+      "aum": "A$941B global AUM (IPE Real Assets #1 infrastructure manager)",
+      "notes": "Active BESS developer across NEM states. Punchs Creek BESS JV (QLD). Aula Energy platform (4 GW wind/solar/battery pipeline AU/NZ)."
+    },
+    {
+      "name": "Quinbrook Infrastructure Partners",
+      "aum": "USD 7B+ committed capital",
+      "notes": "Raised A$400M Aug 2025. Supernode BESS and wind portfolio. 5 GW development pipeline."
+    },
+    {
+      "name": "Edify Energy (La Caisse / CDPQ)",
+      "aum": "CAD 450B+ (CDPQ)",
+      "notes": "CDPQ acquiring Edify Energy (~A$1.1B+). Edify has 11 GW+ pipeline including major CIS battery contracts."
+    },
+    {
+      "name": "TagEnergy",
+      "aum": "Private",
+      "notes": "Golden Plains BESS (VIC), financed Q4 2025."
+    }
+  ],
+
+  "m_and_a_trends": {
+    "dealVolume": "16 BESS deals in Q4 2025 — acquisitions, project financings, and PPAs. NEM added 4.8 GW / 12 GWh in 2025.",
+    "hybridDominance": "Solar projects without integrated BESS increasingly unfinanceable due to negative daytime pricing. Hybrid solar+BESS now dominant for M&A/financing.",
+    "durationShift": "Average battery duration shifting to 4-hour systems from 2027 — higher value per MWh for M&A.",
+    "zombieRisk": "Only ~28% FID rate on CIS-awarded battery projects — creating advisory opportunities around distressed/undercapitalised developers.",
+    "coalSiteOpportunity": "11 GW of coal closure over next decade creates BESS-at-coal-site M&A theme (Eraring model). Yallourn, Callide B, Bayswater next.",
+    "globalCapital": "BESS M&A deal value increased ~57% globally from 2024 to 2025. Australian assets attracting global pension and infrastructure fund capital.",
+    "cisAudit": "~28% FID rate on CIS-awarded projects creates advisory market: CIS winners unable to reach FID need strategic acquirers. Key CS Capital opportunity."
+  }
 }
