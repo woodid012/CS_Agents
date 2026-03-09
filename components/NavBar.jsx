@@ -15,6 +15,7 @@ const MARKET_DATA_LINKS = [
 ];
 
 const TOP_LINKS = [
+  { href: '/dashboard', label: 'Dashboard' },
   { href: '/analytics', label: 'Analytics' },
   { href: '/development-tracker', label: 'Development Tracker' },
   { href: '/ai-agents', label: 'AI Agents' },
