@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -19,14 +19,14 @@ const NAV_PILLARS = [
     ],
   },
   {
-    label: 'Data — Prices',
+    label: 'Data â€” Prices',
     links: [
       { href: '/market-data/price-curves', label: 'Price Curves' },
       { href: '/market-data/forward-curves', label: 'Forward Curves' },
     ],
   },
   {
-    label: 'Data — Capex',
+    label: 'Data â€” Capex',
     links: [
       { href: '/capex', label: 'Project Capex' },
       { href: '/market-data/capex-opex', label: 'Benchmarks' },
@@ -92,7 +92,7 @@ function Dropdown({ label, links, pathname }) {
 
 const TOP_LINKS = [
   { href: '/news', label: 'News' },
-  { href: '/ai-agents', label: 'AI Agents' },
+  { href: '/ideas', label: 'Ideas' },
 ];
 
 export default function NavBar() {
@@ -125,3 +125,4 @@ export default function NavBar() {
     </nav>
   );
 }
+
