@@ -1,0 +1,385 @@
+{
+  "_notes": "Australia renewable energy market data. Last enriched with live research March 2026.",
+  "marketOverview": {
+    "currentRenewableShare": "~40% of electricity generation (Q4 2025), rising rapidly",
+    "target2030": "82% renewable electricity by 2030 (federal target)",
+    "installedCapacityFY2425": "Record 4.4 GW new generation and storage commissioned FY2024-25",
+    "q42025Commissioning": "1.8 GW commissioned in Q4 2025 alone (2 solar + 7 BESS projects)",
+    "gridConnectionPipeline": "Record 64 GW in grid connection process (NEM, Q4 2025) - up 14% quarter-on-quarter",
+    "rooftopSolar": "25.1 GW total rooftop solar in NEM (Nov 2025). World's highest per-capita uptake. AEMO projects 53 GW by 2030.",
+    "totalCapexNeeded2030": "~A$73B+ investment expected under CIS alone. AEMO ISP estimates A$120B+ total to 2030.",
+    "aemoLongTermForecast": "Total NEM generation/storage to triple from 92 GW today to 297 GW by 2050. Grid-scale wind+solar to reach 58 GW by 2030.",
+    "keyTechnologies": [
+      "Solar PV (utility and rooftop)",
+      "Wind (onshore and offshore)",
+      "Battery Storage (BESS) - dominant Q4 2025 activity",
+      "Pumped Hydro",
+      "Green Hydrogen (emerging)"
+    ]
+  },
+  "keyPolicy": {
+    "capacityInvestmentScheme": {
+      "name": "Capacity Investment Scheme (CIS)",
+      "description": "Federal government scheme underwriting new firm and dispatchable capacity. Provides revenue support for new renewable and storage projects.",
+      "target": "40 GW of new capacity nationally by 2030 (uplifted July 2025 from original 32 GW target)",
+      "mechanism": "Contracts for Difference (CfDs) - government tops up or claws back revenue based on market prices",
+      "expectedInvestment": "~A$73B in electricity sector investment supported by CIS",
+      "tenderProgress": {
+        "tender3": "Awarded Sep 2025 - 4.13 GW / 15.37 GWh battery storage (16 projects, largest battery tender to date)",
+        "tender4": "Awarded mid-2025 - 6.6 GW renewable generation (20 projects, 12 are hybrid with battery)",
+        "tender5_6": "WEM tenders closed Nov 2025 - 1.6 GW generation + 2,400 MWh storage, results expected Mar-Apr 2026",
+        "tender7": "NEM generation - bidding closed Dec 2025, 5 GW target, results expected May 2026",
+        "tender8": "NEM storage - open, seeking 16 GWh (largest single CIS storage procurement), results mid-2026",
+        "cumulativeAwarded": "13 GW generation + 5.78 GW / 21.57 GWh dispatchable capacity awarded to date"
+      },
+      "keyRisk": "Only ~28% of battery capacity awarded a CISA has reached FID - zombie project risk for lowest-cost bids unable to secure debt financing"
+    },
+    "arena": "Australian Renewable Energy Agency - grants and concessional finance for RE innovation",
+    "cleanEnergyFinanceCorp": "CEFC provides A$10B+ in low-cost finance for clean energy projects",
+    "accccMergerRegime": {
+      "description": "New ACCC mandatory merger control regime in effect from 1 January 2026",
+      "impact": "ACCC approval now required before completing transactions crossing certain thresholds. More rigorous competitive impact assessment especially for battery storage, grid infrastructure, and cross-border transactions."
+    },
+    "stateSchemes": {
+      "victoria": "Victorian Renewable Energy Target (VRET) - 95% by 2035",
+      "queensland": "Queensland Energy and Jobs Plan - 70% renewables by 2032, 80% by 2035",
+      "nsw": "Electricity Infrastructure Roadmap - 12 GW renewable by 2030",
+      "southAustralia": "Already >70% renewables, targeting net 100%",
+      "westernAustralia": "Wholesale electricity market reform underway; CIS Tenders 5 & 6 targeting WEM"
+    },
+    "firb": {
+      "description": "Foreign Investment Review Board - reviews foreign investment in sensitive sectors",
+      "threshold": "A$0 threshold for foreign government investors in electricity generation",
+      "privateThreshold": "A$330M for private foreign investors in electricity generation (critical infrastructure)",
+      "recentTrend": "Increased scrutiny on Chinese-linked investors. FIRB rejected several Chinese RE deals 2022-2024.",
+      "keyRisk": "Chinese SOE-linked bidders face near-certain FIRB rejection for Australian RE assets",
+      "sembcorpNote": "Sembcorp/Alinta deal (announced Dec 2025) awaiting FIRB approval - Singapore-linked expected to pass. Key watchpoint H1 2026."
+    }
+  },
+  "majorTransactions2024_2026": [
+    {
+      "deal": "Brookfield / Neoen",
+      "value": "EUR 6.1B (~A$10B)",
+      "date": "Completed April 4, 2025 (squeeze-out/delisting from Euronext Paris)",
+      "description": "Brookfield Renewable Holdings (with Temasek) completed full acquisition of Neoen. Initial 53.12% stake acquired Dec 30, 2024 (EUR 3.25B). Tender offer price EUR 39.85/share. Neoen delisted April 4, 2025 after mandatory squeeze-out. Neoen operates ~10 GW target capacity globally with major Australian assets incl. Hornsdale Power Reserve.",
+      "significance": "Landmark transaction - among the largest renewable energy M&A deals globally. Validates institutional appetite for large-scale Australian RE platforms."
+    },
+    {
+      "deal": "Sembcorp Industries / Alinta Energy",
+      "value": "A$6.5B enterprise value (~A$5.6B purchase price)",
+      "date": "Announced December 11, 2025. Shareholder EGM approved Jan 30, 2026. Completion expected H1 2026.",
+      "description": "Sembcorp Industries (SGX-listed Singapore utility) agreed to acquire 100% of Alinta Energy from Chow Tai Fook Enterprises. Alinta has 3,400 MW owned/contracted generation (gas, wind, solar, coal) across AU/NZ plus 10.4 GW pipeline of renewables and firming. Deal is immediately EPS accretive (+9%). Funded fully in cash via bridge facility.",
+      "significance": "Major entry of Asian strategic into Australian power market. Supports Sembcorp's target of 25 GW renewables capacity by 2028. Awaiting FIRB and ACCC approvals. ACCC approval now required under new Jan 2026 merger control regime."
+    },
+    {
+      "deal": "BlackRock / AGL renewable portfolio stake",
+      "value": "Undisclosed (~A$500M)",
+      "date": "2024",
+      "description": "BlackRock Infrastructure (via GIP acquisition) took a stake in AGL's renewable development pipeline.",
+      "significance": "Global fund managers deepening Australian RE exposure. BlackRock also holds Akaysha Energy (1 GW+ BESS pipeline)."
+    },
+    {
+      "deal": "Macquarie GIG / multiple wind, solar and battery assets",
+      "value": "~A$2B+ total 2024-2025",
+      "date": "Ongoing 2024-2025",
+      "description": "Macquarie Asset Management (A$941B global AUM, tops IPE Real Assets 100) continued active acquisition and development via GIG and new Aula Energy platform (4 GW wind/solar/battery pipeline AU/NZ).",
+      "significance": "Macquarie remains most active infrastructure investor in Australian RE."
+    },
+    {
+      "deal": "AustralianSuper / Amp Energy portfolio",
+      "value": "A$300M+",
+      "date": "2024",
+      "description": "AustralianSuper (A$340B+ AUM) increased direct RE infrastructure exposure.",
+      "significance": "Domestic super funds increasingly investing directly, competing with offshore funds."
+    },
+    {
+      "deal": "APG / Octopus Energy Australia",
+      "value": "USD 650M",
+      "date": "July 2025",
+      "description": "Dutch pension giant APG committed USD 650M to Octopus Energy's Australian platform. Octopus now has USD 11B+ portfolio and is rapidly expanding in Australian RE.",
+      "significance": "Major European pension capital deployment into Australian RE. Octopus is now a top-tier Australian RE investor."
+    }
+  ],
+  "keyTransmission": [
+    {
+      "project": "HumeLink",
+      "description": "500 kV transmission line NSW - connects Snowy 2.0 to Sydney/Canberra load centers",
+      "capex": "A$3.3B+",
+      "status": "Under construction, delayed, in-service ~2028-2029"
+    },
+    {
+      "project": "VNI West",
+      "description": "New interconnector Victoria-NSW, enables more renewable transfer",
+      "capex": "A$3B+",
+      "status": "Planning/approvals stage"
+    },
+    {
+      "project": "Project EnergyConnect",
+      "description": "SA-NSW interconnector via ElectraNet/TransGrid",
+      "capex": "A$2.3B",
+      "status": "Commissioning 2025-2026"
+    },
+    {
+      "project": "Marinus Link",
+      "description": "Undersea cable Tasmania-Victoria, unlocks Tasmanian hydro battery",
+      "capex": "A$3.8B",
+      "status": "FID delayed, under review"
+    },
+    {
+      "project": "Snowy 2.0",
+      "description": "2 GW pumped hydro expansion of Snowy Scheme",
+      "capex": "A$12B+ (heavily over budget vs original A$2B)",
+      "status": "Under construction, delayed to ~2028"
+    }
+  ],
+  "keyBidderCapex": {
+    "MacquarieGIG": {
+      "aum": "A$941B global AUM (tops IPE Real Assets Top 100 Infrastructure Managers 2025)",
+      "australiaActivity": "Most active RE investor/developer in Australia. Launched Aula Energy (4 GW AU/NZ pipeline).",
+      "recentCapex": "~A$2B deployed 2024-2025"
+    },
+    "Brookfield": {
+      "aum": "USD 900B+ total AUM, USD 100B+ infrastructure",
+      "australiaActivity": "Completed Neoen acquisition (EUR 6.1B / ~A$10B) April 2025. Major Australian RE presence.",
+      "recentCapex": "EUR 6.1B Neoen acquisition"
+    },
+    "BlackRock": {
+      "aum": "USD 10T+ total AUM, USD 170B+ infrastructure (incl. GIP acquired 2024)",
+      "australiaActivity": "Growing Australian RE exposure via GIP. Controls Akaysha Energy (1 GW+ BESS pipeline).",
+      "recentCapex": "~A$500M+ in Australia"
+    },
+    "IFM": {
+      "aum": "A$220B+ AUM (Australian industry super backed)",
+      "australiaActivity": "Significant infrastructure investor, growing RE allocation",
+      "recentCapex": "Multiple A$100-500M RE deals"
+    },
+    "AustralianSuper": {
+      "aum": "A$340B+ AUM",
+      "australiaActivity": "Increasing direct RE investment, targets 10%+ infrastructure allocation",
+      "recentCapex": "A$300M+ in 2024"
+    },
+    "QIC": {
+      "aum": "A$100B+ AUM (Queensland government-owned)",
+      "australiaActivity": "A$12B in RE assets (2024). Plans A$15B+ in energy transition over next 5 years. Active in QLD via PowAR consortium.",
+      "recentCapex": "A$12B RE assets; A$15B+ 5-year investment plan"
+    },
+    "CBUS": {
+      "aum": "A$100B+ AUM",
+      "australiaActivity": "Growing infrastructure/RE allocation via direct and fund investments",
+      "recentCapex": "Undisclosed"
+    },
+    "Quinbrook": {
+      "aum": "USD 7B+ committed capital",
+      "australiaActivity": "Australia-focused RE developer/investor. Owns several solar/wind assets.",
+      "recentCapex": "Active developer"
+    },
+    "Tepco": {
+      "aum": "Revenue JPY 7T+",
+      "australiaActivity": "Acquired 5GW+ renewable pipeline assets in Australia",
+      "recentCapex": "~A$500M+ in Australia"
+    },
+    "Amp": {
+      "aum": "USD 22B+ infrastructure AUM",
+      "australiaActivity": "Active in Australian RE development and investment",
+      "recentCapex": "A$200M+"
+    },
+    "Octopus": {
+      "aum": "GBP 20B+ AUM, USD 11B portfolio",
+      "australiaActivity": "Received USD 650M from APG (Jul 2025). Rapidly expanding Australian platform.",
+      "recentCapex": "USD 650M raise from APG, deploying in AU"
+    },
+    "Sembcorp": {
+      "aum": "SGD 4B+ equity",
+      "australiaActivity": "Agreed to acquire Alinta Energy (A$6.5B EV). Completion expected H1 2026 pending FIRB/ACCC. Will have 3.4 GW + 10.4 GW pipeline.",
+      "recentCapex": "A$5.6B purchase price (Alinta, pending)"
+    }
+  },
+  "recentNews": [
+    {
+      "date": "Mar 2026",
+      "headline": "Battery deal surge dominates Australian RE market",
+      "source": "RenewEconomy",
+      "detail": "Investor activity in Australian energy storage intensifying with multiple transactions - purchases, sales, financing arrangements, and PPAs for big batteries. BESS dominated investment in Q4 2025 with 16 deals."
+    },
+    {
+      "date": "Mar 2026",
+      "headline": "Spanish RE company completes Australian wind farm acquisition",
+      "source": "RenewEconomy",
+      "detail": "A Spanish renewable energy company completed the purchase of a formerly record-holding Australian wind farm, with plans to alleviate grid constraints."
+    },
+    {
+      "date": "Mar 2026",
+      "headline": "Victoria's second-largest battery connects to grid",
+      "source": "RenewEconomy",
+      "detail": "Battery storage facility connected to Victoria's grid management system near major gas generation infrastructure - part of the accelerating BESS deployment across NEM."
+    },
+    {
+      "date": "Mar 2026",
+      "headline": "Fortescue begins WA's largest solar facility construction",
+      "source": "RenewEconomy",
+      "detail": "Fortescue has commenced building Western Australia's largest solar facility as part of its Pilbara decarbonisation initiative."
+    },
+    {
+      "date": "Jan 2026",
+      "headline": "Sembcorp shareholders approve A$6.5B Alinta Energy acquisition",
+      "source": "SGX Announcement / Bloomberg",
+      "detail": "Sembcorp Industries received shareholder EGM approval (Jan 30, 2026) for the A$6.5B Alinta Energy deal. Completion expected H1 2026 subject to FIRB and ACCC regulatory approvals. Alinta has 10.4 GW renewables pipeline."
+    },
+    {
+      "date": "Jan 2026",
+      "headline": "ACCC mandatory merger control regime takes effect",
+      "source": "ACCC",
+      "detail": "New mandatory merger clearance regime in force from 1 January 2026. All major M&A transactions in energy and infrastructure sectors must seek ACCC approval before completing. Adds new regulatory hurdle to Australian RE deals."
+    },
+    {
+      "date": "Sep 2025",
+      "headline": "CIS Tender 3 awards 4.13 GW / 15.37 GWh battery storage - largest battery tender globally",
+      "source": "DCCEEW / Clean Energy Council",
+      "detail": "Australia's CIS third tender awarded contracts to 16 battery projects across NEM (5 NSW, 5 VIC, 4 QLD, 2 SA). Cumulative CIS awards now 13 GW generation + 5.78 GW/21.57 GWh dispatchable capacity. Government also uplifted CIS target to 40 GW in July 2025."
+    },
+    {
+      "date": "Jul 2025",
+      "headline": "APG commits USD 650M to Octopus Energy Australia",
+      "source": "Market Announcement",
+      "detail": "Dutch pension giant APG invested USD 650M in Octopus Energy's Australian platform. Octopus now manages USD 11B+ portfolio and is rapidly expanding across Australian wind, solar and BESS."
+    },
+    {
+      "date": "Apr 2025",
+      "headline": "Brookfield completes EUR 6.1B Neoen acquisition, delists from Euronext Paris",
+      "source": "GlobeNewswire / Nasdaq",
+      "detail": "Brookfield Renewable Holdings (with Temasek) completed full acquisition after mandatory squeeze-out on April 4, 2025. Neoen delisted from Euronext Paris. Initial 53.12% stake was acquired Dec 30, 2024 for EUR 3.25B. Neoen targeting 10 GW globally including major Australian assets (Hornsdale Battery, Victorian wind/solar)."
+    },
+    {
+      "date": "Dec 2025",
+      "headline": "Sembcorp announces A$6.5B Alinta Energy acquisition",
+      "source": "Bloomberg / SGX",
+      "detail": "Singapore's Sembcorp Industries signed share sale agreement to acquire 100% of Alinta Energy from Chow Tai Fook Enterprises for A$6.5B EV (A$5.6B purchase price). Supports Sembcorp's target of 25 GW renewables by 2028. Deal not yet completed - awaiting FIRB/ACCC."
+    },
+    {
+      "date": "2025",
+      "headline": "Australia Q4 2025: Record NEM capacity additions, 64 GW pipeline",
+      "source": "Clean Energy Council / AEMO",
+      "detail": "Q4 2025 was a record quarter with 1.8 GW commissioned (NEM). Full FY2024-25 saw record 4.4 GW. Grid connection pipeline hit record 64 GW, up 14% quarter-on-quarter. Rooftop solar reached 25.1 GW in NEM. AEMO forecasts grid-scale wind+solar to reach 58 GW by 2030, 120 GW by 2050."
+    },
+    {
+      "date": "2025",
+      "headline": "FIRB continues to scrutinise Chinese-linked RE investments",
+      "source": "Market Observations",
+      "detail": "FIRB rejected or deterred multiple bids from Chinese state-owned or linked entities for Australian RE assets on national security grounds. BJEI solar acquisition collapsed after FIRB failure. Zero-dollar threshold applies to all foreign government investors."
+    },
+    {
+      "date": "2024",
+      "headline": "Offshore wind zones progress - VIC/NSW gazetted",
+      "source": "DCCEEW",
+      "detail": "Commonwealth offshore wind legislation enabled. Victoria (Gippsland) and Hunter/Illawarra zones gazetted. First projects expected FID 2026-2027."
+    },
+    {
+      "date": "2024",
+      "headline": "Snowy 2.0 costs blow out to A$12B+, delayed to ~2028",
+      "source": "Snowy Hydro",
+      "detail": "Snowy Hydro's pumped hydro expansion suffered further cost blowouts and delays. Now projected A$12B+ vs original A$2B budget."
+    }
+  ],
+  "domesticPlayers": [
+    {
+      "name": "AGL Energy",
+      "type": "Integrated utility (ASX: AGL)",
+      "aum_or_assets": "~10 GW total generation",
+      "description": "Australia's largest electricity generator (coal + gas + renewables). Undergoing coal exit with major BESS investments at retiring coal plant sites. Part of PowAR consortium (with QIC and Future Fund). Owns Bayswater and Loy Yang A coal plants retiring 2030-35.",
+      "focus": "Utility-scale wind, solar, BESS; thermal transition"
+    },
+    {
+      "name": "Origin Energy",
+      "type": "Integrated utility (ASX: ORG)",
+      "aum_or_assets": "~6 GW total generation",
+      "description": "Major NEM generator and gas retailer. Owns Eraring coal plant (NSW, closing 2025). Significant renewables development pipeline. 49% stake in Australia Pacific LNG. Building large BESS at Eraring site post-closure.",
+      "focus": "Large-scale BESS, offshore wind, solar farms"
+    },
+    {
+      "name": "Macquarie Asset Management / Green Investment Group (GIG)",
+      "type": "Infrastructure fund manager",
+      "aum_or_assets": "A$941B global AUM (IPE Real Assets #1 infrastructure manager 2025); 5+ GW in Australia",
+      "description": "World's largest infrastructure investor. Dominant in Australian RE through GIG platform. Also launched Aula Energy (4 GW AU/NZ wind/solar/battery pipeline). Manages Potentia Energy acquisition, QIC Solar JV, and numerous assets.",
+      "focus": "Wind, solar, BESS; platform acquisitions; global capital deployment"
+    },
+    {
+      "name": "IFM Investors",
+      "type": "Industry super-backed infrastructure manager",
+      "aum_or_assets": "A$220B+ AUM",
+      "description": "Owned by 17 Australian industry super funds. Significant Australian infrastructure investor (airports, ports, utilities). Increasing RE allocation via direct investments and fund mandates.",
+      "focus": "Large-scale infrastructure platforms; patient long-duration capital"
+    },
+    {
+      "name": "QIC (Queensland Investment Corporation)",
+      "type": "Government-owned fund manager (QLD)",
+      "aum_or_assets": "A$100B+ AUM; A$12B in RE assets (2024)",
+      "description": "Queensland state government investment manager. Active RE investor via PowAR consortium with AGL and Future Fund. QIC Infrastructure managing Punchs Creek solar+BESS JV (480MWp + 1.6GWh, QLD). Plans A$15B+ in energy transition over next 5 years.",
+      "focus": "Solar + BESS; Queensland focus; energy transition platform"
+    },
+    {
+      "name": "AustralianSuper",
+      "type": "Industry superannuation fund",
+      "aum_or_assets": "A$340B+ AUM",
+      "description": "Australia's largest super fund. Direct infrastructure investor increasingly active in RE. Holds stakes in multiple wind and solar farms. Targets 10%+ infrastructure allocation. Growing direct RE mandate.",
+      "focus": "Direct infrastructure; large-scale; long-duration assets"
+    },
+    {
+      "name": "CBUS Super",
+      "type": "Industry superannuation fund",
+      "aum_or_assets": "A$100B+ AUM",
+      "description": "Construction and building unions industry super fund. Growing infrastructure and RE allocation via IFM and direct mandates.",
+      "focus": "Infrastructure co-investments; renewables"
+    },
+    {
+      "name": "Aware Super",
+      "type": "Industry superannuation fund",
+      "aum_or_assets": "A$170B+ AUM",
+      "description": "Merged fund (First State Super + VicSuper + WA Super). Increasing direct RE investment. Member of consortia for offshore wind and large-scale solar.",
+      "focus": "Infrastructure; growing direct RE investing"
+    },
+    {
+      "name": "Future Fund",
+      "type": "Australian sovereign wealth fund",
+      "aum_or_assets": "A$230B+ AUM",
+      "description": "Federal government wealth fund. Infrastructure allocation includes RE assets. Member of PowAR consortium with AGL and QIC. Generally passive, long-duration investor.",
+      "focus": "Infrastructure returns; passive; patient capital"
+    },
+    {
+      "name": "Quinbrook Infrastructure Partners",
+      "type": "Specialist RE fund manager",
+      "aum_or_assets": "USD 7B+ committed capital; 1.5 GW+ AU portfolio",
+      "description": "Australia-focused RE developer and investor. Raised A$400M in Aug 2025. Portfolio 1.5GW+ operational/construction, 5GW development pipeline. Known for Supernode BESS and wind projects. Targeting $3B deployment for 1GW+ additional capacity.",
+      "focus": "Wind, BESS, grid-scale solar; development and acquisition"
+    },
+    {
+      "name": "Tilt Renewables",
+      "type": "Listed RE developer (ASX: TLT, NZX: TLT)",
+      "aum_or_assets": "~1 GW operating (AU)",
+      "description": "NZ-domiciled but significant Australian wind developer. Part of PowAR consortium. Owns Dundonnell Wind Farm (336MW, VIC) and Rye Park Wind Farm (396MW, NSW). Primarily organic developer.",
+      "focus": "Wind development; greenfield construction"
+    },
+    {
+      "name": "Lightsource bp",
+      "type": "Solar developer (BP majority-owned subsidiary)",
+      "aum_or_assets": "Multiple GW pipeline globally; active in AU",
+      "description": "Leading global utility-scale solar developer. Active in Australia with several large solar projects. Typically develops and sells down assets post-construction (asset-light model).",
+      "focus": "Utility-scale solar; sell-down after construction"
+    },
+    {
+      "name": "Akaysha Energy (BlackRock / GIP)",
+      "type": "BESS specialist (BlackRock/GIP owned)",
+      "aum_or_assets": "1 GW+ BESS pipeline",
+      "description": "One of Australia's leading large-scale BESS developers. Acquired by BlackRock/GIP post-2024. Pipeline exceeds 1GW. Key beneficiary of CIS battery tenders.",
+      "focus": "Grid-scale BESS development"
+    }
+  ],
+  "australiaRenewableTargets": {
+    "federal2030": "82% renewable electricity",
+    "federal2050": "Net zero emissions",
+    "cisProgramme": "40 GW new capacity by 2030 (uplifted July 2025)",
+    "totalNewCapacityNeeded": "Grid-scale wind+solar from 23 GW to 58 GW by 2030 (AEMO ISP)",
+    "annualInvestmentNeeded": "5.2-10.1 GW of new capacity annually over next 5 years",
+    "storagePipeline": "5.78 GW / 21.57 GWh awarded under CIS dispatchable tenders to date",
+    "aemo2050Target": "Total NEM capacity to triple from 92 GW to 297 GW; wind+solar to reach 120 GW"
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "_notes": "AUM and capex figures sourced from public disclosures, annual reports, IPE Real Assets, Bloomberg and market data. Last enriched with live research March 2026. All figures approximate.",
+  "Macquarie GIG": {
+    "aum": "A$941B global AUM",
+    "aumNote": "Ranked #1 infrastructure manager globally by IPE Real Assets Top 100 (2025, as at 31 Mar 2025)",
+    "australiaCapex2024": "~A$2B+",
+    "notes": "Most active infrastructure investor in Australian RE. Developer and investor across wind, solar, storage. Launched Aula Energy (4 GW AU/NZ pipeline). GIG platform manages Potentia Energy JV."
+  },
+  "Brookfield": {
+    "aum": "USD 900B+ total AUM",
+    "infrastructureAUM": "USD 100B+",
+    "australiaCapex2024": "EUR 6.1B / ~A$10B (Neoen)",
+    "notes": "Completed Neoen acquisition April 4, 2025 (squeeze-out/delisting). Initial 53.12% stake closed Dec 30, 2024 (EUR 3.25B with Temasek). Neoen targeting 10 GW globally. Largest single RE deal in Australia."
+  },
+  "BlackRock / GIP": {
+    "aum": "USD 10T+ (total)",
+    "infrastructureAUM": "USD 170B+ (incl. GIP acquired 2024)",
+    "australiaCapex2024": "~A$500M+",
+    "notes": "Global fund giant. Acquired GIP 2024. Growing Australian RE exposure. Controls Akaysha Energy (1 GW+ BESS pipeline - key CIS tender winner)."
+  },
+  "IFM Investors": {
+    "aum": "A$220B+",
+    "australiaCapex2024": "~A$300M",
+    "notes": "Australian industry super fund backed (17 funds). Significant infrastructure allocation. Domestic advantage - no FIRB issues."
+  },
+  "AustralianSuper": {
+    "aum": "A$340B+",
+    "australiaCapex2024": "~A$300M+",
+    "notes": "Largest Australian super fund. 10%+ infrastructure target. Increasing direct RE investment."
+  },
+  "QIC": {
+    "aum": "A$100B+",
+    "reAssets": "A$12B in RE assets (2024)",
+    "australiaCapex2024": "A$12B RE portfolio; A$15B+ 5-year investment plan",
+    "notes": "Queensland government-owned. Active RE infrastructure investor via PowAR consortium. QIC Infrastructure managing Punchs Creek solar+BESS JV (480MWp + 1.6GWh)."
+  },
+  "CBUS Super": {
+    "aum": "A$100B+",
+    "australiaCapex2024": "Undisclosed",
+    "notes": "Construction sector super fund. Growing infrastructure RE allocation via IFM and direct mandates."
+  },
+  "Aware Super": {
+    "aum": "A$170B+",
+    "australiaCapex2024": "Undisclosed",
+    "notes": "Merged super fund. Expanding direct infrastructure mandate. Member of consortia for offshore wind and large-scale solar."
+  },
+  "Future Fund": {
+    "aum": "A$230B+",
+    "australiaCapex2024": "Passive / undisclosed",
+    "notes": "Australian sovereign wealth fund. Member of PowAR consortium (with AGL and QIC). Passive long-duration investor."
+  },
+  "Quinbrook": {
+    "aum": "USD 7B+ committed",
+    "aumAUD": "A$10B+",
+    "australiaCapex2024": "~A$400M",
+    "notes": "Australia-focused RE developer/investor. Raised A$400M (Aug 2025). 1.5 GW+ operational/construction portfolio, 5 GW development pipeline. $3B deployment target."
+  },
+  "Octopus Energy": {
+    "aum": "GBP 20B+ / USD 11B portfolio",
+    "australiaCapex2024": "USD 650M (APG commitment Jul 2025) + existing",
+    "notes": "Received USD 650M commitment from Dutch pension APG (July 2025). Rapidly expanding Australian platform across wind, solar, BESS."
+  },
+  "APG": {
+    "aum": "EUR 600B+",
+    "australiaCapex2024": "USD 650M (Octopus investment, Jul 2025)",
+    "notes": "Dutch pension giant. Committed USD 650M to Octopus Australia Jul 2025. One of the largest pension funds globally."
+  },
+  "Sembcorp": {
+    "revenue": "SGD 4B+",
+    "australiaCapex2024": "A$5.6B (Alinta - pending close)",
+    "notes": "Singapore utility. Agreed to acquire Alinta Energy Dec 2025 (A$6.5B EV / A$5.6B purchase price). Awaiting FIRB + ACCC approval, expected H1 2026. Alinta: 3.4 GW owned/contracted + 10.4 GW pipeline. Target 25 GW global renewables by 2028."
+  },
+  "Amp Energy": {
+    "aum": "USD 22B+",
+    "australiaCapex2024": "~A$200M+",
+    "notes": "Global infrastructure investor active in Australian RE development."
+  },
+  "Tepco / T-REX": {
+    "revenue": "JPY 7T+",
+    "australiaCapex2024": "~A$500M+",
+    "notes": "Japanese utility with major Australian RE pipeline acquisitions (5 GW+)."
+  },
+  "AGL Energy": {
+    "marketCap": "A$5B+",
+    "australiaCapex2024": "~A$1B",
+    "notes": "ASX-listed. Transitioning from coal. A$20B capex plan for RE transition. Part of PowAR consortium. CIS contract holder."
+  },
+  "Origin Energy": {
+    "marketCap": "A$18B+",
+    "australiaCapex2024": "~A$500M",
+    "notes": "ASX-listed. Significant RE development pipeline. Building large BESS at Eraring site. Significant CIS contracts."
+  },
+  "ENGIE": {
+    "revenue": "EUR 93B+",
+    "australiaCapex2024": "~A$300M",
+    "notes": "French utility with long-standing Australian operations. Closing coal, investing in RE."
+  },
+  "EDP Renewables": {
+    "installedCapacity": "28 GW global",
+    "australiaCapex2024": "~A$200M",
+    "notes": "Portuguese RE developer with Australian wind/solar portfolio."
+  },
+  "Acciona": {
+    "revenue": "EUR 11B+",
+    "australiaCapex2024": "~A$150M",
+    "notes": "Spanish developer with large Australian wind assets. MacIntyre Wind Farm (923 MW, QLD) - one of world's largest onshore wind farms. Bellwether 3 GW WA wind project proposed. Limited M&A appetite - primarily develops own projects."
+  },
+  "Copenhagen Infrastructure Partners": {
+    "aum": "EUR 28B+",
+    "australiaCapex2024": "~A$200M",
+    "notes": "Danish infrastructure fund. Active in Australian offshore wind and large-scale RE."
+  },
+  "CDPQ": {
+    "aum": "CAD 450B+",
+    "australiaCapex2024": "~A$200M+",
+    "notes": "Quebec pension fund. Growing Australian RE infrastructure allocation."
+  },
+  "Ares Management": {
+    "aum": "USD 450B+",
+    "australiaCapex2024": "Emerging",
+    "notes": "US alternative asset manager expanding infrastructure globally including Australia."
+  },
+  "KKR": {
+    "aum": "USD 600B+",
+    "australiaCapex2024": "~A$300M+",
+    "notes": "US PE giant. Australian infrastructure team active. Increasing RE allocation."
+  },
+  "Global summary": {
+    "totalForeignCapexAustralia2024_2025": "~A$20B+ committed or deployed 2024-2025",
+    "dominantInvestorTypes": "Infrastructure funds (Macquarie, Brookfield, BlackRock), pension funds (APG, CDPQ, AustralianSuper), Asian utilities (Sembcorp, Tepco)",
+    "notableAbsent": "Chinese SOEs/funds blocked by FIRB",
+    "newRegulatory2026": "ACCC mandatory merger clearance regime (Jan 2026) adds approval requirement for major deals",
+    "outlook": "Strong demand expected to continue. 40 GW CIS target needs A$73B+ investment. AEMO forecasts 58 GW grid-scale wind+solar by 2030.",
+    "cisRisk": "~28% FID rate on CIS-awarded projects to date - zombie project risk for lowest-cost/undercapitalised developers"
+  }
+}

@@ -1,1 +1,242 @@
-{}
+{
+  "1": {
+    "name": "AGL",
+    "archetype": "IG Grade Gentailers",
+    "contact": "",
+    "conversationHeld": "Yes",
+    "feedbackDate": "16/02/2026",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": "Pending  response to request for next meetiing"
+  },
+  "2": {
+    "name": "Alinta Energy",
+    "archetype": "IG Grade Gentailers",
+    "contact": "Harrison Zhou - Corporate Strategy\r\nDane Rosenheim - Corporate Strategy",
+    "conversationHeld": "Yes",
+    "feedbackDate": "12/02/2026",
+    "conversationType": "Pre-RFP (Initial Conversation)",
+    "projectInterest": "1. Focus on SA and NSW for now\r\n2. No need for VIC and QLD",
+    "keyNotes": "1. BESS as a technology is focus, but will also look at wind and solar \r\n2. TPM trading team will need to consider the RFP\r\n3. Indicated that they need generation and capacity in SA but at the right price expectations"
+  },
+  "3": {
+    "name": "Amazon",
+    "archetype": "Corporates",
+    "contact": "",
+    "conversationHeld": "Yes",
+    "feedbackDate": "16/02/2026",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": "DC opportunities introduced by ElectraNet (pending next steps from ElectraNet)"
+  },
+  "4": {
+    "name": "Banpu",
+    "archetype": "Corporates",
+    "contact": "Steven Black - CFO\r\nTachatorn Panyim (Normi) - Project Development \r\nSinch Lim - Project Development",
+    "conversationHeld": "Yes",
+    "feedbackDate": "06/02/2026",
+    "conversationType": "Pre-RFP (Initial Conversation)",
+    "projectInterest": "1. Focus on QLD and NSW preferred. \r\n2. Vic has exposure \r\n3. SA not preferred jurisdiction (lack history in SA and don't like SA performance). Could be convinced but against the flow.\r\n4. If full SW REZ buildout  in NSW blocks SA access, first 5 years of toll could be de facto NSW",
+    "keyNotes": "1. Banpu Australia dn Centennial Coal merging into one entity\r\n2. Have looked at Virtual tolls only (not physical tolls or capacity swaps). Lookingh at physical developments too, not super open to date. \r\n3. Prefer 2hr duration, can stretch to 4hr. 100MW/2hr sweet spot but could go bigger. \r\n4. offtake length ~ 3years preferred (goes to trading business). 10 years considered long. \r\n5. Will not provide PCG, uses strong LoS but hasn't tipped over. Has provided SBLC. \r\n6. Own development pipeline runnning to 2028/29 so may be more open to virtual assets after that."
+  },
+  "5": {
+    "name": "BHP",
+    "archetype": "Corporates",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "16/02/2026",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": "Pending  response to request for next meetiing"
+  },
+  "6": {
+    "name": "CleanPeak Energy",
+    "archetype": "Small Retailers",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": ""
+  },
+  "7": {
+    "name": "Delta",
+    "archetype": "Corporates",
+    "contact": "",
+    "conversationHeld": "Yes",
+    "feedbackDate": "04/02/2026",
+    "conversationType": "Pre-RFP (Initial Conversation)",
+    "projectInterest": "1. Some interest in NV and WN. \r\n2. SA not a focus and don’t like DC config (would'nt do physical)\r\n3. knew high 20s ZEN toll price for Templers; best offer mid teens for 5-7 years. \r\n4. Keen on 30MW virtual swaps",
+    "keyNotes": "1. SR: size, state, and DC configuration are all blockers\r\n2. Templers: significant gap on toll pricing expectations"
+  },
+  "8": {
+    "name": "Energy Australia",
+    "archetype": "IG Grade Gentailers",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": ""
+  },
+  "9": {
+    "name": "EnergyLocals",
+    "archetype": "Small Retailers",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": ""
+  },
+  "10": {
+    "name": "Engie",
+    "archetype": "IG Grade Gentailers",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "16/02/2026",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": "Pending  response to request for next meetiing"
+  },
+  "11": {
+    "name": "Gunvor",
+    "archetype": "Financial/Trading Houses",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": ""
+  },
+  "12": {
+    "name": "InCommodities",
+    "archetype": "Financial/Trading Houses",
+    "contact": "",
+    "conversationHeld": "Yes",
+    "feedbackDate": "05/02/2026",
+    "conversationType": "Pre-RFP (Initial Conversation)",
+    "projectInterest": "1. Can consider up to 10 years for Templers; SA market up to around 70MW\r\n2. Interest in NV, WN and NY (4hrs minimum)\r\n3. QLD assets: interested but need longer duration (can consider 2/3/4hr)",
+    "keyNotes": "1. 700MW NSW BESS and gen PPAs up to 15 years contracted (Wellington BESS capacity swap)\r\n2. Looking to grow to 2GW NEM capacity\r\n3. Considered VIC wind/BESS recently, glad to have missed out\r\n4. VIC viewed as worse for longer with less rescue opportunity vs NSW\r\n5. Don't like hybrid/DC coupled - prefer split BESS/PV to avoid negative pricing charging issues\r\n6. Venus LNG may improve SA gas story but limited to 50-75MW SA BESS"
+  },
+  "13": {
+    "name": "Macquarie",
+    "archetype": "Financial/Trading Houses",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": ""
+  },
+  "14": {
+    "name": "Mercuria",
+    "archetype": "Financial/Trading Houses",
+    "contact": "",
+    "conversationHeld": "Yes",
+    "feedbackDate": "05/02/2026",
+    "conversationType": "Pre-RFP (Initial Conversation)",
+    "projectInterest": "1. Focus on NSw andf find that QLD/VIC market prices hard to justify currently. \r\n2. haven't spent time on SA pricing and liquidity in SA a key risk\r\n3. Could chat internally on Templers and most likely a 5 year deal",
+    "keyNotes": "1. Pricing BESS COD Q2-27 to 28\r\n2. Small Aus team, pricing sensitive (rather than support retail book)\r\n3. seeing intersec tion at 4hr for deals (good value for offtaker and asset owner)\r\n4. Ideally 5-7 tolls, vanilla virtual style\r\n    - Energy only, prefer virtual tolls with nomination process (not capacity swaps)\r\n    - Can achieve additional tenure with upside sharing"
+  },
+  "15": {
+    "name": "Nectr",
+    "archetype": "Small Retailers",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": ""
+  },
+  "16": {
+    "name": "NEXT DC",
+    "archetype": "Corporates",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "16/02/2026",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": "DC opportunities introduced by ElectraNet (pending next steps from ElectraNet)"
+  },
+  "17": {
+    "name": "Origin",
+    "archetype": "IG Grade Gentailers",
+    "contact": "",
+    "conversationHeld": "Yes",
+    "feedbackDate": "05/02/2026",
+    "conversationType": "Pre-RFP (Initial Conversation)",
+    "projectInterest": "1. SA not a focus\r\n2. Discussions ongoing for WN and YN\r\n3. NV: similar to Supernode, well intermeshed to Ipswich, may need network location requirements",
+    "keyNotes": "1. NSW long duration BESS: #1 priority (Eraring transition Aug-27 to Apr-29)\r\n2. VIC BESS: least BESS vs loiad, considering longer duration (Mortlake only 2hrs)\r\n3. Shorter term opportunities of interest\r\n4. Long-term offtakes not SA related. Prefer 8hrs+ duration  BESS (esp NSW)\r\n5. Can engage on offtake early but max 6/9/12 months in advance due to project delivery risk\r\n6. Spending this quarter on risk/reward position for long-duration NSW BESS\r\n7. QLD focus around Supernode network location"
+  },
+  "18": {
+    "name": "Re2",
+    "archetype": "Financial/Trading Houses",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": ""
+  },
+  "19": {
+    "name": "Red Energy",
+    "archetype": "Small Retailers",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": ""
+  },
+  "20": {
+    "name": "Rio Tinto",
+    "archetype": "Corporates",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": ""
+  },
+  "21": {
+    "name": "Shell",
+    "archetype": "IG Grade Gentailers",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": ""
+  },
+  "22": {
+    "name": "Smartest Energy",
+    "archetype": "Small Retailers",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": ""
+  },
+  "23": {
+    "name": "Woolsworth",
+    "archetype": "Corporates",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": ""
+  },
+  "24": {
+    "name": "ZEN Energy",
+    "archetype": "Small Retailers",
+    "contact": "",
+    "conversationHeld": "",
+    "feedbackDate": "",
+    "conversationType": "",
+    "projectInterest": "",
+    "keyNotes": ""
+  }
+}
