@@ -10,6 +10,8 @@ const NAV_PILLARS = [
     links: [
       { href: '/', label: 'Bidder List' },
       { href: '/analytics', label: 'Analytics' },
+      { href: '/insights', label: 'Insights' },
+      { href: '/insights/submit', label: 'Submit Insight' },
     ],
   },
   {
@@ -19,14 +21,14 @@ const NAV_PILLARS = [
     ],
   },
   {
-    label: 'Data â€” Prices',
+    label: 'Data - Prices',
     links: [
       { href: '/market-data/price-curves', label: 'Price Curves' },
       { href: '/market-data/forward-curves', label: 'Forward Curves' },
     ],
   },
   {
-    label: 'Data â€” Capex',
+    label: 'Data - Capex',
     links: [
       { href: '/capex', label: 'Project Capex' },
       { href: '/market-data/capex-opex', label: 'Benchmarks' },
@@ -126,4 +128,5 @@ export default function NavBar() {
     </nav>
   );
 }
+
 
