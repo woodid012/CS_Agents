@@ -179,8 +179,18 @@ export default function AnalyticsPage() {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-4">
-        <h1 className="text-xl font-bold text-gray-900">Analytics Dashboard</h1>
-        <p className="text-sm text-gray-500 mt-0.5">{stats.total} bidders tracked</p>
+        <div className="flex flex-wrap items-center gap-2 mb-0.5">
+          <h1 className="text-xl font-bold text-gray-900">Analytics Dashboard</h1>
+          <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
+            CS Capital Advisory
+          </span>
+          <span className="text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
+            BESS &amp; Renewables M&amp;A
+          </span>
+        </div>
+        <p className="text-sm text-gray-500 mt-0.5">
+          {stats.total} bidders tracked · Australian renewable energy M&amp;A · Battery storage specialist
+        </p>
       </div>
 
       {/* Top stat cards */}
@@ -443,6 +453,60 @@ export default function AnalyticsPage() {
               </div>
             ))}
           </dl>
+        </div>
+      </div>
+
+      {/* BESS Market — CS Capital Focus */}
+      <SectionHeader title="BESS Market — CS Capital Core Focus" />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+        <StatCard label="AU BESS Pipeline" value="13 GW / 34.7 GWh" sub="committed or under construction (Q4 2025)" color="blue" />
+        <StatCard label="2025 Record Deployment" value="1.9 GW / 4.9 GWh" sub="surpassed entire 2017–24 combined" color="green" />
+        <StatCard label="Capex Cost Decline" value="−11–16%" sub="2024–25 reduction (CSIRO GenCost)" color="amber" />
+        <StatCard label="2027 Forecast" value="16.8 GW" sub="grid-scale BESS forecast operational in NEM" color="gray" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">Key BESS Projects</h3>
+          <div className="space-y-1.5">
+            {(marketData.bessMarket?.keyProjects || []).slice(0, 7).map((p, i) => (
+              <div key={i} className="flex gap-2 items-start border-b border-gray-50 pb-1.5">
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs font-semibold text-gray-800">{p.name}</span>
+                  <span className="text-xs text-gray-400 ml-1">({p.state})</span>
+                  <div className="text-xs text-gray-500 truncate">{p.developer}</div>
+                </div>
+                <span className="text-xs text-blue-700 font-medium whitespace-nowrap shrink-0 mt-0.5">{p.capacity}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">Installed Cost Benchmarks (A$/kWh)</h3>
+          <div className="space-y-1.5">
+            {Object.entries(marketData.bessMarket?.capexBenchmarks || {}).map(([yr, val]) => (
+              <div key={yr} className="flex gap-2 border-b border-gray-50 pb-1.5">
+                <dt className="text-xs font-medium text-gray-500 w-44 shrink-0">{yr}</dt>
+                <dd className="text-xs text-gray-700">{val}</dd>
+              </div>
+            ))}
+          </div>
+          {marketData.bessMarket?.csCapitalContext && (
+            <p className="text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded p-2 mt-3 leading-relaxed">
+              <span className="font-semibold">CS Capital context: </span>
+              {marketData.bessMarket.csCapitalContext}
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">BESS Pipeline by State</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {Object.entries(marketData.bessMarket?.pipelineByState || {}).map(([state, desc]) => (
+            <div key={state} className="bg-gray-50 rounded p-2.5">
+              <div className="text-xs font-semibold text-gray-800 mb-1">{state}</div>
+              <div className="text-xs text-gray-600 leading-relaxed">{desc}</div>
+            </div>
+          ))}
         </div>
       </div>
 
