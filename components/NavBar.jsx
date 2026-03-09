@@ -4,27 +4,39 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 
-const CRM_LINKS = [
-  { href: '/', label: 'Master Bidder List' },
-  { href: '/offtakers', label: 'Offtaker Engagement List' },
-];
-
-const MARKET_DATA_LINKS = [
-  { href: '/market-data/price-curves', label: 'Price Curves' },
-  { href: '/market-data/capex-opex', label: 'Capex / Opex' },
-];
-
-const TOP_LINKS = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/analytics', label: 'Analytics' },
-  { href: '/development-tracker', label: 'Development Tracker' },
-  { href: '/ai-agents', label: 'AI Agents' },
+const NAV_PILLARS = [
+  {
+    label: 'Investors',
+    links: [
+      { href: '/', label: 'Bidder List' },
+      { href: '/analytics', label: 'Analytics' },
+    ],
+  },
+  {
+    label: 'Offtakers',
+    links: [
+      { href: '/offtakers', label: 'Offtaker List' },
+    ],
+  },
+  {
+    label: 'Data — Prices',
+    links: [
+      { href: '/market-data/price-curves', label: 'Price Curves' },
+      { href: '/market-data/forward-curves', label: 'Forward Curves' },
+    ],
+  },
+  {
+    label: 'Data — Capex',
+    links: [
+      { href: '/capex', label: 'Project Capex' },
+      { href: '/market-data/capex-opex', label: 'Benchmarks' },
+    ],
+  },
 ];
 
 function Dropdown({ label, links, pathname }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
-  // '/' must match exactly; others match by prefix
   const isActive = links.some((l) =>
     l.href === '/' ? pathname === '/' : pathname === l.href || pathname.startsWith(l.href + '/')
   );
@@ -56,7 +68,7 @@ function Dropdown({ label, links, pathname }) {
         </svg>
       </button>
       {open && (
-        <div className="absolute top-full left-0 mt-1.5 bg-white border border-gray-200 rounded-lg shadow-xl min-w-[220px] z-50 py-1">
+        <div className="absolute top-full left-0 mt-1.5 bg-white border border-gray-200 rounded-lg shadow-xl min-w-[200px] z-50 py-1">
           {links.map((l) => {
             const active = pathname === l.href;
             return (
@@ -83,23 +95,14 @@ export default function NavBar() {
 
   return (
     <nav className="flex gap-0.5 items-center">
-      <Dropdown label="CRM" links={CRM_LINKS} pathname={pathname} />
-      <Dropdown label="Market Data" links={MARKET_DATA_LINKS} pathname={pathname} />
-
-      {TOP_LINKS.map((l) => {
-        const active = pathname === l.href;
-        return (
-          <Link
-            key={l.href}
-            href={l.href}
-            className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-              active ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'
-            }`}
-          >
-            {l.label}
-          </Link>
-        );
-      })}
+      {NAV_PILLARS.map((pillar) => (
+        <Dropdown
+          key={pillar.label}
+          label={pillar.label}
+          links={pillar.links}
+          pathname={pathname}
+        />
+      ))}
     </nav>
   );
 }
