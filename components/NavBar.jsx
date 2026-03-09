@@ -12,7 +12,6 @@ const NAV_PILLARS = [
       { href: '/analytics', label: 'Analytics' },
       { href: '/insights/submit', label: 'Submit Insight' },
       { href: '/insights', label: 'Recent Insights' },
-{ href: '/insights/submit', label: 'Submit Insight' },
     ],
   },
   {
@@ -131,6 +130,8 @@ export default function NavBar() {
     </nav>
   );
 }
+
+
 
 
 
