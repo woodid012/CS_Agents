@@ -90,6 +90,11 @@ function Dropdown({ label, links, pathname }) {
   );
 }
 
+const TOP_LINKS = [
+  { href: '/news', label: 'News' },
+  { href: '/ai-agents', label: 'AI Agents' },
+];
+
 export default function NavBar() {
   const pathname = usePathname();
 
@@ -103,6 +108,20 @@ export default function NavBar() {
           pathname={pathname}
         />
       ))}
+      {TOP_LINKS.map((l) => {
+        const active = pathname === l.href;
+        return (
+          <Link
+            key={l.href}
+            href={l.href}
+            className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+              active ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+            }`}
+          >
+            {l.label}
+          </Link>
+        );
+      })}
     </nav>
   );
 }
