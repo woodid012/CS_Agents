@@ -209,9 +209,9 @@ export default function BidderTable({ bidders, selected, setSelected, insightSta
   };
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-auto max-h-[calc(100vh-220px)]">
+    <div className="bg-white border border-gray-200 rounded-lg overflow-auto max-h-[calc(100vh-240px)]">
       <table className="w-full text-[10px]">
-        <thead className="sticky top-0 bg-gray-100 z-10">
+        <thead className="sticky top-0 bg-gray-50 border-b border-gray-200 z-10">
           <tr>
             <th className="px-0.5 py-1 w-6">
               <input type="checkbox" checked={allSelected} onChange={toggleAll} className="rounded w-3 h-3" />

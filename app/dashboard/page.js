@@ -205,14 +205,16 @@ export default function DashboardPage() {
     <div className="space-y-4">
 
       {/* ── Page header ─────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between mb-1">
         <div>
-          <h1 className="text-base font-bold text-gray-900 tracking-tight">DEAL INTELLIGENCE DASHBOARD</h1>
-          <p className="text-xs text-gray-400 mt-0.5 font-mono">{AS_OF} · Australian Renewable Energy &amp; BESS M&amp;A</p>
+          <h1 className="text-xl font-semibold text-gray-900">Deal Intelligence Dashboard</h1>
+          <p className="text-sm text-gray-500 mt-0.5">
+            {AS_OF} · Australian Renewable Energy &amp; BESS M&amp;A
+          </p>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 mt-1">
           <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs text-gray-400 font-mono">LIVE</span>
+          <span className="text-xs text-gray-400">Live</span>
         </div>
       </div>
 

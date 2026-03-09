@@ -24,7 +24,10 @@ const TOP_LINKS = [
 function Dropdown({ label, links, pathname }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
-  const isActive = links.some((l) => pathname.startsWith(l.href));
+  // '/' must match exactly; others match by prefix
+  const isActive = links.some((l) =>
+    l.href === '/' ? pathname === '/' : pathname === l.href || pathname.startsWith(l.href + '/')
+  );
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -39,7 +42,7 @@ function Dropdown({ label, links, pathname }) {
       <button
         onClick={() => setOpen((prev) => !prev)}
         className={`px-3 py-1.5 rounded text-sm font-medium transition-colors flex items-center gap-1 ${
-          isActive ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+          isActive ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'
         }`}
       >
         {label}
@@ -53,7 +56,7 @@ function Dropdown({ label, links, pathname }) {
         </svg>
       </button>
       {open && (
-        <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg min-w-[220px] z-50 py-1">
+        <div className="absolute top-full left-0 mt-1.5 bg-white border border-gray-200 rounded-lg shadow-xl min-w-[220px] z-50 py-1">
           {links.map((l) => {
             const active = pathname === l.href;
             return (
@@ -61,7 +64,7 @@ function Dropdown({ label, links, pathname }) {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className={`block px-4 py-2 text-sm transition-colors ${
+                className={`block px-4 py-2.5 text-sm transition-colors ${
                   active ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -79,7 +82,7 @@ export default function NavBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex gap-1 items-center">
+    <nav className="flex gap-0.5 items-center">
       <Dropdown label="CRM" links={CRM_LINKS} pathname={pathname} />
       <Dropdown label="Market Data" links={MARKET_DATA_LINKS} pathname={pathname} />
 
@@ -90,7 +93,7 @@ export default function NavBar() {
             key={l.href}
             href={l.href}
             className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-              active ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+              active ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'
             }`}
           >
             {l.label}
