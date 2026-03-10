@@ -385,7 +385,6 @@ const COMPARE_COLORS = [
 ];
 
 function toFY(dateStr) {
-  // FY runs Jul–Jun in Australia, labelled by the ending year
   const [y, m] = dateStr.split('-').map(Number);
   return m >= 7 ? `FY${y + 1}` : `FY${y}`;
 }
@@ -397,6 +396,24 @@ function toQtr(dateStr) {
 
 function toCY(dateStr) {
   return dateStr.split('-')[0];
+}
+
+// Returns a numeric sort key so aggregated keys sort chronologically regardless of format
+function keySortValue(key, agg) {
+  if (agg === 'M') {
+    // "Jan 2024" — convert back via month index
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const [mon, yr] = key.split(' ');
+    return parseInt(yr) * 12 + months.indexOf(mon);
+  }
+  if (agg === 'Q') {
+    // "Q3 2024"
+    const [q, yr] = key.split(' ');
+    return parseInt(yr) * 4 + parseInt(q[1]);
+  }
+  if (agg === 'CY') return parseInt(key);
+  if (agg === 'FY') return parseInt(key.replace('FY', ''));
+  return 0;
 }
 
 function aggregateRows(rows, agg) {
@@ -448,11 +465,7 @@ function CompareTab({ region, vintages }) {
   // Build unified key list (sorted)
   const allKeys = [...new Set(
     Object.values(aggByVintage).flatMap((rows) => rows.map((r) => r.key))
-  )].sort((a, b) => {
-    // Sort by underlying date value
-    if (agg === 'FY') return a.localeCompare(b);
-    return a.localeCompare(b);
-  });
+  )].sort((a, b) => keySortValue(a, agg) - keySortValue(b, agg));
 
   const chartData = allKeys.map((key) => {
     const point = { key };
