@@ -27,6 +27,7 @@ const NAV_PILLARS = [
     links: [
       { href: '/market-data/price-curves', label: 'Price Curves' },
       { href: '/market-data/forward-curves', label: 'Forward Curves' },
+      { href: '/market-data/bess-cases', label: 'BESS Cases' },
     ],
   },
   {
