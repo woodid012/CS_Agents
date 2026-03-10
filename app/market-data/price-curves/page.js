@@ -29,7 +29,7 @@ export default function PriceCurvesPage() {
   useEffect(() => {
     fetch('/api/price-curve-files')
       .then((r) => r.json())
-      .then((d) => setFiles(d.files || []));
+      .then((d) => setFiles((d.files || []).sort((a, b) => b.release_date.localeCompare(a.release_date))));
   }, []);
 
   function download(filename) {
