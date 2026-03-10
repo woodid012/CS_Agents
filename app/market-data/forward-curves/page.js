@@ -467,15 +467,15 @@ function CompareTab({ vintages }) {
 
   if (!rawData) return <LoadingSpinner />;
 
-  // Sort vintages chronologically by their formatted "YYYY QX" label
-  const sortedVintages = [...vintages].sort((a, b) => vintageLabel(a).localeCompare(vintageLabel(b)));
-
   // Group by vintage
   const byVintage = {};
   for (const r of rawData) {
     if (!byVintage[r.vintage]) byVintage[r.vintage] = [];
     byVintage[r.vintage].push(r);
   }
+
+  // Sort vintages chronologically by their formatted "YYYY QX" label
+  const sortedVintages = Object.keys(byVintage).sort((a, b) => vintageLabel(a).localeCompare(vintageLabel(b)));
 
   // Aggregate each vintage
   const aggByVintage = {};

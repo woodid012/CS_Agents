@@ -68,7 +68,7 @@ function LoadingSpinner() {
 // Keys in cascade order — changing one resets all keys after it
 const CASCADE_ORDER = ['vintage', 'region', 'duration', 'scenario', 'startYear', 'degraded'];
 
-function FilterBar({ filters, sel, setSel }) {
+function FilterBar({ filters, sel, setSel, hideVintage }) {
   if (!filters) return null;
   const { vintages, regions, durations, scenarios, startYears, degradedOptions } = filters;
 
@@ -99,7 +99,7 @@ function FilterBar({ filters, sel, setSel }) {
 
   return (
     <div className="flex flex-wrap gap-3 mb-5 p-3 bg-gray-50 rounded-lg border border-gray-200">
-      {field('Vintage', 'vintage', vintages, Object.fromEntries(vintages.map((v) => [v, vintageLabel(v)])))}
+      {!hideVintage && field('Vintage', 'vintage', vintages, Object.fromEntries(vintages.map((v) => [v, vintageLabel(v)])))}
       {field('Region', 'region', regions)}
       {field('Duration', 'duration', DURATION_ORDER.filter((d) => durations.includes(d)))}
       {field('Scenario', 'scenario', scenarios, SCENARIO_LABELS)}
@@ -539,7 +539,7 @@ function BESSCompareTab({ sel, allVintages }) {
   if (data.length === 0) return <div className="text-center text-gray-400 py-12 text-sm">No data for this combination.</div>;
 
   const sortedVintages = [...new Set(data.map((r) => r.vintage))]
-    .sort((a, b) => vintageSortKey(a) - vintageSortKey(b));
+    .sort((a, b) => vintageLabel(a).localeCompare(vintageLabel(b)));
   const years = [...new Set(data.map((r) => r.fy_year))].sort();
 
   const chartData = years.map((year) => {
@@ -634,7 +634,7 @@ export default function BESSCasesPage() {
         <p className="text-sm text-gray-500 mt-0.5">Battery energy storage cashflow & revenue analysis by vintage, region, and duration</p>
       </div>
 
-      <FilterBar filters={filters} sel={sel} setSel={setSel} />
+      <FilterBar filters={filters} sel={sel} setSel={setSel} hideVintage={activeTab === 0} />
 
       {/* Tab bar */}
       <div className="flex gap-1 border-b border-gray-200 mb-5 overflow-x-auto">
