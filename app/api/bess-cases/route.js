@@ -13,19 +13,34 @@ export async function GET(request) {
 
   try {
     if (type === 'filters') {
-      const [vintages, regions, durations, scenarios, startYears] = await Promise.all([
-        sql`SELECT DISTINCT vintage FROM bess_investment_cases ORDER BY vintage`,
-        sql`SELECT DISTINCT region FROM bess_investment_cases ORDER BY region`,
-        sql`SELECT DISTINCT duration FROM bess_investment_cases ORDER BY duration`,
-        sql`SELECT DISTINCT scenario_variant FROM bess_investment_cases ORDER BY scenario_variant`,
-        sql`SELECT DISTINCT start_year FROM bess_investment_cases ORDER BY start_year`,
-      ]);
+      // Vintages always show all
+      const vintageRows = await sql`SELECT DISTINCT vintage FROM bess_investment_cases ORDER BY vintage`;
+      const vintages = vintageRows.map((r) => r.vintage);
+
+      // If a vintage is selected, scope all other options to that vintage
+      const [regions, durations, scenarios, startYears, degradedRows] = vintage
+        ? await Promise.all([
+            sql`SELECT DISTINCT region FROM bess_investment_cases WHERE vintage = ${vintage} ORDER BY region`,
+            sql`SELECT DISTINCT duration FROM bess_investment_cases WHERE vintage = ${vintage} ORDER BY duration`,
+            sql`SELECT DISTINCT scenario_variant FROM bess_investment_cases WHERE vintage = ${vintage} ORDER BY scenario_variant`,
+            sql`SELECT DISTINCT start_year FROM bess_investment_cases WHERE vintage = ${vintage} ORDER BY start_year`,
+            sql`SELECT DISTINCT degraded FROM bess_investment_cases WHERE vintage = ${vintage} ORDER BY degraded`,
+          ])
+        : await Promise.all([
+            sql`SELECT DISTINCT region FROM bess_investment_cases ORDER BY region`,
+            sql`SELECT DISTINCT duration FROM bess_investment_cases ORDER BY duration`,
+            sql`SELECT DISTINCT scenario_variant FROM bess_investment_cases ORDER BY scenario_variant`,
+            sql`SELECT DISTINCT start_year FROM bess_investment_cases ORDER BY start_year`,
+            sql`SELECT DISTINCT degraded FROM bess_investment_cases ORDER BY degraded`,
+          ]);
+
       return Response.json({
-        vintages:   vintages.map((r) => r.vintage),
+        vintages,
         regions:    regions.map((r) => r.region),
         durations:  durations.map((r) => r.duration),
         scenarios:  scenarios.map((r) => r.scenario_variant),
         startYears: startYears.map((r) => r.start_year),
+        degradedOptions: degradedRows.map((r) => r.degraded),
       });
     }
 
@@ -70,6 +85,19 @@ export async function GET(request) {
         ORDER BY vintage, event_type, duration
       `;
       return Response.json({ event_payouts: rows });
+    }
+
+    if (type === 'compare_vintages') {
+      // Total cashflow per year across all vintages for a given region/duration/scenario/start_year/degraded
+      const rows = await sql`
+        SELECT fy_year, vintage, total_cf
+        FROM bess_investment_cases
+        WHERE region = ${region} AND duration = ${duration}
+          AND scenario_variant = ${scenario} AND degraded = ${degraded}
+          ${startYear ? sql`AND start_year = ${startYear}` : sql``}
+        ORDER BY fy_year, vintage
+      `;
+      return Response.json({ compare: rows });
     }
 
     if (type === 'compare_durations') {

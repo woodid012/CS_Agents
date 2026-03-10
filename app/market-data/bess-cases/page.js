@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { vintageLabel } from '../../../lib/vintageLabel';
+import { vintageLabel, vintageSortKey } from '../../../lib/vintageLabel';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, ReferenceLine,
@@ -33,7 +33,7 @@ const CF_LABELS = {
   wholesale_charge_cf: 'Charge Cost',
 };
 
-const TABS = ['Annual Cashflow', 'Revenue Breakdown', 'Duration Comparison', 'Volume', 'Cap Values', 'Event Payouts'];
+const TABS = ['Compare', 'Annual Cashflow', 'Revenue Breakdown', 'Duration Comparison', 'Volume', 'Cap Values', 'Event Payouts'];
 
 const SCENARIO_LABELS = {
   base:                 'Base',
@@ -66,7 +66,7 @@ function LoadingSpinner() {
 
 function FilterBar({ filters, sel, setSel }) {
   if (!filters) return null;
-  const { vintages, regions, durations, scenarios, startYears } = filters;
+  const { vintages, regions, durations, scenarios, startYears, degradedOptions } = filters;
 
   const field = (label, key, opts, labelMap) => (
     <div>
@@ -81,24 +81,32 @@ function FilterBar({ filters, sel, setSel }) {
     </div>
   );
 
+  const showDegradation = !degradedOptions || degradedOptions.length > 1;
+
   return (
     <div className="flex flex-wrap gap-3 mb-5 p-3 bg-gray-50 rounded-lg border border-gray-200">
       {field('Vintage', 'vintage', vintages, Object.fromEntries(vintages.map((v) => [v, vintageLabel(v)])))}
       {field('Region', 'region', regions)}
       {field('Duration', 'duration', DURATION_ORDER.filter((d) => durations.includes(d)))}
       {field('Scenario', 'scenario', scenarios, SCENARIO_LABELS)}
-      {field('Start Year', 'startYear', startYears)}
-      <div>
-        <label className="text-xs text-gray-500 font-medium block mb-1">Degradation</label>
-        <select
-          className="border border-gray-300 rounded px-2 py-1.5 text-sm bg-white"
-          value={sel.degraded}
-          onChange={(e) => setSel((s) => ({ ...s, degraded: e.target.value }))}
-        >
-          <option value="true">With Degradation</option>
-          <option value="false">No Degradation</option>
-        </select>
-      </div>
+      {field('Start Year', 'startYear', startYears.map(String))}
+      {showDegradation && (
+        <div>
+          <label className="text-xs text-gray-500 font-medium block mb-1">Degradation</label>
+          <select
+            className="border border-gray-300 rounded px-2 py-1.5 text-sm bg-white"
+            value={sel.degraded}
+            onChange={(e) => setSel((s) => ({ ...s, degraded: e.target.value }))}
+          >
+            {degradedOptions?.includes(true) && <option value="true">With Degradation</option>}
+            {degradedOptions?.includes(false) && <option value="false">No Degradation</option>}
+            {!degradedOptions && <>
+              <option value="true">With Degradation</option>
+              <option value="false">No Degradation</option>
+            </>}
+          </select>
+        </div>
+      )}
     </div>
   );
 }
@@ -476,6 +484,66 @@ function StatCard({ label, value, color = 'blue' }) {
   );
 }
 
+// ─── Tab: Compare Vintages ────────────────────────────────────────────────────
+
+const BESS_COMPARE_COLORS = [
+  '#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#06b6d4','#f97316','#84cc16',
+];
+
+function BESSCompareTab({ sel, allVintages }) {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    setData(null);
+    const p = new URLSearchParams({
+      type: 'compare_vintages',
+      region: sel.region, duration: sel.duration,
+      scenario: sel.scenario, start_year: sel.startYear, degraded: sel.degraded,
+    });
+    fetch(`/api/bess-cases?${p}`).then((r) => r.json()).then((d) => setData(d.compare || []));
+  }, [sel.region, sel.duration, sel.scenario, sel.startYear, sel.degraded]);
+
+  if (!data) return <LoadingSpinner />;
+  if (data.length === 0) return <div className="text-center text-gray-400 py-12 text-sm">No data for this combination.</div>;
+
+  const sortedVintages = [...new Set(data.map((r) => r.vintage))]
+    .sort((a, b) => vintageSortKey(a) - vintageSortKey(b));
+  const years = [...new Set(data.map((r) => r.fy_year))].sort();
+
+  const chartData = years.map((year) => {
+    const point = { year };
+    for (const v of sortedVintages) {
+      const row = data.find((r) => r.fy_year === year && r.vintage === v);
+      point[v] = row?.total_cf != null ? parseFloat(row.total_cf) : null;
+    }
+    return point;
+  });
+
+  return (
+    <div>
+      <h3 className="text-sm font-semibold text-gray-700 mb-1">
+        Total Annual Cashflow by Vintage — {sel.region} {sel.duration} ({SCENARIO_LABELS[sel.scenario] || sel.scenario})
+      </h3>
+      <p className="text-xs text-gray-400 mb-3">Shows how the cashflow forecast has changed across successive vintages</p>
+      <ResponsiveContainer width="100%" height={360}>
+        <LineChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <XAxis dataKey="year" tick={{ fontSize: 11 }} />
+          <YAxis tick={{ fontSize: 11 }} tickFormatter={fmtK} />
+          <Tooltip formatter={(v, name) => [fmtDollar(v), vintageLabel(name)]} labelStyle={{ fontWeight: 600 }} />
+          <ReferenceLine y={0} stroke="#9ca3af" />
+          <Legend formatter={(name) => vintageLabel(name)} />
+          {sortedVintages.map((v, i) => (
+            <Line key={v} type="monotone" dataKey={v}
+              stroke={BESS_COMPARE_COLORS[i % BESS_COMPARE_COLORS.length]}
+              strokeWidth={2} dot={false} connectNulls={false} />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function BESSCasesPage() {
@@ -486,18 +554,34 @@ export default function BESSCasesPage() {
     scenario: 'base', startYear: '2025', degraded: 'true',
   });
 
+  // Initial load — get all vintages
   useEffect(() => {
     fetch('/api/bess-cases?type=filters')
       .then((r) => r.json())
       .then((f) => {
         setFilters(f);
-        setSel((s) => ({
-          ...s,
-          vintage:   f.vintages?.at(-1) || s.vintage,
-          startYear: f.startYears?.[0]?.toString() || s.startYear,
-        }));
+        const latestVintage = f.vintages?.at(-1) || '';
+        setSel((s) => ({ ...s, vintage: latestVintage }));
       });
   }, []);
+
+  // Re-fetch scoped filters when vintage changes, then reset dependent fields to first valid value
+  useEffect(() => {
+    if (!sel.vintage) return;
+    fetch(`/api/bess-cases?type=filters&vintage=${encodeURIComponent(sel.vintage)}`)
+      .then((r) => r.json())
+      .then((f) => {
+        setFilters(f);
+        setSel((s) => ({
+          ...s,
+          region:    f.regions?.includes(s.region)    ? s.region    : (f.regions?.[0] ?? s.region),
+          duration:  f.durations?.includes(s.duration) ? s.duration : (f.durations?.[0] ?? s.duration),
+          scenario:  f.scenarios?.includes(s.scenario) ? s.scenario : (f.scenarios?.[0] ?? s.scenario),
+          startYear: f.startYears?.map(String).includes(s.startYear) ? s.startYear : (f.startYears?.[0]?.toString() ?? s.startYear),
+          degraded:  f.degradedOptions?.map(String).includes(s.degraded === 'true' ? 'true' : 'false') ? s.degraded : (f.degradedOptions?.[0] != null ? String(f.degradedOptions[0]) : s.degraded),
+        }));
+      });
+  }, [sel.vintage]);
 
   const ready = filters && sel.vintage;
 
@@ -530,12 +614,13 @@ export default function BESSCasesPage() {
           <LoadingSpinner />
         ) : (
           <>
-            {activeTab === 0 && <CashflowTab sel={sel} />}
-            {activeTab === 1 && <RevenueTab sel={sel} />}
-            {activeTab === 2 && <DurationTab sel={sel} />}
-            {activeTab === 3 && <VolumeTab sel={sel} />}
-            {activeTab === 4 && <CapValuesTab sel={sel} />}
-            {activeTab === 5 && <EventPayoutsTab sel={sel} />}
+            {activeTab === 0 && <BESSCompareTab sel={sel} allVintages={filters?.vintages || []} />}
+            {activeTab === 1 && <CashflowTab sel={sel} />}
+            {activeTab === 2 && <RevenueTab sel={sel} />}
+            {activeTab === 3 && <DurationTab sel={sel} />}
+            {activeTab === 4 && <VolumeTab sel={sel} />}
+            {activeTab === 5 && <CapValuesTab sel={sel} />}
+            {activeTab === 6 && <EventPayoutsTab sel={sel} />}
           </>
         )}
       </div>
