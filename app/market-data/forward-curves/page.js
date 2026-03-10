@@ -411,13 +411,6 @@ function CompareTab({ region, vintages }) {
   const [curveType, setCurveType] = useState('energy_twa_monthly');
   const [agg, setAgg] = useState('Q');
   const [rawData, setRawData] = useState(null);
-  const [selectedVintages, setSelectedVintages] = useState([]);
-
-  // Default: all vintages selected
-  useEffect(() => {
-    if (vintages.length && selectedVintages.length === 0) setSelectedVintages(vintages);
-  }, [vintages]);
-
   useEffect(() => {
     setRawData(null);
     fetch(`/api/price-curves?type=compare&region=${region}&curve_type=${curveType}`)
@@ -451,15 +444,12 @@ function CompareTab({ region, vintages }) {
 
   const chartData = allKeys.map((key) => {
     const point = { key };
-    for (const v of selectedVintages) {
+    for (const v of vintages) {
       const row = (aggByVintage[v] || []).find((r) => r.key === key);
       point[v] = row ? row.value : null;
     }
     return point;
   });
-
-  const toggleVintage = (v) =>
-    setSelectedVintages((prev) => prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]);
 
   return (
     <div>
@@ -493,24 +483,6 @@ function CompareTab({ region, vintages }) {
         </div>
       </div>
 
-      {/* Vintage toggles */}
-      <div className="flex flex-wrap gap-1.5 mb-4">
-        {vintages.map((v, i) => (
-          <button
-            key={v}
-            onClick={() => toggleVintage(v)}
-            className={`px-2.5 py-1 text-xs rounded-full border font-medium transition-colors ${
-              selectedVintages.includes(v)
-                ? 'text-white border-transparent'
-                : 'bg-white text-gray-500 border-gray-300'
-            }`}
-            style={selectedVintages.includes(v) ? { backgroundColor: COMPARE_COLORS[i % COMPARE_COLORS.length] } : {}}
-          >
-            {vintageLabel(v)}
-          </button>
-        ))}
-      </div>
-
       <h3 className="text-sm font-semibold text-gray-700 mb-3">
         {COMPARE_CURVES.find((c) => c.value === curveType)?.label} — {region} — by vintage
       </h3>
@@ -532,7 +504,7 @@ function CompareTab({ region, vintages }) {
             labelStyle={{ fontWeight: 600 }}
           />
           <Legend formatter={(name) => vintageLabel(name)} />
-          {selectedVintages.map((v, i) => (
+          {vintages.map((v, i) => (
             <Line
               key={v}
               type="monotone"
