@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { vintageLabel } from '../../../lib/vintageLabel';
+import { vintageLabel, vintageSortKey } from '../../../lib/vintageLabel';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   BarChart, Bar,
@@ -420,6 +420,9 @@ function CompareTab({ region, vintages }) {
 
   if (!rawData) return <LoadingSpinner />;
 
+  // Sort vintages chronologically
+  const sortedVintages = [...vintages].sort((a, b) => vintageSortKey(a) - vintageSortKey(b));
+
   // Group by vintage
   const byVintage = {};
   for (const r of rawData) {
@@ -444,7 +447,7 @@ function CompareTab({ region, vintages }) {
 
   const chartData = allKeys.map((key) => {
     const point = { key };
-    for (const v of vintages) {
+    for (const v of sortedVintages) {
       const row = (aggByVintage[v] || []).find((r) => r.key === key);
       point[v] = row ? row.value : null;
     }
@@ -504,7 +507,7 @@ function CompareTab({ region, vintages }) {
             labelStyle={{ fontWeight: 600 }}
           />
           <Legend formatter={(name) => vintageLabel(name)} />
-          {vintages.map((v, i) => (
+          {sortedVintages.map((v, i) => (
             <Line
               key={v}
               type="monotone"
