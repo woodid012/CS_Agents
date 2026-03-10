@@ -50,6 +50,17 @@ export async function GET(request) {
       return Response.json({ lgc: rows });
     }
 
+    if (type === 'compare') {
+      // Multi-vintage comparison for a single curve_type + region
+      const ct = curveType || 'energy_twa_monthly';
+      const rows = await sql`
+        SELECT vintage, date, value FROM price_curves_monthly
+        WHERE region = ${region} AND curve_type = ${ct}
+        ORDER BY vintage, date
+      `;
+      return Response.json({ compare: rows });
+    }
+
     return Response.json({ error: 'Invalid type' }, { status: 400 });
   } catch (e) {
     return Response.json({ error: e.message }, { status: 500 });

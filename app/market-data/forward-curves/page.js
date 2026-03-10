@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { vintageLabel } from '../../../lib/vintageLabel';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   BarChart, Bar,
@@ -32,7 +33,7 @@ const LINE_COLORS = [
   '#06b6d4', '#f97316', '#84cc16',
 ];
 
-const TABS = ['Energy Prices', 'Renewable Capture', 'Price Spreads', 'LGC Prices'];
+const TABS = ['Energy Prices', 'Renewable Capture', 'Price Spreads', 'LGC Prices', 'Compare'];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -77,7 +78,7 @@ function FilterBar({ vintages, vintage, setVintage, region, setRegion }) {
           onChange={(e) => setVintage(e.target.value)}
         >
           {vintages.map((v) => (
-            <option key={v} value={v}>{v.replace(/_/g, ' ')}</option>
+            <option key={v} value={v}>{vintageLabel(v)}</option>
           ))}
         </select>
       </div>
@@ -353,6 +354,201 @@ function LGCTab({ vintage }) {
   );
 }
 
+// ─── Tab: Compare Vintages ────────────────────────────────────────────────────
+
+const COMPARE_CURVES = [
+  { value: 'energy_twa_monthly',           label: 'Energy (TWA)' },
+  { value: 'solar_dwa_monthly',            label: 'Solar DWA' },
+  { value: 'wind_dwa_monthly',             label: 'Wind DWA' },
+  { value: 'solar_dwa_monthly_post_curt_lgc', label: 'Solar Post-Curt (+LGC)' },
+  { value: 'wind_dwa_monthly_post_curt_lgc',  label: 'Wind Post-Curt (+LGC)' },
+];
+
+const AGGS = [
+  { value: 'M',  label: 'Monthly' },
+  { value: 'Q',  label: 'Quarterly' },
+  { value: 'CY', label: 'Calendar Year' },
+  { value: 'FY', label: 'Financial Year' },
+];
+
+const COMPARE_COLORS = [
+  '#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#06b6d4','#f97316','#84cc16',
+];
+
+function toFY(dateStr) {
+  // FY runs Jul–Jun in Australia, labelled by the ending year
+  const [y, m] = dateStr.split('-').map(Number);
+  return m >= 7 ? `FY${y + 1}` : `FY${y}`;
+}
+
+function toQtr(dateStr) {
+  const [y, m] = dateStr.split('-').map(Number);
+  return `Q${Math.ceil(m / 3)} ${y}`;
+}
+
+function toCY(dateStr) {
+  return dateStr.split('-')[0];
+}
+
+function aggregateRows(rows, agg) {
+  // rows: [{date, value}]
+  const buckets = {};
+  for (const r of rows) {
+    if (r.value == null) continue;
+    let key;
+    if (agg === 'M')  key = fmtDate(r.date);
+    else if (agg === 'Q')  key = toQtr(r.date);
+    else if (agg === 'CY') key = toCY(r.date);
+    else if (agg === 'FY') key = toFY(r.date);
+    if (!buckets[key]) buckets[key] = { sum: 0, count: 0 };
+    buckets[key].sum += parseFloat(r.value);
+    buckets[key].count++;
+  }
+  return Object.entries(buckets).map(([key, { sum, count }]) => ({ key, value: sum / count }));
+}
+
+function CompareTab({ region, vintages }) {
+  const [curveType, setCurveType] = useState('energy_twa_monthly');
+  const [agg, setAgg] = useState('Q');
+  const [rawData, setRawData] = useState(null);
+  const [selectedVintages, setSelectedVintages] = useState([]);
+
+  // Default: all vintages selected
+  useEffect(() => {
+    if (vintages.length && selectedVintages.length === 0) setSelectedVintages(vintages);
+  }, [vintages]);
+
+  useEffect(() => {
+    setRawData(null);
+    fetch(`/api/price-curves?type=compare&region=${region}&curve_type=${curveType}`)
+      .then((r) => r.json())
+      .then((d) => setRawData(d.compare || []));
+  }, [region, curveType]);
+
+  if (!rawData) return <LoadingSpinner />;
+
+  // Group by vintage
+  const byVintage = {};
+  for (const r of rawData) {
+    if (!byVintage[r.vintage]) byVintage[r.vintage] = [];
+    byVintage[r.vintage].push(r);
+  }
+
+  // Aggregate each vintage
+  const aggByVintage = {};
+  for (const [v, rows] of Object.entries(byVintage)) {
+    aggByVintage[v] = aggregateRows(rows, agg);
+  }
+
+  // Build unified key list (sorted)
+  const allKeys = [...new Set(
+    Object.values(aggByVintage).flatMap((rows) => rows.map((r) => r.key))
+  )].sort((a, b) => {
+    // Sort by underlying date value
+    if (agg === 'FY') return a.localeCompare(b);
+    return a.localeCompare(b);
+  });
+
+  const chartData = allKeys.map((key) => {
+    const point = { key };
+    for (const v of selectedVintages) {
+      const row = (aggByVintage[v] || []).find((r) => r.key === key);
+      point[v] = row ? row.value : null;
+    }
+    return point;
+  });
+
+  const toggleVintage = (v) =>
+    setSelectedVintages((prev) => prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]);
+
+  return (
+    <div>
+      {/* Controls */}
+      <div className="flex flex-wrap gap-3 mb-4 items-end">
+        <div>
+          <label className="text-xs text-gray-500 font-medium block mb-1">Curve</label>
+          <select
+            className="border border-gray-300 rounded px-2 py-1.5 text-sm bg-white"
+            value={curveType}
+            onChange={(e) => setCurveType(e.target.value)}
+          >
+            {COMPARE_CURVES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="text-xs text-gray-500 font-medium block mb-1">Aggregation</label>
+          <div className="flex gap-1">
+            {AGGS.map((a) => (
+              <button
+                key={a.value}
+                onClick={() => setAgg(a.value)}
+                className={`px-2.5 py-1.5 text-xs rounded border font-medium ${
+                  agg === a.value ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300'
+                }`}
+              >
+                {a.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Vintage toggles */}
+      <div className="flex flex-wrap gap-1.5 mb-4">
+        {vintages.map((v, i) => (
+          <button
+            key={v}
+            onClick={() => toggleVintage(v)}
+            className={`px-2.5 py-1 text-xs rounded-full border font-medium transition-colors ${
+              selectedVintages.includes(v)
+                ? 'text-white border-transparent'
+                : 'bg-white text-gray-500 border-gray-300'
+            }`}
+            style={selectedVintages.includes(v) ? { backgroundColor: COMPARE_COLORS[i % COMPARE_COLORS.length] } : {}}
+          >
+            {vintageLabel(v)}
+          </button>
+        ))}
+      </div>
+
+      <h3 className="text-sm font-semibold text-gray-700 mb-3">
+        {COMPARE_CURVES.find((c) => c.value === curveType)?.label} — {region} — by vintage
+      </h3>
+
+      <ResponsiveContainer width="100%" height={360}>
+        <LineChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <XAxis
+            dataKey="key"
+            tick={{ fontSize: 10 }}
+            interval={agg === 'M' ? 5 : 0}
+            angle={agg === 'M' ? -30 : 0}
+            textAnchor={agg === 'M' ? 'end' : 'middle'}
+            height={agg === 'M' ? 50 : 30}
+          />
+          <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${v}`} />
+          <Tooltip
+            formatter={(v, name) => [`$${Number(v).toFixed(2)}`, vintageLabel(name)]}
+            labelStyle={{ fontWeight: 600 }}
+          />
+          <Legend formatter={(name) => vintageLabel(name)} />
+          {selectedVintages.map((v, i) => (
+            <Line
+              key={v}
+              type="monotone"
+              dataKey={v}
+              stroke={COMPARE_COLORS[i % COMPARE_COLORS.length]}
+              strokeWidth={2}
+              dot={false}
+              connectNulls={false}
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function ForwardCurvesPage() {
@@ -413,6 +609,7 @@ export default function ForwardCurvesPage() {
             {activeTab === 1 && <CaptureTab vintage={vintage} region={region} />}
             {activeTab === 2 && <SpreadsTab vintage={vintage} region={region} />}
             {activeTab === 3 && <LGCTab vintage={vintage} />}
+            {activeTab === 4 && <CompareTab region={region} vintages={vintages} />}
           </>
         )}
       </div>

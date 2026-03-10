@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { vintageLabel } from '../../../lib/vintageLabel';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, ReferenceLine,
@@ -82,7 +83,7 @@ function FilterBar({ filters, sel, setSel }) {
 
   return (
     <div className="flex flex-wrap gap-3 mb-5 p-3 bg-gray-50 rounded-lg border border-gray-200">
-      {field('Vintage', 'vintage', vintages)}
+      {field('Vintage', 'vintage', vintages, Object.fromEntries(vintages.map((v) => [v, vintageLabel(v)])))}
       {field('Region', 'region', regions)}
       {field('Duration', 'duration', DURATION_ORDER.filter((d) => durations.includes(d)))}
       {field('Scenario', 'scenario', scenarios, SCENARIO_LABELS)}
@@ -439,7 +440,7 @@ function EventPayoutsTab({ sel }) {
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Event Payouts by Duration — {sel.vintage}</h3>
+      <h3 className="text-sm font-semibold text-gray-700 mb-3">Event Payouts by Duration — {vintageLabel(sel.vintage)}</h3>
       <ResponsiveContainer width="100%" height={260}>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
