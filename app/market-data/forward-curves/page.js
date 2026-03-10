@@ -68,36 +68,6 @@ function toYearlyAvg(rows) {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function FilterBar({ vintages, vintage, setVintage, region, setRegion }) {
-  return (
-    <div className="flex flex-wrap gap-3 mb-4">
-      <div>
-        <label className="text-xs text-gray-500 font-medium block mb-1">Vintage</label>
-        <select
-          className="border border-gray-300 rounded px-2 py-1.5 text-sm bg-white"
-          value={vintage}
-          onChange={(e) => setVintage(e.target.value)}
-        >
-          {vintages.map((v) => (
-            <option key={v} value={v}>{vintageLabel(v)}</option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label className="text-xs text-gray-500 font-medium block mb-1">Region</label>
-        <select
-          className="border border-gray-300 rounded px-2 py-1.5 text-sm bg-white"
-          value={region}
-          onChange={(e) => setRegion(e.target.value)}
-        >
-          {REGIONS.map((r) => (
-            <option key={r} value={r}>{r}</option>
-          ))}
-        </select>
-      </div>
-    </div>
-  );
-}
 
 function LoadingSpinner() {
   return (
@@ -109,9 +79,52 @@ function LoadingSpinner() {
 
 // ─── Tab: Energy Prices ───────────────────────────────────────────────────────
 
-function EnergyTab({ vintage, region }) {
+function TabFilters({ vintages, vintage, setVintage, region, setRegion, children }) {
+  return (
+    <div className="flex flex-wrap gap-3 mb-4 items-end">
+      <div>
+        <label className="text-xs text-gray-500 font-medium block mb-1">Vintage</label>
+        <select
+          className="border border-gray-300 rounded px-2 py-1.5 text-sm bg-white"
+          value={vintage}
+          onChange={(e) => setVintage(e.target.value)}
+        >
+          {[...vintages].sort((a, b) => vintageSortKey(b) - vintageSortKey(a)).map((v) => (
+            <option key={v} value={v}>{vintageLabel(v)}</option>
+          ))}
+        </select>
+      </div>
+      {setRegion && (
+        <div>
+          <label className="text-xs text-gray-500 font-medium block mb-1">Region</label>
+          <select
+            className="border border-gray-300 rounded px-2 py-1.5 text-sm bg-white"
+            value={region}
+            onChange={(e) => setRegion(e.target.value)}
+          >
+            {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+          </select>
+        </div>
+      )}
+      {children && <div className="ml-auto flex items-end gap-2">{children}</div>}
+    </div>
+  );
+}
+
+function useLatestVintage(vintages) {
+  const sorted = [...vintages].sort((a, b) => vintageSortKey(a) - vintageSortKey(b));
+  const [vintage, setVintage] = useState('');
+  useEffect(() => {
+    if (vintages.length > 0 && !vintage) setVintage(sorted[sorted.length - 1]);
+  }, [vintages]);
+  return [vintage, setVintage];
+}
+
+function EnergyTab({ vintages }) {
+  const [vintage, setVintage] = useLatestVintage(vintages);
   const [data, setData] = useState(null);
   const [view, setView] = useState('monthly'); // monthly | yearly
+  const [region, setRegion] = useState('NSW');
 
   useEffect(() => {
     if (!vintage) return;
@@ -121,7 +134,7 @@ function EnergyTab({ vintage, region }) {
       .then((d) => setData(d.energy_twa_monthly || []));
   }, [vintage, region]);
 
-  if (!data) return <LoadingSpinner />;
+  if (!vintage || !data) return <LoadingSpinner />;
 
   const chartData = view === 'monthly'
     ? data.map((r) => ({ date: fmtDate(r.date), value: r.value != null ? parseFloat(r.value) : null }))
@@ -129,10 +142,9 @@ function EnergyTab({ vintage, region }) {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-sm font-semibold text-gray-700">Energy Time-Weighted Average Price — {region}</h3>
+      <TabFilters vintages={vintages} vintage={vintage} setVintage={setVintage} region={region} setRegion={setRegion}>
+        <ExportButton onClick={() => exportCSV(chartData.map(r => ({ date: r.date, energy_twa: r.value })), `energy-twa-${region}-${vintage}`)} />
         <div className="flex gap-1">
-          <ExportButton onClick={() => exportCSV(chartData.map(r => ({ date: r.date, energy_twa: r.value })), `energy-twa-${region}-${vintage}`)} />
           {['monthly', 'yearly'].map((v) => (
             <button
               key={v}
@@ -143,7 +155,8 @@ function EnergyTab({ vintage, region }) {
             </button>
           ))}
         </div>
-      </div>
+      </TabFilters>
+      <h3 className="text-sm font-semibold text-gray-700 mb-3">Energy Time-Weighted Average Price — {region}</h3>
       <ResponsiveContainer width="100%" height={320}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -173,9 +186,11 @@ const CAPTURE_CURVES = [
   'wind_dwa_monthly_post_curt_lgc',
 ];
 
-function CaptureTab({ vintage, region }) {
+function CaptureTab({ vintages }) {
+  const [vintage, setVintage] = useLatestVintage(vintages);
   const [data, setData] = useState(null);
   const [selected, setSelected] = useState(['solar_dwa_monthly', 'wind_dwa_monthly']);
+  const [region, setRegion] = useState('NSW');
 
   useEffect(() => {
     if (!vintage) return;
@@ -185,7 +200,7 @@ function CaptureTab({ vintage, region }) {
       .then(setData);
   }, [vintage, region]);
 
-  if (!data) return <LoadingSpinner />;
+  if (!vintage || !data) return <LoadingSpinner />;
 
   // Build chart data aligned by date
   const allDates = (data[CAPTURE_CURVES[0]] || []).map((r) => r.date);
@@ -203,22 +218,24 @@ function CaptureTab({ vintage, region }) {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-2 mb-3 items-center">
+      <TabFilters vintages={vintages} vintage={vintage} setVintage={setVintage} region={region} setRegion={setRegion}>
         <ExportButton onClick={() => exportCSV(chartData, `capture-rates-${region}-${vintage}`)} />
-        {CAPTURE_CURVES.map((ct) => (
-          <button
-            key={ct}
-            onClick={() =>
-              setSelected((prev) =>
-                prev.includes(ct) ? prev.filter((x) => x !== ct) : [...prev, ct]
-              )
-            }
-            className={`px-2 py-1 text-xs rounded border ${selected.includes(ct) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300'}`}
-          >
-            {CURVE_LABELS[ct]}
-          </button>
-        ))}
-      </div>
+        <div className="flex gap-1">
+          {CAPTURE_CURVES.map((ct) => (
+            <button
+              key={ct}
+              onClick={() =>
+                setSelected((prev) =>
+                  prev.includes(ct) ? prev.filter((x) => x !== ct) : [...prev, ct]
+                )
+              }
+              className={`px-2 py-1 text-xs rounded border ${selected.includes(ct) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300'}`}
+            >
+              {CURVE_LABELS[ct]}
+            </button>
+          ))}
+        </div>
+      </TabFilters>
       <ResponsiveContainer width="100%" height={320}>
         <LineChart data={sampled}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -237,8 +254,10 @@ function CaptureTab({ vintage, region }) {
 
 // ─── Tab: Price Spreads ───────────────────────────────────────────────────────
 
-function SpreadsTab({ vintage, region }) {
+function SpreadsTab({ vintages }) {
+  const [vintage, setVintage] = useLatestVintage(vintages);
   const [data, setData] = useState(null);
+  const [region, setRegion] = useState('NSW');
 
   useEffect(() => {
     if (!vintage) return;
@@ -248,7 +267,7 @@ function SpreadsTab({ vintage, region }) {
       .then((d) => setData(d.spreads || []));
   }, [vintage, region]);
 
-  if (!data) return <LoadingSpinner />;
+  if (!vintage || !data) return <LoadingSpinner />;
 
   // Pivot: { year -> { duration -> value } }
   const durations = [...new Set(data.map((r) => r.duration))];
@@ -264,10 +283,10 @@ function SpreadsTab({ vintage, region }) {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-sm font-semibold text-gray-700">Storage Price Spreads by Duration — {region}</h3>
+      <TabFilters vintages={vintages} vintage={vintage} setVintage={setVintage} region={region} setRegion={setRegion}>
         <ExportButton onClick={() => exportCSV(chartData, `spreads-${region}-${vintage}`)} />
-      </div>
+      </TabFilters>
+      <h3 className="text-sm font-semibold text-gray-700 mb-3">Storage Price Spreads by Duration — {region}</h3>
       <ResponsiveContainer width="100%" height={320}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -310,7 +329,8 @@ function SpreadsTab({ vintage, region }) {
 
 // ─── Tab: LGC Prices ─────────────────────────────────────────────────────────
 
-function LGCTab({ vintage }) {
+function LGCTab({ vintages }) {
+  const [vintage, setVintage] = useLatestVintage(vintages);
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -321,16 +341,16 @@ function LGCTab({ vintage }) {
       .then((d) => setData(d.lgc || []));
   }, [vintage]);
 
-  if (!data) return <LoadingSpinner />;
+  if (!vintage || !data) return <LoadingSpinner />;
 
   const chartData = data.map((r) => ({ year: r.year, value: r.value != null ? parseFloat(r.value) : null }));
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-sm font-semibold text-gray-700">LGC Price Forecast ($/MWh)</h3>
+      <TabFilters vintages={vintages} vintage={vintage} setVintage={setVintage}>
         <ExportButton onClick={() => exportCSV(chartData, `lgc-${vintage}`)} />
-      </div>
+      </TabFilters>
+      <h3 className="text-sm font-semibold text-gray-700 mb-3">LGC Price Forecast ($/MWh)</h3>
       <ResponsiveContainer width="100%" height={280}>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -433,9 +453,10 @@ function aggregateRows(rows, agg) {
   return Object.entries(buckets).map(([key, { sum, count }]) => ({ key, value: sum / count }));
 }
 
-function CompareTab({ region, vintages }) {
+function CompareTab({ vintages }) {
   const [curveType, setCurveType] = useState('energy_twa_monthly');
   const [agg, setAgg] = useState('FY');
+  const [region, setRegion] = useState('NSW');
   const [rawData, setRawData] = useState(null);
   useEffect(() => {
     setRawData(null);
@@ -476,10 +497,26 @@ function CompareTab({ region, vintages }) {
     return point;
   });
 
+  const majorInterval =
+    agg === 'M'  ? Math.ceil(allKeys.length / 24) :
+    agg === 'Q'  ? Math.ceil(allKeys.length / 16) :
+    Math.ceil(allKeys.length / 12);
+  const majorTickSet = new Set(allKeys.filter((_, i) => i % majorInterval === 0));
+
   return (
     <div>
       {/* Controls */}
       <div className="flex flex-wrap gap-3 mb-4 items-end">
+        <div>
+          <label className="text-xs text-gray-500 font-medium block mb-1">Region</label>
+          <select
+            className="border border-gray-300 rounded px-2 py-1.5 text-sm bg-white"
+            value={region}
+            onChange={(e) => setRegion(e.target.value)}
+          >
+            {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+          </select>
+        </div>
         <div>
           <label className="text-xs text-gray-500 font-medium block mb-1">Curve</label>
           <select
@@ -520,11 +557,12 @@ function CompareTab({ region, vintages }) {
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis
             dataKey="key"
+            ticks={allKeys}
             tick={{ fontSize: 10 }}
-            interval={agg === 'M' ? 5 : 0}
-            angle={agg === 'M' ? -30 : 0}
-            textAnchor={agg === 'M' ? 'end' : 'middle'}
-            height={agg === 'M' ? 50 : 30}
+            tickFormatter={(k) => majorTickSet.has(k) ? k : ''}
+            angle={agg === 'M' || agg === 'Q' ? -35 : 0}
+            textAnchor={agg === 'M' || agg === 'Q' ? 'end' : 'middle'}
+            height={agg === 'M' || agg === 'Q' ? 50 : 30}
           />
           <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${v}`} />
           <Tooltip
@@ -554,17 +592,11 @@ function CompareTab({ region, vintages }) {
 export default function ForwardCurvesPage() {
   const [activeTab, setActiveTab] = useState(0);
   const [vintages, setVintages] = useState([]);
-  const [vintage, setVintage] = useState('');
-  const [region, setRegion] = useState('NSW');
 
   useEffect(() => {
     fetch('/api/price-curves?type=vintages')
       .then((r) => r.json())
-      .then((d) => {
-        const vs = d.vintages || [];
-        setVintages(vs);
-        if (vs.length > 0) setVintage(vs[vs.length - 1]); // latest vintage
-      });
+      .then((d) => setVintages(d.vintages || []));
   }, []);
 
   return (
@@ -573,14 +605,6 @@ export default function ForwardCurvesPage() {
         <h1 className="text-xl font-bold text-gray-900">Forward Price Curves</h1>
         <p className="text-sm text-gray-500 mt-0.5">Aurora Energy Research — Australian power market forecasts</p>
       </div>
-
-      <FilterBar
-        vintages={vintages}
-        vintage={vintage}
-        setVintage={setVintage}
-        region={region}
-        setRegion={setRegion}
-      />
 
       {/* Tab bar */}
       <div className="flex gap-1 border-b border-gray-200 mb-5">
@@ -601,15 +625,15 @@ export default function ForwardCurvesPage() {
 
       {/* Tab content */}
       <div className="bg-white rounded-lg border border-gray-200 p-5">
-        {!vintage ? (
+        {vintages.length === 0 ? (
           <LoadingSpinner />
         ) : (
           <>
-            {activeTab === 0 && <CompareTab region={region} vintages={vintages} />}
-            {activeTab === 1 && <EnergyTab vintage={vintage} region={region} />}
-            {activeTab === 2 && <CaptureTab vintage={vintage} region={region} />}
-            {activeTab === 3 && <SpreadsTab vintage={vintage} region={region} />}
-            {activeTab === 4 && <LGCTab vintage={vintage} />}
+            {activeTab === 0 && <CompareTab vintages={vintages} />}
+            {activeTab === 1 && <EnergyTab vintages={vintages} />}
+            {activeTab === 2 && <CaptureTab vintages={vintages} />}
+            {activeTab === 3 && <SpreadsTab vintages={vintages} />}
+            {activeTab === 4 && <LGCTab vintages={vintages} />}
           </>
         )}
       </div>
