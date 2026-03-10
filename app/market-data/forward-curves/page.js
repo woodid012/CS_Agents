@@ -435,7 +435,7 @@ function aggregateRows(rows, agg) {
 
 function CompareTab({ region, vintages }) {
   const [curveType, setCurveType] = useState('energy_twa_monthly');
-  const [agg, setAgg] = useState('Q');
+  const [agg, setAgg] = useState('FY');
   const [rawData, setRawData] = useState(null);
   useEffect(() => {
     setRawData(null);
