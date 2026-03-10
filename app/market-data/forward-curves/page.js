@@ -89,7 +89,7 @@ function TabFilters({ vintages, vintage, setVintage, region, setRegion, children
           value={vintage}
           onChange={(e) => setVintage(e.target.value)}
         >
-          {[...vintages].sort((a, b) => vintageSortKey(b) - vintageSortKey(a)).map((v) => (
+          {[...vintages].sort((a, b) => vintageLabel(b).localeCompare(vintageLabel(a))).map((v) => (
             <option key={v} value={v}>{vintageLabel(v)}</option>
           ))}
         </select>
@@ -112,7 +112,7 @@ function TabFilters({ vintages, vintage, setVintage, region, setRegion, children
 }
 
 function useLatestVintage(vintages) {
-  const sorted = [...vintages].sort((a, b) => vintageSortKey(a) - vintageSortKey(b));
+  const sorted = [...vintages].sort((a, b) => vintageLabel(a).localeCompare(vintageLabel(b)));
   const [vintage, setVintage] = useState('');
   useEffect(() => {
     if (vintages.length > 0 && !vintage) setVintage(sorted[sorted.length - 1]);
@@ -467,8 +467,8 @@ function CompareTab({ vintages }) {
 
   if (!rawData) return <LoadingSpinner />;
 
-  // Sort vintages chronologically
-  const sortedVintages = [...vintages].sort((a, b) => vintageSortKey(a) - vintageSortKey(b));
+  // Sort vintages chronologically by their formatted "YYYY QX" label
+  const sortedVintages = [...vintages].sort((a, b) => vintageLabel(a).localeCompare(vintageLabel(b)));
 
   // Group by vintage
   const byVintage = {};
