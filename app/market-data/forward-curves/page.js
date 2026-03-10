@@ -33,7 +33,7 @@ const LINE_COLORS = [
   '#06b6d4', '#f97316', '#84cc16',
 ];
 
-const TABS = ['Energy Prices', 'Renewable Capture', 'Price Spreads', 'LGC Prices', 'Compare'];
+const TABS = ['Compare', 'Energy Prices', 'Renewable Capture', 'Price Spreads', 'LGC Prices'];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -580,11 +580,11 @@ export default function ForwardCurvesPage() {
           <LoadingSpinner />
         ) : (
           <>
-            {activeTab === 0 && <EnergyTab vintage={vintage} region={region} />}
-            {activeTab === 1 && <CaptureTab vintage={vintage} region={region} />}
-            {activeTab === 2 && <SpreadsTab vintage={vintage} region={region} />}
-            {activeTab === 3 && <LGCTab vintage={vintage} />}
-            {activeTab === 4 && <CompareTab region={region} vintages={vintages} />}
+            {activeTab === 0 && <CompareTab region={region} vintages={vintages} />}
+            {activeTab === 1 && <EnergyTab vintage={vintage} region={region} />}
+            {activeTab === 2 && <CaptureTab vintage={vintage} region={region} />}
+            {activeTab === 3 && <SpreadsTab vintage={vintage} region={region} />}
+            {activeTab === 4 && <LGCTab vintage={vintage} />}
           </>
         )}
       </div>
