@@ -1,0 +1,154 @@
+[
+  {
+    "filename": "Aurora_Feb24_AUS_Power_Renewables_Market_Forecast_Data (2).xlsx",
+    "title": "February 2024 update",
+    "description": "This workbook accompanies the full Australia Power Market Forecast report for 2023 Q4. For more information on assumptions, methodology and results please see the full report available on Aurora's EOS",
+    "version": "1",
+    "release_date": "2024-02-23",
+    "prepared_by": "Eamonn Briers, Andrew McGregor, Daniel Pires",
+    "sheets": [
+      "Disclaimer",
+      "Intro",
+      "Input assumptions",
+      "Central",
+      "Scenario comparison",
+      "Sensitivity comparison",
+      "REZ Overview",
+      "RE Zones"
+    ],
+    "size_bytes": 3279208
+  },
+  {
+    "filename": "Aurora_August_24_AUS_Power_Renewables_Market_Forecast.xlsx",
+    "title": "August 2024 update",
+    "description": "This workbook accompanies the full Australia Power Market Forecast report for 2024 Q3. For more information on assumptions, methodology and results please see the full report available on Aurora's EOS",
+    "version": "1",
+    "release_date": "2024-08-16",
+    "prepared_by": "Ryan Tomlin, Monica Lewis, Andrew McGregor",
+    "sheets": [
+      "Disclaimer",
+      "Intro",
+      "Input assumptions",
+      "Central scenario",
+      "Scenario comparison",
+      "Sensitivity comparison",
+      "REZ overview",
+      "REZ inputs"
+    ],
+    "size_bytes": 3441563
+  },
+  {
+    "filename": "Aurora_Nov2024_AUS_Power_Renewables_Market_Forecast.xlsx",
+    "title": "November  2024 update",
+    "description": "This workbook accompanies the full Australia Power Market Forecast report for 2024 Q2. For more information on assumptions, methodology and results please see the full report available on Aurora's EOS",
+    "version": "1",
+    "release_date": "2024-11-22",
+    "prepared_by": "Conor Tongue, Ryan Tomlin",
+    "sheets": [
+      "Disclaimer",
+      "Intro",
+      "Central Inputs",
+      "Central scenario",
+      "Scenario comparison",
+      "Sensitivity comparison",
+      "REZ Overview",
+      "RE Zones"
+    ],
+    "size_bytes": 2744970
+  },
+  {
+    "filename": "Aurora_Jan2025_AUS_Power_Renewables_Market_Forecast.xlsx",
+    "title": "January 2025 update",
+    "description": "This workbook accompanies the full Australia Power Market Forecast report for 2025 Q1. For more information on assumptions, methodology and results please see the full report available on Aurora's EOS",
+    "version": "1",
+    "release_date": "2025-01-31",
+    "prepared_by": "Conor Tongue, Ryan Tomlin, Brigitta Auywang",
+    "sheets": [
+      "Disclaimer",
+      "Intro",
+      "Central inputs",
+      "Central scenario",
+      "Scenario comparison",
+      "Sensitivity comparison",
+      "REZ Overview",
+      "RE Zones"
+    ],
+    "size_bytes": 2761124
+  },
+  {
+    "filename": "Aurora_May25_AUS_Power_Renewables_Market_Forecast.xlsx",
+    "title": "May 2025 update",
+    "description": "This workbook accompanies the full Australia Power Market Forecast report for 2025 Q2. For more information on assumptions, methodology and results please see the full report available on Aurora's EOS",
+    "version": "1.1",
+    "release_date": "2025-05-09",
+    "prepared_by": "Conor Tongue, Huiting Wu, Ryan Tomlin, Brigitta Auwyang",
+    "sheets": [
+      "Disclaimer",
+      "Intro",
+      "Central inputs",
+      "Central scenario",
+      "Scenario comparison",
+      "Sensitivity comparison",
+      "REZ Overview",
+      "RE Zones"
+    ],
+    "size_bytes": 2716592
+  },
+  {
+    "filename": "Aurora_Jul25_AUS_Power_Renewables_Market_Forecast.xlsx",
+    "title": "July 2025 update",
+    "description": "This workbook accompanies the full Australia Power Market Forecast report for 2025 Q3. For more information on assumptions, methodology and results please see the full report available on Aurora's EOS",
+    "version": "1",
+    "release_date": "2025-07-25",
+    "prepared_by": "Huiting Wu, Conor Tongue, Jasmine Du",
+    "sheets": [
+      "Disclaimer",
+      "Intro",
+      "Central inputs",
+      "Central scenario",
+      "Scenario comparison",
+      "Sensitivity comparison",
+      "REZ Overview",
+      "RE Zones"
+    ],
+    "size_bytes": 2407756
+  },
+  {
+    "filename": "Aurora_Oct25_AUS_Power_Renewables_Market_Forecast.xlsx",
+    "title": "October 2025 update",
+    "description": "This workbook accompanies the full Australia Power Market Forecast report for 2025 Q4. For more information on assumptions, methodology and results please see the full report available on Aurora's EOS",
+    "version": "1",
+    "release_date": "2025-10-10",
+    "prepared_by": "Huiting Wu, Conor Tongue, Star Xian, Jasmine Du",
+    "sheets": [
+      "Disclaimer",
+      "Intro",
+      "Central inputs",
+      "Central scenario",
+      "Scenario comparison",
+      "Sensitivity comparison",
+      "REZ Overview",
+      "RE Zones"
+    ],
+    "size_bytes": 2409894
+  },
+  {
+    "filename": "Aurora_Q1_26_AUS_Power_Renewables_Market_Forecast.xlsx",
+    "title": "Q1 2026 update",
+    "description": "This workbook accompanies the full Australia Power Market Forecast report for Q1 2026. For more information on assumptions, methodology and results please see the full report available on Aurora's EOS",
+    "version": "1",
+    "release_date": "2026-01-23",
+    "prepared_by": "Star Xian, Samuel Murphy, Prateek Walia, Conor Tongue",
+    "sheets": [
+      "Disclaimer",
+      "Intro",
+      "Central inputs",
+      "Central scenario",
+      "Scenario comparison",
+      "Sensitivity comparison",
+      "REZ Overview",
+      "RE Zones"
+    ],
+    "size_bytes": 2239991
+  }
+]

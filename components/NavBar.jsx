@@ -25,9 +25,9 @@ const NAV_PILLARS = [
   {
     label: 'Data - Prices',
     links: [
-      { href: '/market-data/price-curves', label: 'Price Curves' },
-      { href: '/market-data/forward-curves', label: 'Forward Curves' },
-      { href: '/market-data/bess-cases', label: 'BESS Cases' },
+      { href: '/market-data/price-curves', label: 'File Repository' },
+      { href: '/market-data/forward-curves', label: 'Electricity Market Curves' },
+      { href: '/market-data/bess-cases', label: 'BESS Market Curves' },
     ],
   },
   {
