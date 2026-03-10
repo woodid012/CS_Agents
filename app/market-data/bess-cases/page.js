@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { vintageLabel, vintageSortKey } from '../../../lib/vintageLabel';
+import { exportCSV, ExportButton } from '../../../lib/exportCsv';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, ReferenceLine,
@@ -146,7 +147,10 @@ function CashflowTab({ sel }) {
         <StatCard label="Peak Cashflow" value={fmtK(Math.max(...data.map((r) => parseFloat(r.total_cf || 0))))} color="green" />
         <StatCard label="Years of Data" value={data.length} color="gray" />
       </div>
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Annual Total Cashflow (A$/year)</h3>
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-sm font-semibold text-gray-700">Annual Total Cashflow (A$/year)</h3>
+        <ExportButton onClick={() => exportCSV(data.map(r => ({ year: r.fy_year, energy_trading_cf: r.energy_trading_cf, high_price_cf: r.high_price_cf, fcas_cf: r.fcas_cf, wholesale_charge_cf: r.wholesale_charge_cf, total_cf: r.total_cf })), `bess-cashflow-${sel.vintage}-${sel.region}-${sel.duration}`)} />
+      </div>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -218,7 +222,10 @@ function RevenueTab({ sel }) {
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Revenue Component Breakdown (A$/year)</h3>
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-sm font-semibold text-gray-700">Revenue Component Breakdown (A$/year)</h3>
+        <ExportButton onClick={() => exportCSV(chartData, `bess-revenue-${sel.vintage}-${sel.region}-${sel.duration}`)} />
+      </div>
       <ResponsiveContainer width="100%" height={320}>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -268,7 +275,10 @@ function DurationTab({ sel }) {
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Total Cashflow by Duration — {sel.region} ({SCENARIO_LABELS[sel.scenario] || sel.scenario})</h3>
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-sm font-semibold text-gray-700">Total Cashflow by Duration — {sel.region} ({SCENARIO_LABELS[sel.scenario] || sel.scenario})</h3>
+        <ExportButton onClick={() => exportCSV(chartData, `bess-duration-compare-${sel.vintage}-${sel.region}`)} />
+      </div>
       <ResponsiveContainer width="100%" height={320}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -335,7 +345,10 @@ function VolumeTab({ sel }) {
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Discharge / Charge Volume (MWh/day)</h3>
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-sm font-semibold text-gray-700">Discharge / Charge Volume (MWh/day)</h3>
+        <ExportButton onClick={() => exportCSV(data.map(r => ({ year: r.fy_year, discharge_vol: r.discharge_vol, charge_vol: r.charge_vol })), `bess-volume-${sel.vintage}-${sel.region}-${sel.duration}`)} />
+      </div>
       <ResponsiveContainer width="100%" height={280}>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -369,7 +382,10 @@ function CapValuesTab({ sel }) {
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Cap Market Value (A$/MWh) — {sel.region}</h3>
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-sm font-semibold text-gray-700">Cap Market Value (A$/MWh) — {sel.region}</h3>
+        <ExportButton onClick={() => exportCSV(chartData, `bess-cap-values-${sel.vintage}-${sel.region}`)} />
+      </div>
       <ResponsiveContainer width="100%" height={280}>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -448,7 +464,10 @@ function EventPayoutsTab({ sel }) {
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Event Payouts by Duration — {vintageLabel(sel.vintage)}</h3>
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-sm font-semibold text-gray-700">Event Payouts by Duration — {vintageLabel(sel.vintage)}</h3>
+        <ExportButton onClick={() => exportCSV(data, `bess-event-payouts-${sel.vintage}`)} />
+      </div>
       <ResponsiveContainer width="100%" height={260}>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -521,9 +540,12 @@ function BESSCompareTab({ sel, allVintages }) {
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-700 mb-1">
-        Total Annual Cashflow by Vintage — {sel.region} {sel.duration} ({SCENARIO_LABELS[sel.scenario] || sel.scenario})
-      </h3>
+      <div className="flex justify-between items-start mb-1">
+        <h3 className="text-sm font-semibold text-gray-700">
+          Total Annual Cashflow by Vintage — {sel.region} {sel.duration} ({SCENARIO_LABELS[sel.scenario] || sel.scenario})
+        </h3>
+        <ExportButton onClick={() => exportCSV(chartData, `bess-compare-vintages-${sel.region}-${sel.duration}`)} />
+      </div>
       <p className="text-xs text-gray-400 mb-3">Shows how the cashflow forecast has changed across successive vintages</p>
       <ResponsiveContainer width="100%" height={360}>
         <LineChart data={chartData}>

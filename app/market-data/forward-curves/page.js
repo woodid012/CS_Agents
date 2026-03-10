@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { vintageLabel, vintageSortKey } from '../../../lib/vintageLabel';
+import { exportCSV, ExportButton } from '../../../lib/exportCsv';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   BarChart, Bar,
@@ -131,6 +132,7 @@ function EnergyTab({ vintage, region }) {
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-sm font-semibold text-gray-700">Energy Time-Weighted Average Price — {region}</h3>
         <div className="flex gap-1">
+          <ExportButton onClick={() => exportCSV(chartData.map(r => ({ date: r.date, energy_twa: r.value })), `energy-twa-${region}-${vintage}`)} />
           {['monthly', 'yearly'].map((v) => (
             <button
               key={v}
@@ -201,7 +203,8 @@ function CaptureTab({ vintage, region }) {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-2 mb-3">
+      <div className="flex flex-wrap gap-2 mb-3 items-center">
+        <ExportButton onClick={() => exportCSV(chartData, `capture-rates-${region}-${vintage}`)} />
         {CAPTURE_CURVES.map((ct) => (
           <button
             key={ct}
@@ -261,7 +264,10 @@ function SpreadsTab({ vintage, region }) {
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Storage Price Spreads by Duration — {region}</h3>
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-sm font-semibold text-gray-700">Storage Price Spreads by Duration — {region}</h3>
+        <ExportButton onClick={() => exportCSV(chartData, `spreads-${region}-${vintage}`)} />
+      </div>
       <ResponsiveContainer width="100%" height={320}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -321,7 +327,10 @@ function LGCTab({ vintage }) {
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">LGC Price Forecast ($/MWh)</h3>
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-sm font-semibold text-gray-700">LGC Price Forecast ($/MWh)</h3>
+        <ExportButton onClick={() => exportCSV(chartData, `lgc-${vintage}`)} />
+      </div>
       <ResponsiveContainer width="100%" height={280}>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -486,9 +495,12 @@ function CompareTab({ region, vintages }) {
         </div>
       </div>
 
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">
-        {COMPARE_CURVES.find((c) => c.value === curveType)?.label} — {region} — by vintage
-      </h3>
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-sm font-semibold text-gray-700">
+          {COMPARE_CURVES.find((c) => c.value === curveType)?.label} — {region} — by vintage
+        </h3>
+        <ExportButton onClick={() => exportCSV(chartData, `compare-${curveType}-${region}`)} />
+      </div>
 
       <ResponsiveContainer width="100%" height={360}>
         <LineChart data={chartData}>
