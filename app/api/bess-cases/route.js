@@ -13,33 +13,66 @@ export async function GET(request) {
 
   try {
     if (type === 'filters') {
-      // Vintages always show all
-      const vintageRows = await sql`SELECT DISTINCT vintage FROM bess_investment_cases ORDER BY vintage`;
-      const vintages = vintageRows.map((r) => r.vintage);
+      const region2   = searchParams.get('region');
+      const duration2 = searchParams.get('duration');
+      const scenario2 = searchParams.get('scenario');
+      const startYear2 = searchParams.get('start_year') ? parseInt(searchParams.get('start_year')) : null;
 
-      // If a vintage is selected, scope all other options to that vintage
-      const [regions, durations, scenarios, startYears, degradedRows] = vintage
-        ? await Promise.all([
-            sql`SELECT DISTINCT region FROM bess_investment_cases WHERE vintage = ${vintage} ORDER BY region`,
-            sql`SELECT DISTINCT duration FROM bess_investment_cases WHERE vintage = ${vintage} ORDER BY duration`,
-            sql`SELECT DISTINCT scenario_variant FROM bess_investment_cases WHERE vintage = ${vintage} ORDER BY scenario_variant`,
-            sql`SELECT DISTINCT start_year FROM bess_investment_cases WHERE vintage = ${vintage} ORDER BY start_year`,
-            sql`SELECT DISTINCT degraded FROM bess_investment_cases WHERE vintage = ${vintage} ORDER BY degraded`,
-          ])
-        : await Promise.all([
-            sql`SELECT DISTINCT region FROM bess_investment_cases ORDER BY region`,
-            sql`SELECT DISTINCT duration FROM bess_investment_cases ORDER BY duration`,
-            sql`SELECT DISTINCT scenario_variant FROM bess_investment_cases ORDER BY scenario_variant`,
-            sql`SELECT DISTINCT start_year FROM bess_investment_cases ORDER BY start_year`,
-            sql`SELECT DISTINCT degraded FROM bess_investment_cases ORDER BY degraded`,
-          ]);
+      // Vintages: always all
+      const vintageRows = await sql`SELECT DISTINCT vintage FROM bess_investment_cases ORDER BY vintage`;
+
+      // Each level scoped by all upstream selections
+      const regionRows = await sql`
+        SELECT DISTINCT region FROM bess_investment_cases
+        WHERE TRUE
+          ${vintage   ? sql`AND vintage = ${vintage}`     : sql``}
+        ORDER BY region
+      `;
+
+      const durationRows = await sql`
+        SELECT DISTINCT duration FROM bess_investment_cases
+        WHERE TRUE
+          ${vintage ? sql`AND vintage = ${vintage}` : sql``}
+          ${region2 ? sql`AND region  = ${region2}` : sql``}
+        ORDER BY duration
+      `;
+
+      const scenarioRows = await sql`
+        SELECT DISTINCT scenario_variant FROM bess_investment_cases
+        WHERE TRUE
+          ${vintage   ? sql`AND vintage  = ${vintage}`   : sql``}
+          ${region2   ? sql`AND region   = ${region2}`   : sql``}
+          ${duration2 ? sql`AND duration = ${duration2}` : sql``}
+        ORDER BY scenario_variant
+      `;
+
+      const startYearRows = await sql`
+        SELECT DISTINCT start_year FROM bess_investment_cases
+        WHERE TRUE
+          ${vintage   ? sql`AND vintage          = ${vintage}`   : sql``}
+          ${region2   ? sql`AND region           = ${region2}`   : sql``}
+          ${duration2 ? sql`AND duration         = ${duration2}` : sql``}
+          ${scenario2 ? sql`AND scenario_variant = ${scenario2}` : sql``}
+        ORDER BY start_year
+      `;
+
+      const degradedRows = await sql`
+        SELECT DISTINCT degraded FROM bess_investment_cases
+        WHERE TRUE
+          ${vintage    ? sql`AND vintage          = ${vintage}`    : sql``}
+          ${region2    ? sql`AND region           = ${region2}`    : sql``}
+          ${duration2  ? sql`AND duration         = ${duration2}`  : sql``}
+          ${scenario2  ? sql`AND scenario_variant = ${scenario2}`  : sql``}
+          ${startYear2 ? sql`AND start_year       = ${startYear2}` : sql``}
+        ORDER BY degraded
+      `;
 
       return Response.json({
-        vintages,
-        regions:    regions.map((r) => r.region),
-        durations:  durations.map((r) => r.duration),
-        scenarios:  scenarios.map((r) => r.scenario_variant),
-        startYears: startYears.map((r) => r.start_year),
+        vintages:        vintageRows.map((r) => r.vintage),
+        regions:         regionRows.map((r) => r.region),
+        durations:       durationRows.map((r) => r.duration),
+        scenarios:       scenarioRows.map((r) => r.scenario_variant),
+        startYears:      startYearRows.map((r) => r.start_year),
         degradedOptions: degradedRows.map((r) => r.degraded),
       });
     }

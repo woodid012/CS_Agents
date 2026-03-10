@@ -65,9 +65,22 @@ function LoadingSpinner() {
 
 // ─── Filter bar ───────────────────────────────────────────────────────────────
 
+// Keys in cascade order — changing one resets all keys after it
+const CASCADE_ORDER = ['vintage', 'region', 'duration', 'scenario', 'startYear', 'degraded'];
+
 function FilterBar({ filters, sel, setSel }) {
   if (!filters) return null;
   const { vintages, regions, durations, scenarios, startYears, degradedOptions } = filters;
+
+  const handleChange = (key, value) => {
+    const idx = CASCADE_ORDER.indexOf(key);
+    setSel((s) => {
+      const next = { ...s, [key]: value };
+      // Clear downstream fields so the cascade useEffect will reset them to valid first options
+      CASCADE_ORDER.slice(idx + 1).forEach((k) => { next[k] = ''; });
+      return next;
+    });
+  };
 
   const field = (label, key, opts, labelMap) => (
     <div>
@@ -75,7 +88,7 @@ function FilterBar({ filters, sel, setSel }) {
       <select
         className="border border-gray-300 rounded px-2 py-1.5 text-sm bg-white"
         value={sel[key]}
-        onChange={(e) => setSel((s) => ({ ...s, [key]: e.target.value }))}
+        onChange={(e) => handleChange(key, e.target.value)}
       >
         {opts.map((o) => <option key={o} value={o}>{labelMap ? (labelMap[o] || o) : o}</option>)}
       </select>
@@ -97,7 +110,7 @@ function FilterBar({ filters, sel, setSel }) {
           <select
             className="border border-gray-300 rounded px-2 py-1.5 text-sm bg-white"
             value={sel.degraded}
-            onChange={(e) => setSel((s) => ({ ...s, degraded: e.target.value }))}
+            onChange={(e) => handleChange('degraded', e.target.value)}
           >
             {degradedOptions?.includes(true) && <option value="true">With Degradation</option>}
             {degradedOptions?.includes(false) && <option value="false">No Degradation</option>}
@@ -576,34 +589,41 @@ export default function BESSCasesPage() {
     scenario: 'base', startYear: '2025', degraded: 'true',
   });
 
-  // Initial load — get all vintages
+  // On initial load, fetch all vintages then set latest
   useEffect(() => {
     fetch('/api/bess-cases?type=filters')
       .then((r) => r.json())
       .then((f) => {
         setFilters(f);
-        const latestVintage = f.vintages?.at(-1) || '';
-        setSel((s) => ({ ...s, vintage: latestVintage }));
+        setSel((s) => ({ ...s, vintage: f.vintages?.at(-1) || '' }));
       });
   }, []);
 
-  // Re-fetch scoped filters when vintage changes, then reset dependent fields to first valid value
+  // Cascade: re-fetch scoped options whenever any upstream filter changes
+  // Cascade order: vintage → region → duration → scenario → startYear → degraded
   useEffect(() => {
     if (!sel.vintage) return;
-    fetch(`/api/bess-cases?type=filters&vintage=${encodeURIComponent(sel.vintage)}`)
+    const p = new URLSearchParams({ type: 'filters', vintage: sel.vintage });
+    if (sel.region)    p.set('region',     sel.region);
+    if (sel.duration)  p.set('duration',   sel.duration);
+    if (sel.scenario)  p.set('scenario',   sel.scenario);
+    if (sel.startYear) p.set('start_year', sel.startYear);
+
+    fetch(`/api/bess-cases?${p}`)
       .then((r) => r.json())
       .then((f) => {
         setFilters(f);
+        // Reset each filter to first valid option if current value is no longer available
         setSel((s) => ({
           ...s,
-          region:    f.regions?.includes(s.region)    ? s.region    : (f.regions?.[0] ?? s.region),
-          duration:  f.durations?.includes(s.duration) ? s.duration : (f.durations?.[0] ?? s.duration),
-          scenario:  f.scenarios?.includes(s.scenario) ? s.scenario : (f.scenarios?.[0] ?? s.scenario),
+          region:    f.regions?.includes(s.region)             ? s.region    : (f.regions?.[0]    ?? s.region),
+          duration:  f.durations?.includes(s.duration)          ? s.duration  : (f.durations?.[0]  ?? s.duration),
+          scenario:  f.scenarios?.includes(s.scenario)          ? s.scenario  : (f.scenarios?.[0]  ?? s.scenario),
           startYear: f.startYears?.map(String).includes(s.startYear) ? s.startYear : (f.startYears?.[0]?.toString() ?? s.startYear),
-          degraded:  f.degradedOptions?.map(String).includes(s.degraded === 'true' ? 'true' : 'false') ? s.degraded : (f.degradedOptions?.[0] != null ? String(f.degradedOptions[0]) : s.degraded),
+          degraded:  f.degradedOptions?.some((d) => String(d) === s.degraded) ? s.degraded : (f.degradedOptions?.[0] != null ? String(f.degradedOptions[0]) : s.degraded),
         }));
       });
-  }, [sel.vintage]);
+  }, [sel.vintage, sel.region, sel.duration, sel.scenario, sel.startYear]);
 
   const ready = filters && sel.vintage;
 
