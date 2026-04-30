@@ -15,6 +15,7 @@ const ROLE_FILTERS = [
 const EMPTY_DRAFT = {
   name: '', parent_owner: '', is_bidder: true, is_offtaker: false,
   geography: '', states: [], tier: null, archetype: '', status: '', notes: '',
+  project_ids: [], project_names: [],
 };
 
 const cn = (...xs) => xs.filter(Boolean).join(' ');
@@ -42,6 +43,39 @@ function Field({ label, children, hint }) {
       </div>
       {children}
     </label>
+  );
+}
+
+function ProjectsPicker({ projects, value, onChange }) {
+  const set = new Set((value || []).map(Number));
+  if (!projects || projects.length === 0) {
+    return <p className="text-xs text-gray-400 italic">No projects yet — create some on the Projects page.</p>;
+  }
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {projects.map((p) => {
+        const active = set.has(p.id);
+        return (
+          <button
+            key={p.id}
+            type="button"
+            onClick={() => {
+              const next = new Set(set);
+              active ? next.delete(p.id) : next.add(p.id);
+              onChange([...next]);
+            }}
+            className={cn(
+              'px-2.5 py-1 text-xs font-medium rounded border transition-colors',
+              active
+                ? 'bg-indigo-600 text-white border-indigo-600'
+                : 'bg-white text-gray-600 border-gray-300 hover:border-indigo-400 hover:text-indigo-600',
+            )}
+          >
+            {p.name}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -257,7 +291,7 @@ function MeetingsSection({ counterpartyId }) {
 // Drawer
 // ─────────────────────────────────────────────────────────────────────────
 
-function CounterpartyDrawer({ open, initial, isNew, onClose, onSaved, onDeleted }) {
+function CounterpartyDrawer({ open, initial, isNew, projects, onClose, onSaved, onDeleted }) {
   const [draft, setDraft] = useState(initial || EMPTY_DRAFT);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -304,6 +338,17 @@ function CounterpartyDrawer({ open, initial, isNew, onClose, onSaved, onDeleted 
         throw new Error(e.error || `${method} failed`);
       }
       const saved = await res.json();
+
+      // Persist project assignments (PUT replaces the full set)
+      const targetId = saved.id || draft.id;
+      if (targetId) {
+        await fetch(`/api/counterparties/${targetId}/projects`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ project_ids: draft.project_ids || [] }),
+        });
+      }
+
       setDirty(false);
       onSaved(saved);
     } catch (e) {
@@ -412,6 +457,10 @@ function CounterpartyDrawer({ open, initial, isNew, onClose, onSaved, onDeleted 
             <StatesPicker value={draft.states || []} onChange={(v) => update({ states: v })} />
           </Field>
 
+          <Field label="Projects / deals" hint={(draft.project_ids || []).length > 0 ? `${draft.project_ids.length} assigned` : 'click to assign'}>
+            <ProjectsPicker projects={projects} value={draft.project_ids || []} onChange={(v) => update({ project_ids: v })} />
+          </Field>
+
           <div className="grid grid-cols-2 gap-4">
             <Field label="Tier" hint="bidder context">
               <select
@@ -505,12 +554,14 @@ function RoleBadge({ row }) {
 
 export default function CounterpartiesPage() {
   const [rows, setRows] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [stateFilter, setStateFilter] = useState('');
   const [archetypeFilter, setArchetypeFilter] = useState('');
   const [tierFilter, setTierFilter] = useState('');
+  const [projectFilter, setProjectFilter] = useState('');
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerInitial, setDrawerInitial] = useState(null);
@@ -518,9 +569,12 @@ export default function CounterpartiesPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const r = await fetch('/api/counterparties');
-    const data = await r.json();
-    setRows(Array.isArray(data) ? data : []);
+    const [cpRes, pjRes] = await Promise.all([
+      fetch('/api/counterparties').then((r) => r.json()).catch(() => []),
+      fetch('/api/projects').then((r) => r.json()).catch(() => []),
+    ]);
+    setRows(Array.isArray(cpRes) ? cpRes : []);
+    setProjects(Array.isArray(pjRes) ? pjRes : []);
     setLoading(false);
   }, []);
 
@@ -550,6 +604,7 @@ export default function CounterpartiesPage() {
       if (stateFilter && !(r.states || []).includes(stateFilter)) return false;
       if (archetypeFilter && r.archetype !== archetypeFilter) return false;
       if (tierFilter && String(r.tier) !== tierFilter) return false;
+      if (projectFilter && !(r.project_ids || []).includes(Number(projectFilter))) return false;
       if (search) {
         const q = search.toLowerCase();
         const hay = [r.name, r.parent_owner, r.notes].map((s) => (s || '').toLowerCase()).join(' ');
@@ -557,7 +612,7 @@ export default function CounterpartiesPage() {
       }
       return true;
     });
-  }, [rows, search, roleFilter, stateFilter, archetypeFilter, tierFilter]);
+  }, [rows, search, roleFilter, stateFilter, archetypeFilter, tierFilter, projectFilter]);
 
   const counts = useMemo(() => ({
     total: rows.length,
@@ -622,9 +677,13 @@ export default function CounterpartiesPage() {
           <option value="2">Tier 2</option>
           <option value="3">Tier 3</option>
         </select>
-        {(search || roleFilter !== 'all' || stateFilter || archetypeFilter || tierFilter) && (
+        <select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)} className="border border-gray-300 rounded px-2 py-1 text-xs bg-white">
+          <option value="">All projects</option>
+          {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+        </select>
+        {(search || roleFilter !== 'all' || stateFilter || archetypeFilter || tierFilter || projectFilter) && (
           <button
-            onClick={() => { setSearch(''); setRoleFilter('all'); setStateFilter(''); setArchetypeFilter(''); setTierFilter(''); }}
+            onClick={() => { setSearch(''); setRoleFilter('all'); setStateFilter(''); setArchetypeFilter(''); setTierFilter(''); setProjectFilter(''); }}
             className="text-xs text-gray-500 hover:text-gray-800 underline"
           >
             Clear
@@ -637,14 +696,15 @@ export default function CounterpartiesPage() {
       <div className="overflow-x-auto">
         <table className="min-w-full table-fixed">
           <colgroup>
-            <col style={{ width: '24%' }} />
-            <col style={{ width: '7%' }} />
-            <col style={{ width: '11%' }} />
-            <col style={{ width: '15%' }} />
+            <col style={{ width: '20%' }} />
             <col style={{ width: '6%' }} />
-            <col style={{ width: '11%' }} />
+            <col style={{ width: '9%' }} />
+            <col style={{ width: '12%' }} />
+            <col style={{ width: '5%' }} />
             <col style={{ width: '10%' }} />
-            <col style={{ width: '10%' }} />
+            <col style={{ width: '8%' }} />
+            <col style={{ width: '15%' }} />
+            <col style={{ width: '9%' }} />
             <col style={{ width: '6%' }} />
           </colgroup>
           <thead className="bg-slate-50 border-b border-gray-200 text-[11px] uppercase tracking-wide text-gray-500">
@@ -656,15 +716,16 @@ export default function CounterpartiesPage() {
               <th className="px-4 py-2 text-left font-medium">Tier</th>
               <th className="px-4 py-2 text-left font-medium">Archetype</th>
               <th className="px-4 py-2 text-left font-medium">Status</th>
+              <th className="px-4 py-2 text-left font-medium">Projects</th>
               <th className="px-4 py-2 text-left font-medium">Last meeting</th>
               <th className="px-4 py-2 text-center font-medium">Mtgs</th>
             </tr>
           </thead>
           <tbody className="bg-white">
             {loading ? (
-              <tr><td colSpan={9} className="px-6 py-12 text-center text-sm text-gray-500">Loading…</td></tr>
+              <tr><td colSpan={10} className="px-6 py-12 text-center text-sm text-gray-500">Loading…</td></tr>
             ) : filtered.length === 0 ? (
-              <tr><td colSpan={9} className="px-6 py-12 text-center text-sm text-gray-500">
+              <tr><td colSpan={10} className="px-6 py-12 text-center text-sm text-gray-500">
                 {counts.total === 0 ? 'No counterparties yet. Click "+ New counterparty" to add one.' : 'No counterparties match these filters.'}
               </td></tr>
             ) : (
@@ -692,6 +753,15 @@ export default function CounterpartiesPage() {
                   <td className="px-4 py-2.5 text-xs text-gray-700">{row.tier ?? <span className="text-gray-300">—</span>}</td>
                   <td className="px-4 py-2.5 text-xs text-gray-700">{row.archetype || <span className="text-gray-300">—</span>}</td>
                   <td className="px-4 py-2.5 text-xs text-gray-700">{row.status || <span className="text-gray-300">—</span>}</td>
+                  <td className="px-4 py-2.5 text-xs text-gray-700">
+                    {(row.project_names || []).length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {row.project_names.map((n) => (
+                          <span key={n} className="inline-block px-1.5 py-0.5 bg-indigo-100 text-indigo-800 rounded text-[10px] font-medium">{n}</span>
+                        ))}
+                      </div>
+                    ) : <span className="text-gray-300">—</span>}
+                  </td>
                   <td className="px-4 py-2.5 text-xs text-gray-600">{fmtDateShort(row.last_meeting_date) || <span className="text-gray-300">—</span>}</td>
                   <td className="px-4 py-2.5 text-xs text-center text-gray-600">{row.meeting_count || 0}</td>
                 </tr>
@@ -705,6 +775,7 @@ export default function CounterpartiesPage() {
         open={drawerOpen}
         initial={drawerInitial}
         isNew={drawerIsNew}
+        projects={projects}
         onClose={closeDrawer}
         onSaved={() => { closeDrawer(); load(); }}
         onDeleted={() => { closeDrawer(); load(); }}

@@ -111,6 +111,25 @@ CREATE TABLE IF NOT EXISTS meetings (
 
 CREATE INDEX IF NOT EXISTS meetings_counterparty_idx ON meetings (counterparty_id, meeting_date DESC);
 
+-- Master deal / project list. Counterparties (bidders / offtakers / both)
+-- can be assigned to multiple projects via counterparty_projects.
+CREATE TABLE IF NOT EXISTS projects (
+  id           SERIAL PRIMARY KEY,
+  name         TEXT NOT NULL UNIQUE,
+  description  TEXT,
+  status       TEXT DEFAULT 'Active',  -- Active, On hold, Closed
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS counterparty_projects (
+  counterparty_id  INTEGER NOT NULL REFERENCES counterparties(id) ON DELETE CASCADE,
+  project_id       INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  PRIMARY KEY (counterparty_id, project_id)
+);
+
+CREATE INDEX IF NOT EXISTS counterparty_projects_project_idx ON counterparty_projects (project_id);
+
 -- Market Data: Capex / Opex benchmarks
 CREATE TABLE IF NOT EXISTS capex_opex (
   id              SERIAL PRIMARY KEY,

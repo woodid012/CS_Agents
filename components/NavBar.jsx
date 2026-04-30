@@ -9,6 +9,7 @@ const NAV_PILLARS = [
     label: 'Counterparties',
     links: [
       { href: '/counterparties', label: 'All Counterparties' },
+      { href: '/projects', label: 'Projects / Deals' },
       { href: '/', label: 'Bidder List (legacy)' },
       { href: '/offtakers', label: 'Offtaker List (legacy)' },
       { href: '/analytics', label: 'Analytics' },

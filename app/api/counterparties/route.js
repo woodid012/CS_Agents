@@ -41,7 +41,20 @@ export async function GET() {
     const rows = await sql`
       SELECT c.*,
         (SELECT COUNT(*)::int FROM meetings m WHERE m.counterparty_id = c.id) AS meeting_count,
-        (SELECT MAX(meeting_date) FROM meetings m WHERE m.counterparty_id = c.id) AS last_meeting_date
+        (SELECT MAX(meeting_date) FROM meetings m WHERE m.counterparty_id = c.id) AS last_meeting_date,
+        COALESCE(
+          (SELECT ARRAY_AGG(p.name ORDER BY p.name)
+             FROM counterparty_projects cp
+             JOIN projects p ON p.id = cp.project_id
+            WHERE cp.counterparty_id = c.id),
+          ARRAY[]::TEXT[]
+        ) AS project_names,
+        COALESCE(
+          (SELECT ARRAY_AGG(cp.project_id)
+             FROM counterparty_projects cp
+            WHERE cp.counterparty_id = c.id),
+          ARRAY[]::INTEGER[]
+        ) AS project_ids
       FROM counterparties c
       ORDER BY c.name ASC
     `;
