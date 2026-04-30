@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState, useCallback } from 'react';
+import * as XLSX from 'xlsx';
 
 const AU_STATES = ['NSW', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT', 'ACT'];
 const ARCHETYPES = ['Gentailer', 'IPP', 'Fund', 'Corporate', 'Retailer', 'Utility', 'Developer', 'Other'];
@@ -646,6 +647,75 @@ export default function CounterpartiesPage() {
     setDrawerOpen(false);
   }
 
+  async function exportToExcel() {
+    const res = await fetch('/api/counterparties/export');
+    if (!res.ok) {
+      alert('Export failed.');
+      return;
+    }
+    const data = await res.json();
+
+    // Find max meetings across all counterparties to know how many meeting
+    // column-groups to add.
+    const maxMeetings = data.reduce((m, c) => Math.max(m, (c.meetings || []).length), 0);
+
+    const headers = [
+      'Name', 'Parent/Owner', 'Bidder', 'Offtaker', 'Geography', 'States',
+      'Tier', 'Archetype', 'Status', 'Projects', 'Notes',
+    ];
+    for (let i = 1; i <= maxMeetings; i++) {
+      headers.push(`Mtg ${i} Date`, `Mtg ${i} Attendees`, `Mtg ${i} Notes`, `Mtg ${i} Next Steps`);
+    }
+
+    const fmt = (d) => (d ? new Date(d).toISOString().slice(0, 10) : '');
+
+    const aoa = [headers];
+    for (const c of data) {
+      const row = [
+        c.name || '',
+        c.parent_owner || '',
+        c.is_bidder ? 'Yes' : '',
+        c.is_offtaker ? 'Yes' : '',
+        c.geography || '',
+        (c.states || []).join(', '),
+        c.tier ?? '',
+        c.archetype || '',
+        c.status || '',
+        (c.project_names || []).join(', '),
+        c.notes || '',
+      ];
+      const meetings = c.meetings || [];
+      for (let i = 0; i < maxMeetings; i++) {
+        const m = meetings[i];
+        if (m) {
+          row.push(fmt(m.meeting_date), m.attendees || '', m.notes || '', m.next_steps || '');
+        } else {
+          row.push('', '', '', '');
+        }
+      }
+      aoa.push(row);
+    }
+
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+
+    // Reasonable column widths
+    const widths = [
+      { wch: 28 }, { wch: 22 }, { wch: 8 }, { wch: 9 }, { wch: 16 }, { wch: 18 },
+      { wch: 6 }, { wch: 14 }, { wch: 12 }, { wch: 22 }, { wch: 50 },
+    ];
+    for (let i = 0; i < maxMeetings; i++) {
+      widths.push({ wch: 12 }, { wch: 22 }, { wch: 50 }, { wch: 28 });
+    }
+    ws['!cols'] = widths;
+    ws['!freeze'] = { xSplit: 1, ySplit: 1 };
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Counterparties');
+
+    const today = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(wb, `cs-capital-counterparties-${today}.xlsx`);
+  }
+
   const filtered = useMemo(() => {
     return rows.filter((r) => {
       if (roleFilter === 'bidder' && !r.is_bidder) return false;
@@ -697,12 +767,24 @@ export default function CounterpartiesPage() {
               {counts.total} total · {counts.bidders} bidders · {counts.offtakers} offtakers · {counts.both} both
             </p>
           </div>
-          <button
-            onClick={openNew}
-            className="px-4 py-2 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 shadow-sm"
-          >
-            + New counterparty
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={exportToExcel}
+              className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded text-sm font-medium hover:bg-gray-50 shadow-sm inline-flex items-center gap-1.5"
+              title="Download all counterparties + meetings as XLSX"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+              </svg>
+              Export
+            </button>
+            <button
+              onClick={openNew}
+              className="px-4 py-2 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 shadow-sm"
+            >
+              + New counterparty
+            </button>
+          </div>
         </div>
       </div>
 
