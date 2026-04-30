@@ -87,7 +87,6 @@ function Dropdown({ label, links, pathname }) {
 }
 
 const TOP_LINKS = [
-  { href: '/news', label: 'News' },
   { href: '/ideas', label: 'Ideas' },
 ];
 
