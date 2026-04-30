@@ -648,12 +648,25 @@ export default function CounterpartiesPage() {
   }
 
   async function exportToExcel() {
-    const res = await fetch('/api/counterparties/export');
-    if (!res.ok) {
-      alert('Export failed.');
+    let data;
+    try {
+      const res = await fetch('/api/counterparties/export');
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        alert(`Export failed (${res.status}): ${body.slice(0, 200)}`);
+        return;
+      }
+      data = await res.json();
+    } catch (err) {
+      alert(`Export failed: ${err.message}`);
       return;
     }
-    const data = await res.json();
+
+    if (!Array.isArray(data) || data.length === 0) {
+      alert('Export returned no rows. Check that there are counterparties in the database.');
+      return;
+    }
+    console.log(`Export: ${data.length} counterparties, ${data.reduce((n, c) => n + (c.meetings?.length || 0), 0)} meetings total`);
 
     // Find max meetings across all counterparties to know how many meeting
     // column-groups to add.
@@ -713,7 +726,20 @@ export default function CounterpartiesPage() {
     XLSX.utils.book_append_sheet(wb, ws, 'Counterparties');
 
     const today = new Date().toISOString().slice(0, 10);
-    XLSX.writeFile(wb, `cs-capital-counterparties-${today}.xlsx`);
+    const filename = `cs-capital-counterparties-${today}.xlsx`;
+
+    // Browser-safe download path: write to ArrayBuffer, create a Blob, click an
+    // anchor. XLSX.writeFile is unreliable in bundled browser code.
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   const filtered = useMemo(() => {
