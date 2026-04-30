@@ -585,6 +585,9 @@ export default function CounterpartiesPage() {
   const [archetypeFilter, setArchetypeFilter] = useState('');
   const [tierFilter, setTierFilter] = useState('');
   const [projectFilter, setProjectFilter] = useState('');
+  // Default OFF until the graduate populates status across the dataset; the
+  // intended default once that's done is `true` so the list lands on Active.
+  const [activeOnly, setActiveOnly] = useState(false);
 
   const [sortKey, setSortKey] = useState('name');
   const [sortDir, setSortDir] = useState('asc');
@@ -751,6 +754,7 @@ export default function CounterpartiesPage() {
       if (archetypeFilter && r.archetype !== archetypeFilter) return false;
       if (tierFilter && String(r.tier) !== tierFilter) return false;
       if (projectFilter && !(r.project_ids || []).includes(Number(projectFilter))) return false;
+      if (activeOnly && r.status !== 'Active') return false;
       if (search) {
         const q = search.toLowerCase();
         const hay = [r.name, r.parent_owner, r.notes].map((s) => (s || '').toLowerCase()).join(' ');
@@ -758,7 +762,7 @@ export default function CounterpartiesPage() {
       }
       return true;
     });
-  }, [rows, search, roleFilter, stateFilter, archetypeFilter, tierFilter, projectFilter]);
+  }, [rows, search, roleFilter, stateFilter, archetypeFilter, tierFilter, projectFilter, activeOnly]);
 
   const sorted = useMemo(() => {
     const arr = [...filtered];
@@ -793,7 +797,19 @@ export default function CounterpartiesPage() {
               {counts.total} total · {counts.bidders} bidders · {counts.offtakers} offtakers · {counts.both} both
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-3">
+            <label
+              className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded text-sm cursor-pointer hover:border-gray-400 select-none"
+              title="Show only counterparties whose status is Active"
+            >
+              <input
+                type="checkbox"
+                checked={activeOnly}
+                onChange={(e) => setActiveOnly(e.target.checked)}
+                className="rounded"
+              />
+              <span className="text-gray-700">Active only</span>
+            </label>
             <button
               onClick={exportToExcel}
               className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded text-sm font-medium hover:bg-gray-50 shadow-sm inline-flex items-center gap-1.5"
@@ -854,9 +870,9 @@ export default function CounterpartiesPage() {
           <option value="">All projects</option>
           {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
         </select>
-        {(search || roleFilter !== 'all' || stateFilter || archetypeFilter || tierFilter || projectFilter) && (
+        {(search || roleFilter !== 'all' || stateFilter || archetypeFilter || tierFilter || projectFilter || activeOnly) && (
           <button
-            onClick={() => { setSearch(''); setRoleFilter('all'); setStateFilter(''); setArchetypeFilter(''); setTierFilter(''); setProjectFilter(''); }}
+            onClick={() => { setSearch(''); setRoleFilter('all'); setStateFilter(''); setArchetypeFilter(''); setTierFilter(''); setProjectFilter(''); setActiveOnly(false); }}
             className="text-xs text-gray-500 hover:text-gray-800 underline"
           >
             Clear
