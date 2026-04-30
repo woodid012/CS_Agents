@@ -11,8 +11,6 @@ const NAV_PILLARS = [
       { href: '/', label: 'All Counterparties' },
       { href: '/projects', label: 'Projects / Deals' },
       { href: '/analytics', label: 'Analytics' },
-      { href: '/insights/submit', label: 'Submit Insight' },
-      { href: '/insights', label: 'Recent Insights' },
     ],
   },
   {
