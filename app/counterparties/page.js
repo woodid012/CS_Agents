@@ -539,6 +539,28 @@ function CounterpartyDrawer({ open, initial, isNew, projects, onClose, onSaved, 
 // Main page
 // ─────────────────────────────────────────────────────────────────────────
 
+function SortHeader({ label, k, sortKey, sortDir, onClick, align = 'left' }) {
+  const active = sortKey === k;
+  const arrow = active ? (sortDir === 'asc' ? '▲' : '▼') : '';
+  return (
+    <th
+      onClick={() => onClick(k)}
+      className={cn(
+        'px-4 py-2 font-medium select-none cursor-pointer hover:text-gray-800',
+        align === 'center' ? 'text-center' : 'text-left',
+        active && 'text-gray-900',
+      )}
+    >
+      <span className="inline-flex items-center gap-1">
+        {label}
+        <span className={cn('text-[9px]', active ? 'text-gray-700' : 'text-gray-300')}>
+          {arrow || '↕'}
+        </span>
+      </span>
+    </th>
+  );
+}
+
 function RoleBadge({ row }) {
   if (row.is_bidder && row.is_offtaker) {
     return <span className="inline-block px-1.5 py-0.5 bg-purple-100 text-purple-800 rounded text-[10px] font-medium">B+O</span>;
@@ -563,9 +585,37 @@ export default function CounterpartiesPage() {
   const [tierFilter, setTierFilter] = useState('');
   const [projectFilter, setProjectFilter] = useState('');
 
+  const [sortKey, setSortKey] = useState('name');
+  const [sortDir, setSortDir] = useState('asc');
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerInitial, setDrawerInitial] = useState(null);
   const [drawerIsNew, setDrawerIsNew] = useState(false);
+
+  function toggleSort(key) {
+    if (sortKey === key) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+  }
+
+  function sortValue(row, key) {
+    switch (key) {
+      case 'name':         return (row.name || '').toLowerCase();
+      case 'role':         return (row.is_bidder ? 1 : 0) * 2 + (row.is_offtaker ? 1 : 0); // 3=both, 2=B, 1=O, 0=none
+      case 'geography':    return (row.geography || '').toLowerCase();
+      case 'states':       return (row.states || []).length;
+      case 'tier':         return row.tier == null ? Infinity : Number(row.tier);
+      case 'archetype':    return (row.archetype || '').toLowerCase();
+      case 'status':       return (row.status || '').toLowerCase();
+      case 'projects':     return (row.project_names || []).length;
+      case 'last_meeting': return row.last_meeting_date ? new Date(row.last_meeting_date).getTime() : 0;
+      case 'meetings':     return row.meeting_count || 0;
+      default:             return '';
+    }
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -613,6 +663,21 @@ export default function CounterpartiesPage() {
       return true;
     });
   }, [rows, search, roleFilter, stateFilter, archetypeFilter, tierFilter, projectFilter]);
+
+  const sorted = useMemo(() => {
+    const arr = [...filtered];
+    arr.sort((a, b) => {
+      const va = sortValue(a, sortKey);
+      const vb = sortValue(b, sortKey);
+      if (va < vb) return sortDir === 'asc' ? -1 : 1;
+      if (va > vb) return sortDir === 'asc' ? 1 : -1;
+      // tiebreaker: name asc
+      const na = (a.name || '').toLowerCase();
+      const nb = (b.name || '').toLowerCase();
+      return na < nb ? -1 : na > nb ? 1 : 0;
+    });
+    return arr;
+  }, [filtered, sortKey, sortDir]);
 
   const counts = useMemo(() => ({
     total: rows.length,
@@ -709,27 +774,27 @@ export default function CounterpartiesPage() {
           </colgroup>
           <thead className="bg-slate-50 border-b border-gray-200 text-[11px] uppercase tracking-wide text-gray-500">
             <tr>
-              <th className="px-4 py-2 text-left font-medium">Name</th>
-              <th className="px-4 py-2 text-left font-medium">Role</th>
-              <th className="px-4 py-2 text-left font-medium">Geography</th>
-              <th className="px-4 py-2 text-left font-medium">States</th>
-              <th className="px-4 py-2 text-left font-medium">Tier</th>
-              <th className="px-4 py-2 text-left font-medium">Archetype</th>
-              <th className="px-4 py-2 text-left font-medium">Status</th>
-              <th className="px-4 py-2 text-left font-medium">Projects</th>
-              <th className="px-4 py-2 text-left font-medium">Last meeting</th>
-              <th className="px-4 py-2 text-center font-medium">Mtgs</th>
+              <SortHeader label="Name"         k="name"         sortKey={sortKey} sortDir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Role"         k="role"         sortKey={sortKey} sortDir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Geography"    k="geography"    sortKey={sortKey} sortDir={sortDir} onClick={toggleSort} />
+              <SortHeader label="States"       k="states"       sortKey={sortKey} sortDir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Tier"         k="tier"         sortKey={sortKey} sortDir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Archetype"    k="archetype"    sortKey={sortKey} sortDir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Status"       k="status"       sortKey={sortKey} sortDir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Projects"     k="projects"     sortKey={sortKey} sortDir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Last meeting" k="last_meeting" sortKey={sortKey} sortDir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Mtgs"         k="meetings"     sortKey={sortKey} sortDir={sortDir} onClick={toggleSort} align="center" />
             </tr>
           </thead>
           <tbody className="bg-white">
             {loading ? (
               <tr><td colSpan={10} className="px-6 py-12 text-center text-sm text-gray-500">Loading…</td></tr>
-            ) : filtered.length === 0 ? (
+            ) : sorted.length === 0 ? (
               <tr><td colSpan={10} className="px-6 py-12 text-center text-sm text-gray-500">
                 {counts.total === 0 ? 'No counterparties yet. Click "+ New counterparty" to add one.' : 'No counterparties match these filters.'}
               </td></tr>
             ) : (
-              filtered.map((row) => (
+              sorted.map((row) => (
                 <tr
                   key={row.id}
                   onClick={() => openEdit(row)}
