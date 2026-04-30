@@ -229,10 +229,10 @@ export default function AnalyticsPage() {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [windowKey, setWindowKey] = useState('30');
+  const [windowKey, setWindowKey] = useState('90');
   const [roleFilter, setRoleFilter] = useState('all');
   const [tagFilter, setTagFilter] = useState('');
-  const [withNewsOnly, setWithNewsOnly] = useState(false);
+  const [withNewsOnly, setWithNewsOnly] = useState(true);
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState(new Set());
 
@@ -357,9 +357,9 @@ export default function AnalyticsPage() {
           <input type="checkbox" checked={withNewsOnly} onChange={(e) => setWithNewsOnly(e.target.checked)} />
           With news only
         </label>
-        {(search || roleFilter !== 'all' || tagFilter || withNewsOnly || windowKey !== '30') && (
+        {(search || roleFilter !== 'all' || tagFilter || !withNewsOnly || windowKey !== '90') && (
           <button
-            onClick={() => { setSearch(''); setRoleFilter('all'); setTagFilter(''); setWithNewsOnly(false); setWindowKey('30'); }}
+            onClick={() => { setSearch(''); setRoleFilter('all'); setTagFilter(''); setWithNewsOnly(true); setWindowKey('90'); }}
             className="text-xs text-gray-500 hover:text-gray-800 underline"
           >
             Clear
