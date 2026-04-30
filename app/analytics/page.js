@@ -1,933 +1,506 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import marketData from '../../data/australia-market.json';
-import capexData from '../../data/capex-data.json';
-import bessData from '../../data/bess-market.json';
-import Tabs from '../../components/Tabs';
+// Counterparty intelligence roster.
+//
+// This page is read-mostly: an external Claude routine populates the
+// counterparty_news table by running periodic key-term searches and
+// tabulating the results, and this page surfaces who's been in the news,
+// what was said, and which themes (tags) the items touch.
+//
+// Manual add/edit/delete is also supported for one-off entries.
 
-// ─── AUM lookup from capex-data.json ─────────────────────────────────────────
+import { useEffect, useMemo, useState, useCallback, Fragment } from 'react';
 
-const CAPEX_AUM_ENTRIES = Object.entries(capexData)
-  .filter(([k]) => k !== '_notes' && k !== 'Global summary')
-  .map(([entityName, data]) => ({
-    keywords: entityName.toLowerCase().split(/[\s/,()]+/).filter((w) => w.length > 3),
-    aum: data.aum || data.revenue || data.installedCapacity || data.marketCap,
-  }))
-  .filter((e) => e.aum);
+const cn = (...xs) => xs.filter(Boolean).join(' ');
 
-function getAUM(bidderName) {
-  if (!bidderName) return null;
-  const lower = bidderName.toLowerCase();
-  for (const entry of CAPEX_AUM_ENTRIES) {
-    if (entry.keywords.some((word) => lower.includes(word))) return entry.aum;
-  }
-  return null;
+const ROLE_FILTERS = [
+  { key: 'all',      label: 'All' },
+  { key: 'bidder',   label: 'Bidders' },
+  { key: 'offtaker', label: 'Offtakers' },
+  { key: 'both',     label: 'Bidder + Offtaker' },
+];
+
+const WINDOWS = [
+  { key: '7',   label: 'Last 7 days' },
+  { key: '30',  label: 'Last 30 days' },
+  { key: '90',  label: 'Last 90 days' },
+  { key: '365', label: 'Last 12 months' },
+  { key: 'all', label: 'All time' },
+];
+
+function isoDaysAgo(days) {
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() - days);
+  return d.toISOString().slice(0, 10);
 }
 
-// ─── Shared UI components ─────────────────────────────────────────────────────
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+}
 
-function StatCard({ label, value, sub, color = 'blue' }) {
-  const colors = {
-    blue: 'bg-blue-50 border-blue-200 text-blue-700',
-    green: 'bg-green-50 border-green-200 text-green-700',
-    amber: 'bg-amber-50 border-amber-200 text-amber-700',
-    red: 'bg-red-50 border-red-200 text-red-700',
-    gray: 'bg-gray-50 border-gray-200 text-gray-700',
-    teal: 'bg-teal-50 border-teal-200 text-teal-700',
-    purple: 'bg-purple-50 border-purple-200 text-purple-700',
-  };
+function fmtDateShort(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+}
+
+function RoleBadge({ row }) {
+  if (row.is_bidder && row.is_offtaker) return <span className="inline-block px-1.5 py-0.5 bg-purple-100 text-purple-800 rounded text-[10px] font-medium">B+O</span>;
+  if (row.is_bidder)   return <span className="inline-block px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-[10px] font-medium">B</span>;
+  if (row.is_offtaker) return <span className="inline-block px-1.5 py-0.5 bg-emerald-100 text-emerald-800 rounded text-[10px] font-medium">O</span>;
+  return <span className="text-gray-300 text-[10px]">—</span>;
+}
+
+function TagChips({ tags, onClickTag, activeTag, size = 'sm' }) {
+  if (!tags || tags.length === 0) return null;
   return (
-    <div className={`border rounded-lg p-4 ${colors[color]}`}>
-      <div className="text-2xl font-bold">{value}</div>
-      <div className="text-sm font-medium mt-0.5">{label}</div>
-      {sub && <div className="text-xs mt-1 opacity-70">{sub}</div>}
+    <div className="flex flex-wrap gap-1">
+      {tags.map((t) => (
+        <button
+          key={t}
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onClickTag?.(t); }}
+          className={cn(
+            'rounded font-medium border transition-colors',
+            size === 'sm' ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-0.5 text-[11px]',
+            activeTag === t
+              ? 'bg-amber-500 text-white border-amber-500'
+              : 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100',
+          )}
+        >
+          {t}
+        </button>
+      ))}
     </div>
   );
 }
 
-function SectionHeader({ title }) {
-  return (
-    <h2 className="text-base font-semibold text-gray-800 mb-3 mt-6 border-b border-gray-200 pb-1">
-      {title}
-    </h2>
-  );
-}
+// ─────────────────────────────────────────────────────────────────────────
+// News editor (inline, per counterparty)
+// ─────────────────────────────────────────────────────────────────────────
 
-function BarRow({ label, count, total }) {
-  const pct = total > 0 ? Math.round((count / total) * 100) : 0;
-  return (
-    <div className="flex items-center gap-3 py-1.5">
-      <span className="w-40 text-sm text-gray-700 truncate shrink-0">{label}</span>
-      <div className="flex-1 bg-gray-100 rounded-full h-2.5 overflow-hidden">
-        <div className="bg-blue-500 h-2.5 rounded-full" style={{ width: `${pct}%` }} />
-      </div>
-      <span className="w-14 text-sm text-gray-600 text-right shrink-0">
-        {count} <span className="text-gray-400 text-xs">({pct}%)</span>
-      </span>
-    </div>
-  );
-}
+function NewsItem({ item, onPatch, onDelete }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(item);
 
-function CostBar({ label, value, maxVal, color = 'bg-blue-500' }) {
-  const pct = maxVal > 0 ? Math.round((value / maxVal) * 100) : 0;
-  return (
-    <div className="flex items-center gap-3 py-1.5">
-      <span className="w-28 text-xs text-gray-600 shrink-0">{label}</span>
-      <div className="flex-1 bg-gray-100 rounded h-4 overflow-hidden">
-        <div className={`${color} h-4 rounded flex items-center justify-end pr-1.5`} style={{ width: `${pct}%` }}>
-          {pct > 20 && <span className="text-white text-[9px] font-bold whitespace-nowrap">{value > 0 ? `A$${value}` : ''}</span>}
+  useEffect(() => { setDraft(item); }, [item]);
+
+  if (editing) {
+    return (
+      <div className="bg-white border-2 border-blue-300 rounded p-3 space-y-2">
+        <div className="grid grid-cols-2 gap-2">
+          <input type="date" value={draft.published_at ? String(draft.published_at).slice(0, 10) : ''} onChange={(e) => setDraft({ ...draft, published_at: e.target.value })} className="border border-gray-300 rounded px-2 py-1.5 text-xs" />
+          <input placeholder="Source (e.g. AFR)" value={draft.source || ''} onChange={(e) => setDraft({ ...draft, source: e.target.value })} className="border border-gray-300 rounded px-2 py-1.5 text-xs" />
+        </div>
+        <input placeholder="Headline *" value={draft.headline || ''} onChange={(e) => setDraft({ ...draft, headline: e.target.value })} className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm" />
+        <textarea placeholder="Summary" rows={3} value={draft.summary || ''} onChange={(e) => setDraft({ ...draft, summary: e.target.value })} className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs resize-y" />
+        <input placeholder="URL" value={draft.url || ''} onChange={(e) => setDraft({ ...draft, url: e.target.value })} className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs" />
+        <input placeholder="Tags (comma separated)" value={(draft.tags || []).join(', ')} onChange={(e) => setDraft({ ...draft, tags: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })} className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs" />
+        <div className="flex justify-end gap-2 pt-1">
+          <button onClick={() => { setDraft(item); setEditing(false); }} className="px-3 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
+          <button onClick={async () => { await onPatch(draft); setEditing(false); }} className="px-3 py-1 text-xs bg-emerald-600 text-white rounded hover:bg-emerald-700">Save</button>
         </div>
       </div>
-      {pct <= 20 && <span className="text-xs text-gray-500 shrink-0">A${value}/MWh</span>}
+    );
+  }
+
+  return (
+    <div className="bg-white border border-gray-200 rounded p-3 group hover:border-gray-300">
+      <div className="flex items-start justify-between gap-2 mb-1">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <span className="text-xs font-semibold text-gray-700">{fmtDate(item.published_at)}</span>
+            {item.source && <span className="text-[11px] text-gray-500">· {item.source}</span>}
+          </div>
+          <p className="text-sm font-medium text-gray-900 mt-0.5">{item.headline}</p>
+          {item.summary && <p className="text-xs text-gray-600 mt-1 leading-relaxed whitespace-pre-wrap">{item.summary}</p>}
+          {item.url && (
+            <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-[11px] text-blue-600 hover:underline mt-1 inline-block">
+              {item.url.length > 60 ? item.url.slice(0, 60) + '…' : item.url}
+            </a>
+          )}
+          {item.tags && item.tags.length > 0 && <div className="mt-2"><TagChips tags={item.tags} /></div>}
+        </div>
+        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+          <button onClick={(e) => { e.stopPropagation(); setEditing(true); }} className="text-[11px] text-blue-600 hover:underline">Edit</button>
+          <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="text-[11px] text-red-600 hover:underline">Delete</button>
+        </div>
+      </div>
     </div>
   );
 }
 
-// ─── Bidder analytics helpers ─────────────────────────────────────────────────
+function NewsPanel({ counterpartyId, onChange }) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [draft, setDraft] = useState(null);
 
-const TIER_LABELS = { 1: 'Tier 1', 2: 'Tier 2', 3: 'Tier 3', 4: 'Tier 4' };
+  const load = useCallback(async () => {
+    setLoading(true);
+    const r = await fetch(`/api/counterparty-news?counterparty_id=${counterpartyId}`);
+    const data = await r.json();
+    setItems(Array.isArray(data) ? data : []);
+    setLoading(false);
+  }, [counterpartyId]);
 
-function isFIRBRisk(b) {
-  const text = [b.csInsights, b.aiInsights, b.mergedInsights, b.aiScoreReason].join(' ').toLowerCase();
-  return text.includes('firb');
-}
+  useEffect(() => { if (counterpartyId) load(); }, [counterpartyId, load]);
 
-function isVeryActive(b) {
-  const text = [b.aiInsights, b.aiScoreReason].join(' ').toLowerCase();
-  return text.includes('very active');
-}
+  async function saveDraft() {
+    if (!draft || !draft.headline?.trim()) return;
+    await fetch('/api/counterparty-news', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...draft, counterparty_id: counterpartyId }),
+    });
+    setDraft(null);
+    load();
+    onChange?.();
+  }
 
-function isAbandoned(b) {
-  const text = [b.csInsights, b.aiInsights, b.mergedInsights].join(' ').toLowerCase();
+  async function patchItem(id, patch) {
+    await fetch(`/api/counterparty-news/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
+    });
+    load();
+    onChange?.();
+  }
+
+  async function deleteItem(id) {
+    if (!confirm('Delete this news item?')) return;
+    await fetch(`/api/counterparty-news/${id}`, { method: 'DELETE' });
+    load();
+    onChange?.();
+  }
+
   return (
-    text.includes('no longer') ||
-    text.includes('withdrawn') ||
-    text.includes('abandoned') ||
-    text.includes('unlikely acquirer') ||
-    text.includes("won't") ||
-    text.includes('not interested')
-  );
-}
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+          News {items.length > 0 && <span className="text-gray-400 normal-case font-normal">({items.length})</span>}
+        </h4>
+        {!draft && (
+          <button
+            onClick={() => setDraft({ headline: '', summary: '', url: '', source: '', published_at: new Date().toISOString().slice(0, 10), tags: [] })}
+            className="text-xs px-2.5 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            + Add news
+          </button>
+        )}
+      </div>
 
-function isSuggestUpgrade(b) {
-  const tier = Number(b.tier);
-  const label = (b.aiLabel || '').toUpperCase();
-  return tier >= 2 && (label === 'A' || label === 'B');
-}
+      {draft && (
+        <div className="bg-blue-50 border-2 border-blue-300 rounded p-3 space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <input type="date" value={draft.published_at || ''} onChange={(e) => setDraft({ ...draft, published_at: e.target.value })} className="border border-gray-300 rounded px-2 py-1.5 text-xs" />
+            <input placeholder="Source" value={draft.source || ''} onChange={(e) => setDraft({ ...draft, source: e.target.value })} className="border border-gray-300 rounded px-2 py-1.5 text-xs" />
+          </div>
+          <input placeholder="Headline *" value={draft.headline} onChange={(e) => setDraft({ ...draft, headline: e.target.value })} className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm" />
+          <textarea placeholder="Summary" rows={3} value={draft.summary || ''} onChange={(e) => setDraft({ ...draft, summary: e.target.value })} className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs resize-y" />
+          <input placeholder="URL" value={draft.url || ''} onChange={(e) => setDraft({ ...draft, url: e.target.value })} className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs" />
+          <input placeholder="Tags (comma separated)" value={(draft.tags || []).join(', ')} onChange={(e) => setDraft({ ...draft, tags: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })} className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs" />
+          <div className="flex justify-end gap-2 pt-1">
+            <button onClick={() => setDraft(null)} className="px-3 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
+            <button onClick={saveDraft} className="px-3 py-1 text-xs bg-emerald-600 text-white rounded hover:bg-emerald-700">Save news</button>
+          </div>
+        </div>
+      )}
 
-const COLS_TIER1 = ['#', 'Name', 'Geography', 'Type', 'AI Label', 'AI Score', 'Insights'];
-const COLS_UPGRADE = ['#', 'Name', 'Tier', 'AI Label', 'Geography', 'Reason'];
-const COLS_FIRB = ['#', 'Name', 'Geography', 'Tier', 'Type', 'AI Insights'];
-
-// ─── Name cell with optional AUM badge ───────────────────────────────────────
-
-function NameWithAUM({ name }) {
-  const aum = getAUM(name);
-  return (
-    <div>
-      <span className="font-medium text-gray-900">{name}</span>
-      {aum && (
-        <span className="ml-1 text-[10px] text-gray-400 font-normal">({aum})</span>
+      {loading ? (
+        <p className="text-xs text-gray-500">Loading…</p>
+      ) : items.length === 0 && !draft ? (
+        <p className="text-xs text-gray-400 italic py-2">No news items yet.</p>
+      ) : (
+        items.map((it) => (
+          <NewsItem key={it.id} item={it} onPatch={(p) => patchItem(it.id, p)} onDelete={() => deleteItem(it.id)} />
+        ))
       )}
     </div>
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────
 
 export default function AnalyticsPage() {
-  const [bidders, setBidders] = useState([]);
+  const [counterparties, setCounterparties] = useState([]);
+  const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTable, setActiveTable] = useState('tier1');
+
+  const [windowKey, setWindowKey] = useState('30');
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [tagFilter, setTagFilter] = useState('');
+  const [withNewsOnly, setWithNewsOnly] = useState(false);
   const [search, setSearch] = useState('');
-  const [activeMainTab, setActiveMainTab] = useState('overview');
+  const [expanded, setExpanded] = useState(new Set());
 
-  useEffect(() => {
-    fetch('/api/bidders')
-      .then((r) => r.json())
-      .then((data) => {
-        setBidders(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+  const sinceDate = windowKey === 'all' ? null : isoDaysAgo(Number(windowKey));
 
-  const stats = useMemo(() => {
-    if (!bidders.length) return null;
+  const load = useCallback(async () => {
+    setLoading(true);
+    const sinceParam = sinceDate ? `?since=${sinceDate}` : '';
+    const [cpRes, newsRes] = await Promise.all([
+      fetch('/api/counterparties').then((r) => r.json()).catch(() => []),
+      fetch(`/api/counterparty-news${sinceParam}`).then((r) => r.json()).catch(() => []),
+    ]);
+    setCounterparties(Array.isArray(cpRes) ? cpRes : []);
+    setNews(Array.isArray(newsRes) ? newsRes : []);
+    setLoading(false);
+  }, [sinceDate]);
 
-    const tierCounts = {};
-    for (let t = 1; t <= 4; t++) tierCounts[t] = 0;
-    let untiered = 0;
-    for (const b of bidders) {
-      const t = Number(b.tier);
-      if (t >= 1 && t <= 4) tierCounts[t]++;
-      else untiered++;
+  useEffect(() => { load(); }, [load]);
+
+  const newsByCp = useMemo(() => {
+    const map = new Map();
+    for (const n of news) {
+      const k = n.counterparty_id;
+      if (k == null) continue;
+      if (!map.has(k)) map.set(k, []);
+      map.get(k).push(n);
     }
+    return map;
+  }, [news]);
 
-    const typeCounts = {};
-    for (const b of bidders) {
-      const t = b.type || 'Unknown';
-      typeCounts[t] = (typeCounts[t] || 0) + 1;
-    }
+  const marketNews = useMemo(() => news.filter((n) => n.counterparty_id == null), [news]);
 
-    const geoCounts = {};
-    for (const b of bidders) {
-      const g = b.geography || 'Unknown';
-      geoCounts[g] = (geoCounts[g] || 0) + 1;
-    }
+  const tagCounts = useMemo(() => {
+    const m = new Map();
+    for (const n of news) for (const t of (n.tags || [])) m.set(t, (m.get(t) || 0) + 1);
+    return [...m.entries()].sort((a, b) => b[1] - a[1]);
+  }, [news]);
 
-    const suggestUpgrade = bidders.filter(isSuggestUpgrade);
-    const firbRisk = bidders.filter(isFIRBRisk);
-    const veryActive = bidders.filter(isVeryActive);
-    const abandoned = bidders.filter(isAbandoned);
-    const tier1 = bidders.filter((b) => Number(b.tier) === 1);
+  const enriched = useMemo(() => {
+    return counterparties.map((c) => {
+      const its = newsByCp.get(c.id) || [];
+      const latest = its[0];
+      const allTags = [...new Set(its.flatMap((i) => i.tags || []))];
+      return { ...c, news_count: its.length, latest_news: latest, news_tags: allTags };
+    });
+  }, [counterparties, newsByCp]);
 
-    return {
-      total: bidders.length,
-      tierCounts,
-      untiered,
-      typeCounts,
-      geoCounts,
-      suggestUpgrade,
-      firbRisk,
-      veryActive,
-      abandoned,
-      tier1,
-    };
-  }, [bidders]);
+  const filtered = useMemo(() => {
+    return enriched.filter((c) => {
+      if (roleFilter === 'bidder' && !c.is_bidder) return false;
+      if (roleFilter === 'offtaker' && !c.is_offtaker) return false;
+      if (roleFilter === 'both' && !(c.is_bidder && c.is_offtaker)) return false;
+      if (withNewsOnly && c.news_count === 0) return false;
+      if (tagFilter && !(c.news_tags || []).includes(tagFilter)) return false;
+      if (search) {
+        const q = search.toLowerCase();
+        const hay = [c.name, c.parent_owner, c.latest_news?.headline, c.latest_news?.summary]
+          .map((s) => (s || '').toLowerCase()).join(' ');
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [enriched, roleFilter, withNewsOnly, tagFilter, search]);
 
-  const tableData = useMemo(() => {
-    if (!stats) return [];
-    const map = { tier1: stats.tier1, upgrade: stats.suggestUpgrade, firb: stats.firbRisk };
-    const list = map[activeTable] || [];
-    if (!search.trim()) return list;
-    const q = search.toLowerCase();
-    return list.filter((b) =>
-      [b.name, b.geography, b.type, b.csInsights, b.aiInsights, b.aiScoreReason]
-        .map((s) => (s || '').toLowerCase())
-        .join(' ')
-        .includes(q)
-    );
-  }, [stats, activeTable, search]);
+  const sorted = useMemo(() => {
+    const arr = [...filtered];
+    arr.sort((a, b) => {
+      const ad = a.latest_news?.published_at ? new Date(a.latest_news.published_at).getTime() : 0;
+      const bd = b.latest_news?.published_at ? new Date(b.latest_news.published_at).getTime() : 0;
+      if (ad !== bd) return bd - ad;
+      return (a.name || '').localeCompare(b.name || '');
+    });
+    return arr;
+  }, [filtered]);
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
+  function toggleExpand(id) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+
+  const stats = {
+    total: counterparties.length,
+    withNews: enriched.filter((c) => c.news_count > 0).length,
+    newsItems: news.filter((n) => n.counterparty_id != null).length,
+    marketItems: marketNews.length,
+  };
 
   return (
-    <div>
-      {/* Page header */}
-      <div className="flex items-start justify-between mb-5">
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900">Analytics Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
-            {stats ? `${stats.total} bidders tracked · ` : ''}Australian renewable energy M&amp;A · BESS &amp; storage specialist
-          </p>
-        </div>
+    <div className="min-h-screen bg-slate-50">
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <h1 className="text-xl font-bold text-gray-900">Counterparty Intelligence</h1>
+        <p className="text-xs text-gray-500 mt-0.5">
+          {stats.total} counterparties · {stats.withNews} with news in window · {stats.newsItems} counterparty items · {stats.marketItems} general market items
+        </p>
       </div>
 
-      {/* Main tab switcher */}
-      <Tabs
-        tabs={[
-          { id: 'overview', label: 'Overview' },
-          { id: 'bess', label: 'BESS Market' },
-          { id: 'capex', label: 'Investor Capex' },
-          { id: 'news', label: 'Market News', count: marketData.recentNews?.length },
-        ]}
-        activeTab={activeMainTab}
-        onChange={setActiveMainTab}
-      />
+      <div className="px-6 py-3 bg-white border-b border-gray-200 flex flex-wrap items-center gap-2">
+        <input
+          placeholder="Search counterparty or headline…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border border-gray-300 rounded px-3 py-1.5 text-sm w-72"
+        />
+        <select value={windowKey} onChange={(e) => setWindowKey(e.target.value)} className="border border-gray-300 rounded px-2 py-1 text-xs bg-white">
+          {WINDOWS.map((w) => <option key={w.key} value={w.key}>{w.label}</option>)}
+        </select>
+        <div className="flex gap-1 bg-slate-100 rounded p-0.5">
+          {ROLE_FILTERS.map((f) => (
+            <button
+              key={f.key}
+              onClick={() => setRoleFilter(f.key)}
+              className={cn('px-2.5 py-1 rounded text-xs font-medium transition-colors', roleFilter === f.key ? 'bg-white text-slate-900 shadow-sm' : 'text-gray-600 hover:text-slate-900')}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+        <label className="flex items-center gap-1.5 px-2 py-1 border border-gray-300 rounded text-xs cursor-pointer bg-white">
+          <input type="checkbox" checked={withNewsOnly} onChange={(e) => setWithNewsOnly(e.target.checked)} />
+          With news only
+        </label>
+        {(search || roleFilter !== 'all' || tagFilter || withNewsOnly || windowKey !== '30') && (
+          <button
+            onClick={() => { setSearch(''); setRoleFilter('all'); setTagFilter(''); setWithNewsOnly(false); setWindowKey('30'); }}
+            className="text-xs text-gray-500 hover:text-gray-800 underline"
+          >
+            Clear
+          </button>
+        )}
+        <span className="text-xs text-gray-500 ml-auto">{sorted.length} shown</span>
+      </div>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          TAB 1: OVERVIEW
-          ═══════════════════════════════════════════════════════════════════ */}
-      {activeMainTab === 'overview' && (
-        <>
-          {loading ? (
-            <div className="flex items-center justify-center h-40 text-sm text-gray-500">
-              Loading analytics…
-            </div>
-          ) : !stats ? (
-            <div className="flex items-center justify-center h-40 text-sm text-red-500">
-              Failed to load data.
-            </div>
-          ) : (
-            <>
-              {/* Top stat cards */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-2">
-                <StatCard label="Tier 1 Bidders" value={stats.tier1.length} color="blue" />
-                <StatCard label="Very Active" value={stats.veryActive.length} sub="high engagement signals" color="green" />
-                <StatCard label="Suggest Upgrade" value={stats.suggestUpgrade.length} sub="Tier 2+ with A/B AI score" color="amber" />
-                <StatCard label="FIRB Risk" value={stats.firbRisk.length} sub="foreign investment flag" color="red" />
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-2">
-                {[1, 2, 3, 4].map((t) => (
-                  <StatCard key={t} label={TIER_LABELS[t]} value={stats.tierCounts[t]} color="gray" />
-                ))}
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <StatCard label="Untiered" value={stats.untiered} color="gray" />
-                <StatCard label="Abandoned / Inactive" value={stats.abandoned.length} color="gray" />
-                <StatCard label="Geographies" value={Object.keys(stats.geoCounts).length} color="gray" />
-                <StatCard label="Bidder Types" value={Object.keys(stats.typeCounts).length} color="gray" />
-              </div>
-
-              {/* Breakdown charts */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
-                <div>
-                  <SectionHeader title="Type Breakdown" />
-                  {Object.entries(stats.typeCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([type, count]) => (
-                      <BarRow key={type} label={type} count={count} total={stats.total} />
-                    ))}
-                </div>
-                <div>
-                  <SectionHeader title="Geography Breakdown" />
-                  {Object.entries(stats.geoCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 15)
-                    .map(([geo, count]) => (
-                      <BarRow key={geo} label={geo} count={count} total={stats.total} />
-                    ))}
-                  {Object.keys(stats.geoCounts).length > 15 && (
-                    <p className="text-xs text-gray-400 mt-1">
-                      + {Object.keys(stats.geoCounts).length - 15} more geographies
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Filterable tables */}
-              <SectionHeader title="Detailed Views" />
-              <div className="flex gap-2 mb-3 flex-wrap">
-                {[
-                  { key: 'tier1', label: `Tier 1 (${stats.tier1.length})` },
-                  { key: 'upgrade', label: `Suggest Upgrade (${stats.suggestUpgrade.length})` },
-                  { key: 'firb', label: `FIRB Risk (${stats.firbRisk.length})` },
-                ].map(({ key, label }) => (
-                  <button
-                    key={key}
-                    onClick={() => { setActiveTable(key); setSearch(''); }}
-                    className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-                      activeTable === key
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search…"
-                  className="ml-auto px-3 py-1.5 border border-gray-300 rounded text-sm w-52 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                <div className="overflow-x-auto">
-                  {activeTable === 'tier1' && (
-                    <table className="w-full text-sm">
-                      <thead className="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                          {COLS_TIER1.map((c) => (
-                            <th key={c} className="px-3 py-2.5 text-left font-medium text-gray-600 text-xs">{c}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        {tableData.map((b, i) => (
-                          <tr key={b.no} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                            <td className="px-3 py-2 text-gray-500 w-8">{b.no}</td>
-                            <td className="px-3 py-2"><NameWithAUM name={b.name} /></td>
-                            <td className="px-3 py-2 text-gray-600">{b.geography}</td>
-                            <td className="px-3 py-2 text-gray-600">{b.type}</td>
-                            <td className="px-3 py-2">
-                              <span className={`inline-block px-1.5 py-0.5 rounded text-xs font-bold ${
-                                b.aiLabel === 'A' ? 'bg-green-100 text-green-700' :
-                                b.aiLabel === 'B' ? 'bg-blue-100 text-blue-700' :
-                                b.aiLabel === 'C' ? 'bg-amber-100 text-amber-700' :
-                                'bg-gray-100 text-gray-600'
-                              }`}>
-                                {b.aiLabel || '-'}
-                              </span>
-                            </td>
-                            <td className="px-3 py-2 text-gray-600">{b.aiScore || '-'}</td>
-                            <td className="px-3 py-2 text-gray-600 max-w-xs truncate" title={b.mergedInsights || b.aiInsights}>
-                              {b.mergedInsights || b.aiInsights || '-'}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
-
-                  {activeTable === 'upgrade' && (
-                    <table className="w-full text-sm">
-                      <thead className="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                          {COLS_UPGRADE.map((c) => (
-                            <th key={c} className="px-3 py-2.5 text-left font-medium text-gray-600 text-xs">{c}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        {tableData.map((b, i) => (
-                          <tr key={b.no} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                            <td className="px-3 py-2 text-gray-500 w-8">{b.no}</td>
-                            <td className="px-3 py-2"><NameWithAUM name={b.name} /></td>
-                            <td className="px-3 py-2 text-gray-600">{b.tier}</td>
-                            <td className="px-3 py-2">
-                              <span className={`inline-block px-1.5 py-0.5 rounded text-xs font-bold ${
-                                b.aiLabel === 'A' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                              }`}>
-                                {b.aiLabel}
-                              </span>
-                            </td>
-                            <td className="px-3 py-2 text-gray-600">{b.geography}</td>
-                            <td className="px-3 py-2 text-gray-600 max-w-xs truncate" title={b.aiScoreReason}>
-                              {b.aiScoreReason || '-'}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
-
-                  {activeTable === 'firb' && (
-                    <table className="w-full text-sm">
-                      <thead className="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                          {COLS_FIRB.map((c) => (
-                            <th key={c} className="px-3 py-2.5 text-left font-medium text-gray-600 text-xs">{c}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        {tableData.map((b, i) => (
-                          <tr key={b.no} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                            <td className="px-3 py-2 text-gray-500 w-8">{b.no}</td>
-                            <td className="px-3 py-2"><NameWithAUM name={b.name} /></td>
-                            <td className="px-3 py-2 text-gray-600">{b.geography}</td>
-                            <td className="px-3 py-2 text-gray-600">{b.tier}</td>
-                            <td className="px-3 py-2 text-gray-600">{b.type}</td>
-                            <td className="px-3 py-2 text-gray-600 max-w-xs truncate" title={b.aiInsights}>
-                              {b.aiInsights || '-'}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
-
-                  {tableData.length === 0 && (
-                    <div className="py-8 text-center text-sm text-gray-500">No results found.</div>
-                  )}
-                </div>
-                <div className="px-3 py-2 bg-gray-50 border-t border-gray-200 text-xs text-gray-500">
-                  Showing {tableData.length} record{tableData.length !== 1 ? 's' : ''}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Australia Market Context Panel */}
-          <SectionHeader title="Australia Market Context" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Market Overview</h3>
-              <dl className="space-y-2">
-                {[
-                  ['Renewable Share', marketData.marketOverview.currentRenewableShare],
-                  ['2030 Target', marketData.marketOverview.target2030],
-                  ['FY2024-25 New Capacity', marketData.marketOverview.installedCapacityFY2425],
-                  ['Grid Pipeline', marketData.marketOverview.gridConnectionPipeline],
-                  ['Rooftop Solar', marketData.marketOverview.rooftopSolar],
-                ].map(([k, v]) => (
-                  <div key={k} className="flex gap-2">
-                    <dt className="text-xs font-medium text-gray-500 w-36 shrink-0">{k}</dt>
-                    <dd className="text-xs text-gray-700">{v}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Capacity Investment Scheme (CIS)</h3>
-              <dl className="space-y-2">
-                {[
-                  ['Target', marketData.keyPolicy.capacityInvestmentScheme.target],
-                  ['Mechanism', marketData.keyPolicy.capacityInvestmentScheme.mechanism],
-                  ['Investment', marketData.keyPolicy.capacityInvestmentScheme.expectedInvestment],
-                  ['Cumulative Awarded', marketData.keyPolicy.capacityInvestmentScheme.tenderProgress.cumulativeAwarded],
-                  ['Tender 3 (Sep 2025)', marketData.keyPolicy.capacityInvestmentScheme.tenderProgress.tender3],
-                  ['Tender 7 (pending)', marketData.keyPolicy.capacityInvestmentScheme.tenderProgress.tender7],
-                  ['Key Risk', marketData.keyPolicy.capacityInvestmentScheme.keyRisk],
-                ].map(([k, v]) => (
-                  <div key={k} className="flex gap-2">
-                    <dt className="text-xs font-medium text-gray-500 w-36 shrink-0">{k}</dt>
-                    <dd className="text-xs text-gray-700">{v}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">FIRB Risk Landscape</h3>
-              <dl className="space-y-2">
-                {[
-                  ['Threshold (Gov)', marketData.keyPolicy.firb.threshold],
-                  ['Threshold (Private)', marketData.keyPolicy.firb.privateThreshold],
-                  ['Key Risk', marketData.keyPolicy.firb.keyRisk],
-                  ['Trend', marketData.keyPolicy.firb.recentTrend],
-                  ['Sembcorp Note', marketData.keyPolicy.firb.sembcorpNote],
-                ].map(([k, v]) => (
-                  <div key={k} className="flex gap-2">
-                    <dt className="text-xs font-medium text-gray-500 w-36 shrink-0">{k}</dt>
-                    <dd className="text-xs text-gray-700">{v}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">ACCC Merger Regime (new Jan 2026)</h3>
-              <p className="text-xs text-gray-700 mb-3">{marketData.keyPolicy.accccMergerRegime.description}</p>
-              <p className="text-xs text-gray-700">{marketData.keyPolicy.accccMergerRegime.impact}</p>
-              <h3 className="text-sm font-semibold text-gray-700 mt-4 mb-3">2030 Targets</h3>
-              <dl className="space-y-2">
-                {[
-                  ['Federal', marketData.australiaRenewableTargets.federal2030],
-                  ['CIS Programme', marketData.australiaRenewableTargets.cisProgramme],
-                  ['New Capacity', marketData.australiaRenewableTargets.totalNewCapacityNeeded],
-                  ['Annual Rate', marketData.australiaRenewableTargets.annualInvestmentNeeded],
-                  ['AEMO 2050', marketData.australiaRenewableTargets.aemo2050Target],
-                ].map(([k, v]) => (
-                  <div key={k} className="flex gap-2">
-                    <dt className="text-xs font-medium text-gray-500 w-36 shrink-0">{k}</dt>
-                    <dd className="text-xs text-gray-700">{v}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </div>
-
-          {/* BESS Market — CS Capital Focus */}
-          <SectionHeader title="BESS Market — CS Capital Core Focus" />
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
-            <StatCard label="AU BESS Pipeline" value="13 GW / 34.7 GWh" sub="committed or under construction (Q4 2025)" color="blue" />
-            <StatCard label="2025 Record Deployment" value="1.9 GW / 4.9 GWh" sub="surpassed entire 2017–24 combined" color="green" />
-            <StatCard label="Capex Cost Decline" value="−11–16%" sub="2024–25 reduction (CSIRO GenCost)" color="amber" />
-            <StatCard label="2027 Forecast" value="16.8 GW" sub="grid-scale BESS forecast operational in NEM" color="gray" />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Key BESS Projects</h3>
-              <div className="space-y-1.5">
-                {(marketData.bessMarket?.keyProjects || []).slice(0, 7).map((p, i) => (
-                  <div key={i} className="flex gap-2 items-start border-b border-gray-50 pb-1.5">
-                    <div className="flex-1 min-w-0">
-                      <span className="text-xs font-semibold text-gray-800">{p.name}</span>
-                      <span className="text-xs text-gray-400 ml-1">({p.state})</span>
-                      <div className="text-xs text-gray-500 truncate">{p.developer}</div>
-                    </div>
-                    <span className="text-xs text-blue-700 font-medium whitespace-nowrap shrink-0 mt-0.5">{p.capacity}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Installed Cost Benchmarks (A$/kWh)</h3>
-              <div className="space-y-1.5">
-                {Object.entries(marketData.bessMarket?.capexBenchmarks || {}).map(([yr, val]) => (
-                  <div key={yr} className="flex gap-2 border-b border-gray-50 pb-1.5">
-                    <dt className="text-xs font-medium text-gray-500 w-44 shrink-0">{yr}</dt>
-                    <dd className="text-xs text-gray-700">{val}</dd>
-                  </div>
-                ))}
-              </div>
-              {marketData.bessMarket?.csCapitalContext && (
-                <p className="text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded p-2 mt-3 leading-relaxed">
-                  <span className="font-semibold">CS Capital context: </span>
-                  {marketData.bessMarket.csCapitalContext}
-                </p>
+      {tagCounts.length > 0 && (
+        <div className="px-6 py-2 bg-slate-50 border-b border-gray-200 flex flex-wrap items-center gap-1.5">
+          <span className="text-[10px] uppercase tracking-wide text-gray-500 font-medium mr-1">Tags:</span>
+          {tagCounts.slice(0, 20).map(([t, n]) => (
+            <button
+              key={t}
+              onClick={() => setTagFilter(tagFilter === t ? '' : t)}
+              className={cn(
+                'px-2 py-0.5 text-[11px] rounded border font-medium transition-colors',
+                tagFilter === t
+                  ? 'bg-amber-500 text-white border-amber-500'
+                  : 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100',
               )}
-            </div>
-          </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">BESS Pipeline by State</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {Object.entries(marketData.bessMarket?.pipelineByState || {}).map(([state, desc]) => (
-                <div key={state} className="bg-gray-50 rounded p-2.5">
-                  <div className="text-xs font-semibold text-gray-800 mb-1">{state}</div>
-                  <div className="text-xs text-gray-600 leading-relaxed">{desc}</div>
+            >
+              {t} <span className="opacity-60">({n})</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px]">
+        <div className="overflow-x-auto bg-white">
+          <table className="min-w-full table-fixed">
+            <colgroup>
+              <col style={{ width: '24%' }} />
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '10%' }} />
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '28%' }} />
+              <col style={{ width: '15%' }} />
+            </colgroup>
+            <thead className="bg-slate-50 border-b border-gray-200 text-[11px] uppercase tracking-wide text-gray-500">
+              <tr>
+                <th className="px-4 py-2 text-left font-medium">Counterparty</th>
+                <th className="px-4 py-2 text-left font-medium">Role</th>
+                <th className="px-4 py-2 text-left font-medium">Status</th>
+                <th className="px-4 py-2 text-left font-medium">Projects</th>
+                <th className="px-4 py-2 text-center font-medium">News</th>
+                <th className="px-4 py-2 text-left font-medium">Latest headline</th>
+                <th className="px-4 py-2 text-left font-medium">Tags</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr><td colSpan={7} className="px-6 py-12 text-center text-sm text-gray-500">Loading…</td></tr>
+              ) : sorted.length === 0 ? (
+                <tr><td colSpan={7} className="px-6 py-12 text-center text-sm text-gray-500">No counterparties match these filters.</td></tr>
+              ) : (
+                sorted.map((c) => {
+                  const isOpen = expanded.has(c.id);
+                  return (
+                    <Fragment key={c.id}>
+                      <tr
+                        onClick={() => toggleExpand(c.id)}
+                        className={cn('border-b border-gray-100 cursor-pointer hover:bg-blue-50/40', c.news_count > 0 && 'bg-amber-50/40')}
+                      >
+                        <td className="px-4 py-2.5">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-400 text-xs">{isOpen ? '▾' : '▸'}</span>
+                            <div>
+                              <div className="text-sm font-medium text-gray-900">{c.name}</div>
+                              {c.parent_owner && <div className="text-[11px] text-gray-500">{c.parent_owner}</div>}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-2.5"><RoleBadge row={c} /></td>
+                        <td className="px-4 py-2.5 text-xs text-gray-700">{c.status || <span className="text-gray-300">—</span>}</td>
+                        <td className="px-4 py-2.5 text-xs text-gray-700">
+                          {(c.project_names || []).length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {c.project_names.map((n) => (
+                                <span key={n} className="inline-block px-1.5 py-0.5 bg-indigo-100 text-indigo-800 rounded text-[10px] font-medium">{n}</span>
+                              ))}
+                            </div>
+                          ) : <span className="text-gray-300">—</span>}
+                        </td>
+                        <td className="px-4 py-2.5 text-center">
+                          {c.news_count > 0 ? (
+                            <span className="inline-block px-2 py-0.5 bg-amber-500 text-white rounded text-[10px] font-bold">{c.news_count}</span>
+                          ) : <span className="text-gray-300 text-xs">—</span>}
+                        </td>
+                        <td className="px-4 py-2.5 text-xs text-gray-700">
+                          {c.latest_news ? (
+                            <div>
+                              <div className="font-medium text-gray-900 truncate" title={c.latest_news.headline}>{c.latest_news.headline}</div>
+                              <div className="text-[10px] text-gray-500 mt-0.5">{fmtDateShort(c.latest_news.published_at)}{c.latest_news.source ? ` · ${c.latest_news.source}` : ''}</div>
+                            </div>
+                          ) : <span className="text-gray-300">—</span>}
+                        </td>
+                        <td className="px-4 py-2.5">
+                          <TagChips tags={c.news_tags} onClickTag={(t) => setTagFilter(tagFilter === t ? '' : t)} activeTag={tagFilter} />
+                        </td>
+                      </tr>
+                      {isOpen && (
+                        <tr>
+                          <td colSpan={7} className="bg-slate-50 border-b border-gray-200 px-6 py-4">
+                            <NewsPanel counterpartyId={c.id} onChange={load} />
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <aside className="bg-slate-50 border-l border-gray-200 px-4 py-4 lg:max-h-[calc(100vh-180px)] lg:overflow-y-auto">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3">
+            General market news <span className="text-gray-400 normal-case font-normal">({marketNews.length})</span>
+          </h3>
+          {marketNews.length === 0 ? (
+            <p className="text-xs text-gray-400 italic">No untagged market items in window.</p>
+          ) : (
+            <div className="space-y-2">
+              {marketNews.map((n) => (
+                <div key={n.id} className="bg-white border border-gray-200 rounded p-3">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-[11px] font-semibold text-gray-700">{fmtDateShort(n.published_at)}</span>
+                    {n.source && <span className="text-[10px] text-gray-500">· {n.source}</span>}
+                  </div>
+                  <p className="text-xs font-medium text-gray-900 mt-1">{n.headline}</p>
+                  {n.summary && <p className="text-[11px] text-gray-600 mt-1 leading-relaxed">{n.summary}</p>}
+                  {n.url && <a href={n.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-600 hover:underline mt-1 inline-block">Source ↗</a>}
+                  {n.tags && n.tags.length > 0 && <div className="mt-1.5"><TagChips tags={n.tags} /></div>}
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Recent Transactions */}
-          <SectionHeader title="Recent Major Transactions" />
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-4">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    {['Date', 'Deal', 'Value', 'Status / Significance'].map((h) => (
-                      <th key={h} className="px-3 py-2.5 text-left font-medium text-gray-600 text-xs">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {marketData.majorTransactions2024_2026.map((tx, i) => (
-                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-3 py-2 text-xs text-gray-500 w-28 shrink-0">{tx.date}</td>
-                      <td className="px-3 py-2 font-medium text-gray-900 text-xs">{tx.deal}</td>
-                      <td className="px-3 py-2 text-xs text-gray-700 whitespace-nowrap">{tx.value}</td>
-                      <td className="px-3 py-2 text-xs text-gray-600 max-w-sm">{tx.significance}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Key Transmission Projects */}
-          <SectionHeader title="Key Transmission & Infrastructure" />
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    {['Project', 'Capex', 'Description', 'Status'].map((h) => (
-                      <th key={h} className="px-3 py-2.5 text-left font-medium text-gray-600 text-xs">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {marketData.keyTransmission.map((tx, i) => (
-                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-3 py-2 font-medium text-gray-900 text-xs">{tx.project}</td>
-                      <td className="px-3 py-2 text-xs text-gray-700 whitespace-nowrap">{tx.capex}</td>
-                      <td className="px-3 py-2 text-xs text-gray-600 max-w-xs">{tx.description}</td>
-                      <td className="px-3 py-2 text-xs text-gray-600 max-w-xs">{tx.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* ═══════════════════════════════════════════════════════════════════════
-          TAB 2: BESS MARKET
-          ═══════════════════════════════════════════════════════════════════ */}
-      {activeMainTab === 'bess' && (
-        <div>
-          {/* BESS sub-header */}
-          <div className="flex flex-wrap items-center gap-3 mb-5">
-            <div>
-              <h2 className="text-base font-bold text-gray-900">BESS Market Intelligence</h2>
-              <p className="text-xs text-gray-500 mt-0.5">
-                Australian battery storage market — projects, investors, cost trends &amp; CS Capital positioning
-              </p>
-            </div>
-            <span className="ml-auto text-xs text-gray-400">Updated March 2026</span>
-          </div>
-
-          {/* BESS key stat cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-            <StatCard label="Global Rank" value="3rd" sub="largest utility BESS market (surpassed UK, Oct 2025)" color="blue" />
-            <StatCard label="2025 Deployment" value="4.9 GWh" sub="more than 2017–2024 combined" color="green" />
-            <StatCard label="AU Pipeline" value="13 GW / 34.7 GWh" sub="75 projects committed or under construction" color="teal" />
-            <StatCard label="AEMO 2050 Target" value="40 GW" sub="battery storage required in NEM" color="purple" />
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-            <StatCard label="Q1 2025 Investment" value="A$2.4B" sub="83% above recent yearly average" color="amber" />
-            <StatCard label="CIS BESS Awarded" value="5.78 GW / 21.57 GWh" sub="dispatchable tenders to date" color="gray" />
-            <StatCard label="CIS FID Rate" value="~28%" sub="zombie project risk for undercapitalised bids" color="red" />
-            <StatCard label="2024 Clean Energy Investment" value="A$12.7B" sub="highest year on record (CEC 2025 Report)" color="gray" />
-          </div>
-
-          {/* Key BESS Projects table */}
-          <SectionHeader title="Key BESS Projects" />
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    {['Project', 'Capacity', 'Owner / Developer', 'Status', 'Capex', 'Notes'].map((h) => (
-                      <th key={h} className="px-3 py-2.5 text-left font-medium text-gray-600 text-xs">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {bessData.keyProjects.map((p, i) => (
-                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-3 py-2 text-xs font-semibold text-gray-900 w-40">
-                        {p.name}
-                        <div className="text-[10px] text-gray-400 font-normal">{p.location?.split(',').pop()?.trim()}</div>
-                      </td>
-                      <td className="px-3 py-2 text-xs text-blue-700 font-medium whitespace-nowrap w-44">{p.capacity}</td>
-                      <td className="px-3 py-2 text-xs text-gray-700 w-52">{p.owner}</td>
-                      <td className="px-3 py-2 text-xs w-36">
-                        <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                          p.status?.toLowerCase().includes('operational') || p.status?.toLowerCase().includes('commissioned')
-                            ? 'bg-green-100 text-green-700'
-                            : p.status?.toLowerCase().includes('under construction') || p.status?.toLowerCase().includes('stage 1')
-                            ? 'bg-blue-100 text-blue-700'
-                            : p.status?.toLowerCase().includes('development') || p.status?.toLowerCase().includes('planning')
-                            ? 'bg-amber-100 text-amber-700'
-                            : 'bg-gray-100 text-gray-600'
-                        }`}>
-                          {p.status?.split('—')[0]?.split('(')[0]?.split(',')[0]?.trim() || 'TBC'}
-                        </span>
-                      </td>
-                      <td className="px-3 py-2 text-xs text-gray-700 whitespace-nowrap">{p.capex || '—'}</td>
-                      <td className="px-3 py-2 text-xs text-gray-500 max-w-xs">{p.notes || '—'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Cost curve + Investors (two-column) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            {/* BESS Capex Cost Curve */}
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-1">BESS Capex Cost Trend (A$/MWh installed)</h3>
-              <p className="text-xs text-gray-400 mb-4">2-hour grid-scale BESS, all-in installed cost</p>
-              <CostBar label="2022" value={2100} maxVal={2400} color="bg-red-400" />
-              <CostBar label="2023" value={1600} maxVal={2400} color="bg-orange-400" />
-              <CostBar label="2024" value={900}  maxVal={2400} color="bg-amber-400" />
-              <CostBar label="2025 (est.)" value={750} maxVal={2400} color="bg-green-500" />
-              <CostBar label="2026 (fcst)" value={650} maxVal={2400} color="bg-teal-500" />
-              <div className="mt-4 space-y-1.5 border-t border-gray-100 pt-3">
-                {Object.entries(bessData.capeXBenchmarks).map(([k, v]) => (
-                  <div key={k} className="flex gap-2">
-                    <dt className="text-[10px] font-medium text-gray-500 w-36 shrink-0">{k.replace(/_/g, ' ')}</dt>
-                    <dd className="text-[10px] text-gray-600 leading-tight">{v}</dd>
-                  </div>
-                ))}
-              </div>
-              <p className="text-[10px] text-gray-400 mt-3 italic">
-                Sources: CSIRO GenCost 2025-26, BloombergNEF, CS Capital research
-              </p>
-            </div>
-
-            {/* Key BESS Investors */}
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Key BESS Investors & Developers</h3>
-              <div className="space-y-2.5">
-                {bessData.keyInvestors.map((inv, i) => (
-                  <div key={i} className="border-b border-gray-50 pb-2.5 last:border-0 last:pb-0">
-                    <div className="flex items-start justify-between gap-2 mb-0.5">
-                      <span className="text-xs font-semibold text-gray-800">{inv.name}</span>
-                      {inv.aum && inv.aum !== 'Private' && (
-                        <span className="text-[10px] text-gray-400 shrink-0">{inv.aum}</span>
-                      )}
-                    </div>
-                    <p className="text-[10px] text-gray-600 leading-tight">{inv.notes}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* M&A Trends */}
-          <SectionHeader title="BESS M&A Trends" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
-            {Object.entries(bessData.m_and_a_trends).map(([key, val]) => {
-              const labels = {
-                dealVolume: 'Deal Volume',
-                hybridDominance: 'Hybrid Solar+BESS',
-                durationShift: 'Duration Shift',
-                zombieRisk: 'CIS Zombie Risk',
-                coalSiteOpportunity: 'Coal Site Opportunity',
-                globalCapital: 'Global Capital Inflows',
-                cisAudit: 'CIS Advisory Opportunity',
-              };
-              const colors = {
-                zombieRisk: 'border-red-200 bg-red-50',
-                coalSiteOpportunity: 'border-amber-200 bg-amber-50',
-                cisAudit: 'border-blue-200 bg-blue-50',
-              };
-              return (
-                <div
-                  key={key}
-                  className={`border rounded-lg p-3 ${colors[key] || 'border-gray-200 bg-white'}`}
-                >
-                  <div className="text-xs font-semibold text-gray-700 mb-1">
-                    {labels[key] || key}
-                  </div>
-                  <p className="text-xs text-gray-600 leading-relaxed">{val}</p>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* CS Capital Positioning */}
-          <SectionHeader title="CS Capital Positioning" />
-          <div className="bg-gradient-to-br from-blue-50 to-teal-50 border border-blue-200 rounded-lg p-5 mb-4">
-            <div className="flex flex-wrap gap-3 mb-4">
-              <div>
-                <h3 className="text-sm font-bold text-blue-900">{bessData.csCapitalContext.firm}</h3>
-                <p className="text-xs text-blue-700 mt-0.5">{bessData.csCapitalContext.description}</p>
-              </div>
-              <div className="flex gap-2 ml-auto flex-wrap">
-                <span className="text-xs font-medium bg-blue-600 text-white px-2.5 py-1 rounded-full">
-                  {bessData.csCapitalContext.trackRecord.split('.')[0]}
-                </span>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <div className="text-xs font-semibold text-gray-700 mb-2">Specialisation & Model</div>
-                <dl className="space-y-1.5">
-                  {[
-                    ['Specialisation', bessData.csCapitalContext.specialisation],
-                    ['Model', bessData.csCapitalContext.model],
-                    ['Experience', bessData.csCapitalContext.experience],
-                  ].map(([k, v]) => (
-                    <div key={k} className="flex gap-2">
-                      <dt className="text-[10px] font-medium text-gray-500 w-24 shrink-0">{k}</dt>
-                      <dd className="text-[10px] text-gray-700">{v}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-              <div>
-                <div className="text-xs font-semibold text-gray-700 mb-2">Key Deal Themes 2025–2027</div>
-                <ul className="space-y-1.5">
-                  {bessData.csCapitalContext.keyThemes.map((theme, i) => (
-                    <li key={i} className="flex gap-2 text-[10px] text-gray-700">
-                      <span className="text-blue-500 font-bold mt-0.5 shrink-0">›</span>
-                      {theme}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <p className="text-xs text-blue-800 bg-white/60 border border-blue-100 rounded p-3 leading-relaxed">
-              <span className="font-semibold">Market position: </span>
-              {bessData.csCapitalContext.marketPosition}
-            </p>
-          </div>
-
-          {/* BESS State Pipeline */}
-          <SectionHeader title="BESS Pipeline by State" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
-            {Object.entries(bessData.stateBreakdown).map(([state, desc]) => {
-              const stateColors = {
-                southAustralia: 'border-green-200 bg-green-50',
-                victoria: 'border-blue-200 bg-blue-50',
-                nsw: 'border-purple-200 bg-purple-50',
-                queensland: 'border-amber-200 bg-amber-50',
-                westernAustralia: 'border-teal-200 bg-teal-50',
-              };
-              const stateLabels = {
-                southAustralia: 'South Australia',
-                victoria: 'Victoria',
-                nsw: 'New South Wales',
-                queensland: 'Queensland',
-                westernAustralia: 'Western Australia',
-              };
-              return (
-                <div key={state} className={`border rounded-lg p-3 ${stateColors[state] || 'border-gray-200 bg-white'}`}>
-                  <div className="text-xs font-semibold text-gray-800 mb-1">{stateLabels[state] || state}</div>
-                  <p className="text-[10px] text-gray-600 leading-relaxed">{desc}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ═══════════════════════════════════════════════════════════════════════
-          TAB 3: INVESTOR CAPEX
-          ═══════════════════════════════════════════════════════════════════ */}
-      {activeMainTab === 'capex' && (
-        <div>
-          <div className="flex flex-wrap items-center gap-3 mb-5">
-            <div>
-              <h2 className="text-base font-bold text-gray-900">Investor AUM & Australia Capex</h2>
-              <p className="text-xs text-gray-500 mt-0.5">
-                AUM and renewable energy capital expenditure for key investors active in Australia
-              </p>
-            </div>
-            <span className="ml-auto text-xs text-gray-400">Updated March 2026</span>
-          </div>
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-4">
-            <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
-              <p className="text-xs text-gray-500">{capexData._notes}</p>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    {['Investor', 'AUM', 'AU Capex 2024-25', 'Notes'].map((h) => (
-                      <th key={h} className="px-3 py-2.5 text-left font-medium text-gray-600 text-xs">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {Object.entries(capexData)
-                    .filter(([k]) => k !== '_notes' && k !== 'Global summary')
-                    .map(([name, data], i) => (
-                      <tr key={name} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                        <td className="px-3 py-2 font-medium text-gray-900 text-xs w-44">{name}</td>
-                        <td className="px-3 py-2 text-xs text-gray-700 w-40">
-                          {data.aum || data.revenue || data.installedCapacity || data.marketCap || '-'}
-                        </td>
-                        <td className="px-3 py-2 text-xs text-gray-700 w-44">{data.australiaCapex2024 || '-'}</td>
-                        <td className="px-3 py-2 text-xs text-gray-600 max-w-sm">{data.notes || '-'}</td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="px-3 py-2 bg-blue-50 border-t border-gray-200">
-              <div className="flex flex-wrap gap-4 text-xs text-gray-700">
-                <span><span className="font-medium">Total Foreign Capex:</span> {capexData['Global summary'].totalForeignCapexAustralia2024_2025}</span>
-                <span><span className="font-medium">Dominant Types:</span> {capexData['Global summary'].dominantInvestorTypes}</span>
-                <span><span className="font-medium">Notable Absent:</span> {capexData['Global summary'].notableAbsent}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ═══════════════════════════════════════════════════════════════════════
-          TAB 4: MARKET NEWS
-          ═══════════════════════════════════════════════════════════════════ */}
-      {activeMainTab === 'news' && (
-        <div>
-          <div className="flex flex-wrap items-center gap-3 mb-5">
-            <div>
-              <h2 className="text-base font-bold text-gray-900">Market News & Intelligence</h2>
-              <p className="text-xs text-gray-500 mt-0.5">
-                Recent developments in Australian renewable energy and BESS markets
-              </p>
-            </div>
-            <span className="ml-auto text-xs text-gray-400">Updated March 2026</span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-            {marketData.recentNews.map((item, i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-lg p-3">
-                <div className="flex items-start justify-between gap-2 mb-1">
-                  <span className="text-xs font-semibold text-gray-900">{item.headline}</span>
-                  <span className="text-xs text-gray-400 shrink-0">{item.date}</span>
-                </div>
-                {item.source && (
-                  <span className="inline-block text-xs text-blue-600 mb-1">— {item.source}</span>
-                )}
-                <p className="text-xs text-gray-600">{item.detail}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+          )}
+        </aside>
+      </div>
     </div>
   );
 }

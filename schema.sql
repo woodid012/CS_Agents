@@ -130,6 +130,26 @@ CREATE TABLE IF NOT EXISTS counterparty_projects (
 
 CREATE INDEX IF NOT EXISTS counterparty_projects_project_idx ON counterparty_projects (project_id);
 
+-- Recent news / market intelligence linked to a counterparty (or general
+-- market news when counterparty_id is NULL). Populated by an external
+-- Claude routine that does periodic key-term searches; the analytics page
+-- reads from this table to flag which counterparties have new activity.
+CREATE TABLE IF NOT EXISTS counterparty_news (
+  id              SERIAL PRIMARY KEY,
+  counterparty_id INTEGER REFERENCES counterparties(id) ON DELETE CASCADE,
+  headline        TEXT NOT NULL,
+  summary         TEXT,
+  url             TEXT,
+  source          TEXT,
+  published_at    DATE,
+  tags            TEXT[] DEFAULT '{}',
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS counterparty_news_cp_idx ON counterparty_news (counterparty_id, published_at DESC);
+CREATE INDEX IF NOT EXISTS counterparty_news_published_idx ON counterparty_news (published_at DESC);
+
 -- Market Data: Capex / Opex benchmarks
 CREATE TABLE IF NOT EXISTS capex_opex (
   id              SERIAL PRIMARY KEY,
