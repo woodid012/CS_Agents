@@ -52,9 +52,8 @@ function nonEmpty(...vals) {
 
 function joinNotes(parts) {
   return parts
-    .filter((p) => p && String(p).trim() !== '')
-    .map(([label, val]) => (label ? `${label}: ${val}` : String(val)))
-    .filter((s) => s && s.trim() !== '')
+    .filter(([, val]) => val != null && String(val).trim() !== '')
+    .map(([label, val]) => (label ? `${label}: ${String(val).trim()}` : String(val).trim()))
     .join('\n');
 }
 
