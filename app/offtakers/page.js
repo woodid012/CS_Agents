@@ -53,13 +53,10 @@ export default function OfftakersPage() {
   const [activeFilter, setActiveFilter] = useState(null); // 'engaged' | 'pending' | null
 
   useEffect(() => {
-    Promise.all([
-      fetch('/api/offtakers').then((r) => r.json()),
-      fetch('/api/offtaker-insight-status').then((r) => r.json()),
-    ])
-      .then(([data, statuses]) => {
+    fetch('/api/offtakers')
+      .then((r) => r.json())
+      .then((data) => {
         setOfftakers(data);
-        setInsightStatus(statuses);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -67,11 +64,6 @@ export default function OfftakersPage() {
 
   const updateInsightStatus = useCallback((bidderNo, status) => {
     setInsightStatus((prev) => ({ ...prev, [bidderNo]: status }));
-    fetch('/api/offtaker-insight-status', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bidderNo, status }),
-    });
   }, []);
 
   const handleAccept = useCallback(

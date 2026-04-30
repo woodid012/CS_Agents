@@ -6,20 +6,14 @@ import { useState, useRef, useEffect } from 'react';
 
 const NAV_PILLARS = [
   {
-    label: 'Investors',
+    label: 'Counterparties',
     links: [
-      { href: '/', label: 'Bidder List' },
+      { href: '/counterparties', label: 'All Counterparties' },
+      { href: '/', label: 'Bidder List (legacy)' },
+      { href: '/offtakers', label: 'Offtaker List (legacy)' },
       { href: '/analytics', label: 'Analytics' },
       { href: '/insights/submit', label: 'Submit Insight' },
       { href: '/insights', label: 'Recent Insights' },
-    ],
-  },
-  {
-    label: 'Offtakers',
-    links: [
-      { href: '/offtakers', label: 'Offtaker List' },
-      { href: '/offtaker-insights/submit', label: 'Submit Insight' },
-      { href: '/offtaker-insights', label: 'Recent Insights' },
     ],
   },
   {
@@ -98,7 +92,6 @@ function Dropdown({ label, links, pathname }) {
 const TOP_LINKS = [
   { href: '/news', label: 'News' },
   { href: '/ideas', label: 'Ideas' },
-  { href: '/ai-agents', label: 'AI Agents' },
 ];
 
 export default function NavBar() {

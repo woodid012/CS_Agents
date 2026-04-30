@@ -27,7 +27,6 @@ The platform tracks bidder engagement, offtaker relationships, AI-generated insi
 
 ### Other
 - **Development Tracker** (`/development-tracker`) — project pipeline tracking
-- **AI Agents** (`/ai-agents`) — AI insight generation and processing
 
 ## Tech Stack
 
@@ -37,8 +36,7 @@ The platform tracks bidder engagement, offtaker relationships, AI-generated insi
 | Styling | Tailwind CSS |
 | Database | Neon PostgreSQL (serverless) |
 | Data | Excel (.xlsx) via `xlsx` library + PostgreSQL |
-| AI | Claude API (via AI Agents page) |
-| Deployment | Azure App Service / Azure Static Web Apps |
+| Deployment | Google Cloud (Cloud Run) |
 
 ## Project Structure
 
@@ -49,12 +47,10 @@ cs-capital-crm/
 │   ├── api/
 │   │   ├── bidders/        # Bidder data API (Excel + DB merge)
 │   │   ├── offtakers/      # Offtaker data API
-│   │   ├── insight-status/ # AI insight processing status
 │   │   └── market-data/    # Price curves and capex data APIs
 │   ├── market-data/        # Market data pages
 │   ├── offtakers/          # Offtaker engagement page
 │   ├── development-tracker/# Project pipeline tracker
-│   ├── ai-agents/          # AI insight generation
 │   ├── layout.js           # Root layout with NavBar
 │   └── page.js             # Master Bidder List (home)
 ├── components/
@@ -76,8 +72,7 @@ cs-capital-crm/
 │   └── parseOfftakerExcel.js# Excel parser for Offtaker List
 ├── scripts/
 │   ├── audit-data.js        # Data quality checker (run: node scripts/audit-data.js)
-│   ├── migrate-to-neon.js   # One-time DB migration script
-│   └── process-insights.js  # AI insight processing script
+│   └── migrate-to-neon.js   # One-time DB migration script
 └── Master Bidder Engagement List - CSC.xlsx  # Source data (not committed)
 ```
 
@@ -94,7 +89,6 @@ Create a `.env.local` file:
 
 ```env
 DATABASE_URL=postgresql://...@...neon.tech/neondb?sslmode=require
-ANTHROPIC_API_KEY=sk-ant-...   # Required for AI Agents feature
 ```
 
 ### Install and Run
@@ -124,14 +118,6 @@ node scripts/audit-data.js --json    # JSON output (CI-friendly)
 ```
 
 Checks: required field coverage, tier/type/geography distribution, duplicate names, sequence gaps, AI insight coverage, contact coverage, market data file integrity.
-
-### AI Insight Processing
-
-```bash
-node scripts/process-insights.js
-```
-
-Generates AI insights for bidders via Claude API and stores in Neon DB.
 
 ### Database Migration
 
@@ -182,6 +168,4 @@ The Analytics page surfaces:
 
 ## Deployment
 
-The app is deployed via GitHub Actions to Azure App Service. See `.github/workflows/` for CI/CD configuration.
-
-Environment variable `DATABASE_URL` must be set in the Azure App Service configuration before deployment.
+Target deployment: Google Cloud Run. `DATABASE_URL` must be set as a runtime environment variable / secret.

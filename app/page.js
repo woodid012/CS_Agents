@@ -28,23 +28,17 @@ export default function Home() {
   const [insightStatus, setInsightStatus] = useState({});
 
   useEffect(() => {
-    Promise.all([
-      fetch('/api/bidders').then((r) => r.json()),
-      fetch('/api/insight-status').then((r) => r.json()),
-    ]).then(([data, statuses]) => {
-      setBidders(data);
-      setInsightStatus(statuses);
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    fetch('/api/bidders')
+      .then((r) => r.json())
+      .then((data) => {
+        setBidders(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const updateInsightStatus = useCallback((bidderNo, status) => {
     setInsightStatus((prev) => ({ ...prev, [bidderNo]: status }));
-    fetch('/api/insight-status', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bidderNo, status }),
-    });
   }, []);
 
   const handleAccept = useCallback((bidderNo) => updateInsightStatus(bidderNo, 'accepted'), [updateInsightStatus]);

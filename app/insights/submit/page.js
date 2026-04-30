@@ -121,48 +121,12 @@ export default function SubmitInsightPage() {
   async function handleGenerateDraft() {
     if (!rawNotes.trim()) { setStep1Error('Please enter your raw notes.'); return; }
     setStep1Error('');
-    setGenerating(true);
-    setGenerateError('');
-    try {
-      const res = await fetch('/api/insights/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bidderName: selectedBidderObj?.name || '',
-          updateType,
-          rawNotes,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Generation failed');
-      setDraft(data.draft || '');
-      setStep(2);
-    } catch (err) {
-      setGenerateError(err.message);
-    }
-    setGenerating(false);
+    setDraft(rawNotes);
+    setStep(2);
   }
 
   async function handleRegenerate() {
-    setGenerating(true);
-    setGenerateError('');
-    try {
-      const res = await fetch('/api/insights/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bidderName: selectedBidderObj?.name || '',
-          updateType,
-          rawNotes,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Generation failed');
-      setDraft(data.draft || '');
-    } catch (err) {
-      setGenerateError(err.message);
-    }
-    setGenerating(false);
+    setDraft(rawNotes);
   }
 
   async function handleSave() {

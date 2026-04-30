@@ -60,6 +60,57 @@ CREATE TABLE IF NOT EXISTS price_curves (
   updated_at   TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Project Capex: ingested from Excel files
+CREATE TABLE IF NOT EXISTS data_capex (
+  id           SERIAL PRIMARY KEY,
+  file_name    TEXT,
+  reference    TEXT,
+  name         TEXT,
+  type         TEXT,       -- capex, opex, finance, devex, other, etc.
+  value        NUMERIC,
+  unit         TEXT,
+  uploaded_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- Unified counterparties model
+--   Replaces split bidder/offtaker tables. A single counterparty can be
+--   both a bidder and an offtaker (common for gentailers).
+-- ─────────────────────────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS counterparties (
+  id            SERIAL PRIMARY KEY,
+  name          TEXT NOT NULL,
+  parent_owner  TEXT,
+  is_bidder     BOOLEAN NOT NULL DEFAULT FALSE,
+  is_offtaker   BOOLEAN NOT NULL DEFAULT FALSE,
+  geography     TEXT,                  -- country: Australia, UK, US, ...
+  states        TEXT[] DEFAULT '{}',   -- AU states: NSW, VIC, QLD, SA, WA, TAS
+  tier          INTEGER,               -- 1/2/3, bidder context (nullable)
+  archetype     TEXT,                  -- gentailer, IPP, fund, corporate, retailer, utility, ...
+  status        TEXT,                  -- active, passed, not_engaged
+  notes         TEXT,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS counterparties_name_idx ON counterparties (LOWER(name));
+CREATE INDEX IF NOT EXISTS counterparties_is_bidder_idx ON counterparties (is_bidder) WHERE is_bidder;
+CREATE INDEX IF NOT EXISTS counterparties_is_offtaker_idx ON counterparties (is_offtaker) WHERE is_offtaker;
+
+CREATE TABLE IF NOT EXISTS meetings (
+  id               SERIAL PRIMARY KEY,
+  counterparty_id  INTEGER NOT NULL REFERENCES counterparties(id) ON DELETE CASCADE,
+  meeting_date     DATE,
+  attendees        TEXT,
+  notes            TEXT,
+  next_steps       TEXT,
+  created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS meetings_counterparty_idx ON meetings (counterparty_id, meeting_date DESC);
+
 -- Market Data: Capex / Opex benchmarks
 CREATE TABLE IF NOT EXISTS capex_opex (
   id              SERIAL PRIMARY KEY,

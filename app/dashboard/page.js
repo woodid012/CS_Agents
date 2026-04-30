@@ -402,7 +402,6 @@ export default function DashboardPage() {
               <QuickLink href="/development-tracker" label="Development Tracker" icon="🏗️" />
               <QuickLink href="/market-data/price-curves" label="Price Curves" icon="📈" />
               <QuickLink href="/offtakers" label="Offtaker Engagement" icon="⚡" />
-              <QuickLink href="/ai-agents" label="AI Agents" icon="🤖" />
             </div>
           </div>
 
