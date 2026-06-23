@@ -7,7 +7,7 @@ models only do what each is good at.
 ```
                  ┌─────────────────────┐         ┌──────────────────────────┐
   web sources →  │  comps-scraper       │   →     │  comps-gatekeeper         │  →  comps-scrape.json
-                 │  (Haiku, cheap)      │ stage   │  (Opus, smart)            │     → online DB (/comps)
+                 │  (Sonnet — NOT Haiku)│ stage   │  (Opus, smart)            │     → online DB (/comps)
                  │  searches, extracts  │         │  fact-checks, approves,   │
                  │  → candidates.json   │         │  merges + syncs to DB     │
                  └─────────────────────┘         └──────────────────────────┘
@@ -22,7 +22,7 @@ models only do what each is good at.
 | `scripts/validate-candidates.js` | Deterministic gate: schema, taxonomy membership, references, value sanity, duplicates. Both tiers run it. |
 | `scripts/merge-candidates.js` | Gatekeeper-only: promotes `review: "approved"` rows into `data/comps-scrape.json`, archives processed ones, then syncs to the online DB (`scrape-comps`) so the deployed `/comps` updates. |
 | `data/comps-candidates-archive.json` | History of processed (approved + rejected) candidates. |
-| `.claude/agents/comps-scraper.md` | Haiku subagent — the scraper. |
+| `.claude/agents/comps-scraper.md` | Scraper subagent. Use **Sonnet** — **do NOT use Haiku** (a Haiku run fabricated 17/17 candidates; Sonnet scored 10/10 approved). |
 | `.claude/agents/comps-gatekeeper.md` | Opus subagent — the gatekeeper. |
 | `lib/compsTaxonomy.js` | Single source of truth (metrics, units, schemes) the validator parses. |
 
@@ -38,8 +38,8 @@ models only do what each is good at.
 
 **Headless / scriptable** (e.g. cron) — same split via model flags:
 ```bash
-claude -p --model haiku "Run the comps-scraper workflow for recent NEM battery deals"
-claude -p --model opus  "Run the comps-gatekeeper workflow on data/comps-candidates.json"
+claude -p --model sonnet "Run the comps-scraper workflow for recent NEM battery deals"  # NOT haiku — it hallucinates
+claude -p --model opus   "Run the comps-gatekeeper workflow on data/comps-candidates.json"
 ```
 
 **Manual checks** (no model needed):
