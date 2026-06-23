@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
 import { sql } from '../../../../lib/db';
+import { auth } from '../../../../auth';
 
 export const dynamic = 'force-dynamic';
 
 const FIELDS = ['name', 'description', 'status'];
+const unauthorized = () => NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
 export async function PATCH(req, { params }) {
+  if (!(await auth())) return unauthorized();
   const id = Number(params.id);
   const body = await req.json();
 
@@ -30,6 +33,7 @@ export async function PATCH(req, { params }) {
 }
 
 export async function DELETE(_req, { params }) {
+  if (!(await auth())) return unauthorized();
   const id = Number(params.id);
   await sql`DELETE FROM projects WHERE id = ${id}`;
   return NextResponse.json({ ok: true });

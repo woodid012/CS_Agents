@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { sql } from '../../../lib/db';
+import { auth } from '../../../auth';
 
 export const dynamic = 'force-dynamic';
+
+const unauthorized = () => NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
 const SEED = ['Quagga', 'Lindley', 'Gemini', 'Capricorn', 'Windlab', 'Westwind', 'ACEN'];
 
@@ -35,6 +38,7 @@ async function ensureSchema() {
 }
 
 export async function GET() {
+  if (!(await auth())) return unauthorized();
   try {
     await ensureSchema();
     const rows = await sql`
@@ -51,6 +55,7 @@ export async function GET() {
 }
 
 export async function POST(req) {
+  if (!(await auth())) return unauthorized();
   try {
     await ensureSchema();
     const { name, description, status } = await req.json();

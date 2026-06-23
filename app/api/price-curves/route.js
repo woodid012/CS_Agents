@@ -7,24 +7,31 @@ export async function GET(request) {
   const region = searchParams.get('region') || 'NSW';
   const curveType = searchParams.get('curve_type') || 'energy_twa_monthly';
   const duration = searchParams.get('duration') || 'Half-hourly';
+  const scenario = searchParams.get('scenario') || 'Central';
 
   try {
     if (type === 'vintages') {
-      // Return distinct vintages
       const rows = await sql`
         SELECT DISTINCT vintage FROM price_curves_monthly ORDER BY vintage
       `;
-      return Response.json({ vintages: rows.map((r) => r.vintage) });
+      // Return available scenarios too
+      const scRows = await sql`
+        SELECT DISTINCT scenario FROM price_curves_monthly ORDER BY scenario
+      `;
+      return Response.json({
+        vintages: rows.map((r) => r.vintage),
+        scenarios: scRows.map((r) => r.scenario),
+      });
     }
 
     if (type === 'monthly') {
-      // Return monthly curves for selected vintage + region, multiple curve types
       const curveTypes = curveType.split(',');
       const result = {};
       for (const ct of curveTypes) {
         const rows = await sql`
           SELECT date, value FROM price_curves_monthly
           WHERE vintage = ${vintage} AND region = ${region} AND curve_type = ${ct}
+            AND scenario = ${scenario}
           ORDER BY date
         `;
         result[ct] = rows;
@@ -33,6 +40,7 @@ export async function GET(request) {
     }
 
     if (type === 'spreads') {
+      // Spreads are Central-only (from the Central scenario sheet)
       const rows = await sql`
         SELECT year, duration, value FROM price_curves_spreads
         WHERE vintage = ${vintage} AND region = ${region}
@@ -42,6 +50,7 @@ export async function GET(request) {
     }
 
     if (type === 'lgc') {
+      // LGC is Central-only (from the inputs sheet)
       const rows = await sql`
         SELECT year, value FROM price_curves_lgc
         WHERE vintage = ${vintage}
@@ -51,11 +60,10 @@ export async function GET(request) {
     }
 
     if (type === 'compare') {
-      // Multi-vintage comparison for a single curve_type + region
       const ct = curveType || 'energy_twa_monthly';
       const rows = await sql`
         SELECT vintage, date, value FROM price_curves_monthly
-        WHERE region = ${region} AND curve_type = ${ct}
+        WHERE region = ${region} AND curve_type = ${ct} AND scenario = ${scenario}
         ORDER BY vintage, date
       `;
       return Response.json({ compare: rows });

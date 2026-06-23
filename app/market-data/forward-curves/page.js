@@ -36,6 +36,18 @@ const LINE_COLORS = [
 
 const TABS = ['Compare', 'Energy Prices', 'Renewable Capture', 'Price Spreads', 'LGC Prices'];
 
+const SCENARIO_OPTIONS = [
+  { value: 'Central', label: 'Central' },
+  { value: 'Low', label: 'Low' },
+  { value: 'Messy Transition', label: 'Messy Transition' },
+];
+
+const SCENARIO_COLORS = {
+  Central: 'bg-blue-50 text-blue-700 border-blue-200',
+  Low: 'bg-amber-50 text-amber-700 border-amber-200',
+  'Messy Transition': 'bg-red-50 text-red-700 border-red-200',
+};
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function fmt(v) {
@@ -79,7 +91,33 @@ function LoadingSpinner() {
 
 // ─── Tab: Energy Prices ───────────────────────────────────────────────────────
 
-function TabFilters({ vintages, vintage, setVintage, region, setRegion, children }) {
+function ScenarioPicker({ scenario, setScenario, availableScenarios }) {
+  const options = SCENARIO_OPTIONS.filter(
+    (o) => !availableScenarios || availableScenarios.includes(o.value)
+  );
+  return (
+    <div>
+      <label className="text-xs text-gray-500 font-medium block mb-1">Scenario</label>
+      <div className="flex gap-1">
+        {options.map((o) => (
+          <button
+            key={o.value}
+            onClick={() => setScenario(o.value)}
+            className={`px-2.5 py-1.5 text-xs rounded border font-medium transition-colors ${
+              scenario === o.value
+                ? SCENARIO_COLORS[o.value] || 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'
+            }`}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TabFilters({ vintages, vintage, setVintage, region, setRegion, scenario, setScenario, availableScenarios, children }) {
   return (
     <div className="flex flex-wrap gap-3 mb-4 items-end">
       <div>
@@ -106,6 +144,9 @@ function TabFilters({ vintages, vintage, setVintage, region, setRegion, children
           </select>
         </div>
       )}
+      {setScenario && (
+        <ScenarioPicker scenario={scenario} setScenario={setScenario} availableScenarios={availableScenarios} />
+      )}
       {children && <div className="ml-auto flex items-end gap-2">{children}</div>}
     </div>
   );
@@ -120,19 +161,20 @@ function useLatestVintage(vintages) {
   return [vintage, setVintage];
 }
 
-function EnergyTab({ vintages }) {
+function EnergyTab({ vintages, availableScenarios }) {
   const [vintage, setVintage] = useLatestVintage(vintages);
   const [data, setData] = useState(null);
   const [view, setView] = useState('monthly'); // monthly | yearly
   const [region, setRegion] = useState('NSW');
+  const [scenario, setScenario] = useState('Central');
 
   useEffect(() => {
     if (!vintage) return;
     setData(null);
-    fetch(`/api/price-curves?type=monthly&vintage=${encodeURIComponent(vintage)}&region=${region}&curve_type=energy_twa_monthly`)
+    fetch(`/api/price-curves?type=monthly&vintage=${encodeURIComponent(vintage)}&region=${region}&curve_type=energy_twa_monthly&scenario=${encodeURIComponent(scenario)}`)
       .then((r) => r.json())
       .then((d) => setData(d.energy_twa_monthly || []));
-  }, [vintage, region]);
+  }, [vintage, region, scenario]);
 
   if (!vintage || !data) return <LoadingSpinner />;
 
@@ -140,10 +182,16 @@ function EnergyTab({ vintages }) {
     ? data.map((r) => ({ date: fmtDate(r.date), value: r.value != null ? parseFloat(r.value) : null }))
     : toYearlyAvg(data).map((r) => ({ date: r.year, value: r.value != null ? parseFloat(r.value).toFixed(2) : null }));
 
+  const lineColor = scenario === 'Low' ? '#f59e0b' : scenario === 'Messy Transition' ? '#ef4444' : '#3b82f6';
+
   return (
     <div>
-      <TabFilters vintages={vintages} vintage={vintage} setVintage={setVintage} region={region} setRegion={setRegion}>
-        <ExportButton onClick={() => exportCSV(chartData.map(r => ({ date: r.date, energy_twa: r.value })), `energy-twa-${region}-${vintage}`)} />
+      <TabFilters
+        vintages={vintages} vintage={vintage} setVintage={setVintage}
+        region={region} setRegion={setRegion}
+        scenario={scenario} setScenario={setScenario} availableScenarios={availableScenarios}
+      >
+        <ExportButton onClick={() => exportCSV(chartData.map(r => ({ date: r.date, energy_twa: r.value })), `energy-twa-${region}-${scenario}-${vintage}`)} />
         <div className="flex gap-1">
           {['monthly', 'yearly'].map((v) => (
             <button
@@ -156,7 +204,7 @@ function EnergyTab({ vintages }) {
           ))}
         </div>
       </TabFilters>
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Energy Time-Weighted Average Price — {region}</h3>
+      <h3 className="text-sm font-semibold text-gray-700 mb-3">Energy Time-Weighted Average Price — {region} — {scenario}</h3>
       <ResponsiveContainer width="100%" height={320}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -170,7 +218,7 @@ function EnergyTab({ vintages }) {
           />
           <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${v}`} />
           <Tooltip formatter={(v) => [`$${Number(v).toFixed(2)}`, 'Energy TWA']} />
-          <Line type="monotone" dataKey="value" stroke="#3b82f6" dot={false} strokeWidth={2} name="Energy TWA ($/MWh)" />
+          <Line type="monotone" dataKey="value" stroke={lineColor} dot={false} strokeWidth={2} name="Energy TWA ($/MWh)" />
         </LineChart>
       </ResponsiveContainer>
     </div>
@@ -186,27 +234,32 @@ const CAPTURE_CURVES = [
   'wind_dwa_monthly_post_curt_lgc',
 ];
 
-function CaptureTab({ vintages }) {
+function CaptureTab({ vintages, availableScenarios }) {
   const [vintage, setVintage] = useLatestVintage(vintages);
   const [data, setData] = useState(null);
   const [selected, setSelected] = useState(['solar_dwa_monthly', 'wind_dwa_monthly']);
   const [region, setRegion] = useState('NSW');
+  const [scenario, setScenario] = useState('Central');
+
+  // Post-curtailment curves only exist for Central scenario
+  const activeCurves = scenario === 'Central' ? CAPTURE_CURVES : ['solar_dwa_monthly', 'wind_dwa_monthly'];
 
   useEffect(() => {
     if (!vintage) return;
     setData(null);
-    fetch(`/api/price-curves?type=monthly&vintage=${encodeURIComponent(vintage)}&region=${region}&curve_type=${CAPTURE_CURVES.join(',')}`)
+    fetch(`/api/price-curves?type=monthly&vintage=${encodeURIComponent(vintage)}&region=${region}&curve_type=${activeCurves.join(',')}&scenario=${encodeURIComponent(scenario)}`)
       .then((r) => r.json())
       .then(setData);
-  }, [vintage, region]);
+  }, [vintage, region, scenario]);
 
   if (!vintage || !data) return <LoadingSpinner />;
 
   // Build chart data aligned by date
-  const allDates = (data[CAPTURE_CURVES[0]] || []).map((r) => r.date);
+  const allDates = (data[activeCurves[0]] || []).map((r) => r.date);
+  const activeSelected = selected.filter((ct) => activeCurves.includes(ct));
   const chartData = allDates.map((date, i) => {
     const point = { date: fmtDate(date) };
-    for (const ct of selected) {
+    for (const ct of activeSelected) {
       const row = (data[ct] || [])[i];
       point[ct] = row?.value != null ? parseFloat(row.value) : null;
     }
@@ -218,10 +271,14 @@ function CaptureTab({ vintages }) {
 
   return (
     <div>
-      <TabFilters vintages={vintages} vintage={vintage} setVintage={setVintage} region={region} setRegion={setRegion}>
-        <ExportButton onClick={() => exportCSV(chartData, `capture-rates-${region}-${vintage}`)} />
+      <TabFilters
+        vintages={vintages} vintage={vintage} setVintage={setVintage}
+        region={region} setRegion={setRegion}
+        scenario={scenario} setScenario={setScenario} availableScenarios={availableScenarios}
+      >
+        <ExportButton onClick={() => exportCSV(chartData, `capture-rates-${region}-${scenario}-${vintage}`)} />
         <div className="flex gap-1">
-          {CAPTURE_CURVES.map((ct) => (
+          {activeCurves.map((ct) => (
             <button
               key={ct}
               onClick={() =>
@@ -234,6 +291,9 @@ function CaptureTab({ vintages }) {
               {CURVE_LABELS[ct]}
             </button>
           ))}
+          {scenario !== 'Central' && (
+            <span className="text-xs text-gray-400 self-center ml-1">Post-curt curves Central only</span>
+          )}
         </div>
       </TabFilters>
       <ResponsiveContainer width="100%" height={320}>
@@ -243,7 +303,7 @@ function CaptureTab({ vintages }) {
           <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${v}`} />
           <Tooltip formatter={(v, name) => [`$${Number(v).toFixed(2)}`, CURVE_LABELS[name] || name]} />
           <Legend formatter={(name) => CURVE_LABELS[name] || name} />
-          {selected.map((ct, i) => (
+          {activeSelected.map((ct, i) => (
             <Line key={ct} type="monotone" dataKey={ct} stroke={LINE_COLORS[i % LINE_COLORS.length]} dot={false} strokeWidth={2} />
           ))}
         </LineChart>
@@ -453,17 +513,31 @@ function aggregateRows(rows, agg) {
   return Object.entries(buckets).map(([key, { sum, count }]) => ({ key, value: sum / count }));
 }
 
-function CompareTab({ vintages }) {
+function CompareTab({ vintages, availableScenarios }) {
   const [curveType, setCurveType] = useState('energy_twa_monthly');
   const [agg, setAgg] = useState('FY');
   const [region, setRegion] = useState('NSW');
+  const [scenario, setScenario] = useState('Central');
   const [rawData, setRawData] = useState(null);
+
+  // Post-curtailment curves only exist for Central
+  const availableCurves = scenario === 'Central' ? COMPARE_CURVES : COMPARE_CURVES.filter(
+    (c) => !c.value.includes('post_curt')
+  );
+
+  useEffect(() => {
+    // Reset curve type if it's not available in current scenario
+    if (!availableCurves.find((c) => c.value === curveType)) {
+      setCurveType('energy_twa_monthly');
+    }
+  }, [scenario]);
+
   useEffect(() => {
     setRawData(null);
-    fetch(`/api/price-curves?type=compare&region=${region}&curve_type=${curveType}`)
+    fetch(`/api/price-curves?type=compare&region=${region}&curve_type=${curveType}&scenario=${encodeURIComponent(scenario)}`)
       .then((r) => r.json())
       .then((d) => setRawData(d.compare || []));
-  }, [region, curveType]);
+  }, [region, curveType, scenario]);
 
   if (!rawData) return <LoadingSpinner />;
 
@@ -524,7 +598,7 @@ function CompareTab({ vintages }) {
             value={curveType}
             onChange={(e) => setCurveType(e.target.value)}
           >
-            {COMPARE_CURVES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+            {availableCurves.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
           </select>
         </div>
         <div>
@@ -543,11 +617,12 @@ function CompareTab({ vintages }) {
             ))}
           </div>
         </div>
+        <ScenarioPicker scenario={scenario} setScenario={setScenario} availableScenarios={availableScenarios} />
       </div>
 
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-sm font-semibold text-gray-700">
-          {COMPARE_CURVES.find((c) => c.value === curveType)?.label} — {region} — by vintage
+          {availableCurves.find((c) => c.value === curveType)?.label} — {region} — {scenario} — by vintage
         </h3>
         <ExportButton onClick={() => exportCSV(chartData, `compare-${curveType}-${region}`)} />
       </div>
@@ -592,11 +667,15 @@ function CompareTab({ vintages }) {
 export default function ForwardCurvesPage() {
   const [activeTab, setActiveTab] = useState(0);
   const [vintages, setVintages] = useState([]);
+  const [availableScenarios, setAvailableScenarios] = useState(['Central']);
 
   useEffect(() => {
     fetch('/api/price-curves?type=vintages')
       .then((r) => r.json())
-      .then((d) => setVintages(d.vintages || []));
+      .then((d) => {
+        setVintages(d.vintages || []);
+        if (d.scenarios && d.scenarios.length > 0) setAvailableScenarios(d.scenarios);
+      });
   }, []);
 
   return (
@@ -629,9 +708,9 @@ export default function ForwardCurvesPage() {
           <LoadingSpinner />
         ) : (
           <>
-            {activeTab === 0 && <CompareTab vintages={vintages} />}
-            {activeTab === 1 && <EnergyTab vintages={vintages} />}
-            {activeTab === 2 && <CaptureTab vintages={vintages} />}
+            {activeTab === 0 && <CompareTab vintages={vintages} availableScenarios={availableScenarios} />}
+            {activeTab === 1 && <EnergyTab vintages={vintages} availableScenarios={availableScenarios} />}
+            {activeTab === 2 && <CaptureTab vintages={vintages} availableScenarios={availableScenarios} />}
             {activeTab === 3 && <SpreadsTab vintages={vintages} />}
             {activeTab === 4 && <LGCTab vintages={vintages} />}
           </>

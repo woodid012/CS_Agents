@@ -1,5 +1,6 @@
 import './globals.css';
 import NavBar from '../components/NavBar';
+import AuthButton from '../components/AuthButton';
 
 export const metadata = {
   title: 'CS Capital - CRM Dashboard',
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
             {/* Nav */}
             <NavBar />
           </div>
+          <AuthButton />
         </header>
         <main className="px-6 py-5">{children}</main>
       </body>
