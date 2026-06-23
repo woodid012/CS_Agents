@@ -189,7 +189,9 @@ CREATE TABLE IF NOT EXISTS comp_deals (
   capacity_mwac    NUMERIC,              -- AC capacity (solar)
   capacity_mwdc    NUMERIC,              -- DC capacity (solar; with MWac gives DC/AC ratio)
   status           TEXT,                 -- Announced, Completed, FID, Operating, Benchmark, ...
-  transaction_date DATE,
+  transaction_date DATE,                 -- the deal's announce/complete date
+  date_added       DATE,                 -- provenance: when the comp was added to the dataset
+  data_class       TEXT,                 -- Real | Benchmark | Illustrative
   currency         TEXT DEFAULT 'AUD',
   scheme           TEXT,                 -- support scheme group, e.g. 'CISA', 'NSW LTESA', 'SA FERM'
   program          TEXT,                 -- tender round within the scheme, e.g. 'CIS Tender 3 — NEM Dispatchable'

@@ -27,7 +27,7 @@ async function ensureSchema() {
       id SERIAL PRIMARY KEY, name TEXT NOT NULL, counterparty TEXT, seller TEXT,
       technology TEXT, deal_type TEXT, country TEXT DEFAULT 'Australia', state TEXT,
       capacity_mw NUMERIC, capacity_mwh NUMERIC, capacity_mwac NUMERIC, capacity_mwdc NUMERIC,
-      status TEXT, transaction_date DATE, currency TEXT DEFAULT 'AUD', scheme TEXT, program TEXT, source TEXT,
+      status TEXT, transaction_date DATE, date_added DATE, data_class TEXT, currency TEXT DEFAULT 'AUD', scheme TEXT, program TEXT, source TEXT,
       source_url TEXT, confidence TEXT, notes TEXT,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )`;
@@ -41,6 +41,8 @@ async function ensureSchema() {
   await sql`ALTER TABLE comp_deals   ADD COLUMN IF NOT EXISTS source_url TEXT`;
   await sql`ALTER TABLE comp_deals   ADD COLUMN IF NOT EXISTS program TEXT`;
   await sql`ALTER TABLE comp_deals   ADD COLUMN IF NOT EXISTS scheme TEXT`;
+  await sql`ALTER TABLE comp_deals   ADD COLUMN IF NOT EXISTS date_added DATE`;
+  await sql`ALTER TABLE comp_deals   ADD COLUMN IF NOT EXISTS data_class TEXT`;
   await sql`ALTER TABLE comp_metrics ADD COLUMN IF NOT EXISTS source_url TEXT`;
   await sql`CREATE INDEX IF NOT EXISTS comp_metrics_deal_idx   ON comp_metrics (deal_id)`;
   await sql`CREATE INDEX IF NOT EXISTS comp_metrics_cat_idx    ON comp_metrics (category)`;
@@ -61,12 +63,12 @@ async function run() {
       INSERT INTO comp_deals
         (name, counterparty, seller, technology, deal_type, state, capacity_mw,
          capacity_mwh, capacity_mwac, capacity_mwdc, status, transaction_date,
-         currency, scheme, program, source, source_url, confidence, notes)
+         date_added, data_class, currency, scheme, program, source, source_url, confidence, notes)
       VALUES
         (${d.name}, ${d.counterparty ?? null}, ${d.seller ?? null}, ${d.technology ?? null},
          ${d.deal_type ?? null}, ${d.state ?? null}, ${d.capacity_mw ?? null},
          ${d.capacity_mwh ?? null}, ${d.capacity_mwac ?? null}, ${d.capacity_mwdc ?? null},
-         ${d.status ?? null}, ${d.transaction_date ?? null}, ${d.currency ?? 'AUD'},
+         ${d.status ?? null}, ${d.transaction_date ?? null}, ${d.date_added ?? null}, ${d.data_class ?? null}, ${d.currency ?? 'AUD'},
          ${d.scheme ?? null}, ${d.program ?? null}, ${d.source ?? null}, ${d.source_url ?? null}, ${d.confidence ?? null}, ${d.notes ?? null})
       RETURNING id`;
 

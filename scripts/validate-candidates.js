@@ -29,6 +29,7 @@ const DEAL_TYPES = new Set(arr('DEAL_TYPES'));
 const STATES = new Set(arr('STATES'));
 const CONFIDENCE = new Set(arr('CONFIDENCE'));
 const SCHEMES = new Set(arr('SCHEMES'));
+const DATA_CLASSES = new Set(arr('DATA_CLASSES'));
 
 // Existing deal names (lower-cased) for duplicate detection. Skipped when the
 // target IS the live dataset (every name would otherwise match itself).
@@ -60,6 +61,8 @@ function validateDeal(d, idx, seenNames) {
   else if (!CONFIDENCE.has(d.confidence)) warns.push(`confidence not in taxonomy: ${d.confidence}`);
 
   if (d.transaction_date && isNaN(Date.parse(d.transaction_date))) errs.push(`unparseable transaction_date: ${d.transaction_date}`);
+  if (d.date_added && isNaN(Date.parse(d.date_added))) errs.push(`unparseable date_added: ${d.date_added}`);
+  if (d.data_class && !DATA_CLASSES.has(d.data_class)) warns.push(`data_class not in taxonomy: ${d.data_class}`);
   if (d.technology && !TECHNOLOGIES.has(d.technology)) warns.push(`technology not in taxonomy: ${d.technology}`);
   if (d.deal_type && !DEAL_TYPES.has(d.deal_type)) warns.push(`deal_type not in taxonomy: ${d.deal_type}`);
   if (d.state && !STATES.has(d.state)) warns.push(`state not in taxonomy: ${d.state}`);

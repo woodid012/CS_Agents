@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   COMP_CATEGORIES, CATEGORY_BY_KEY, METRIC_BY_KEY, metricLabel,
-  UNITS, BASES, TECHNOLOGIES, STATES, DEAL_TYPES, STATUSES, CONFIDENCE, SCHEMES, PROGRAMS,
+  UNITS, BASES, TECHNOLOGIES, STATES, DEAL_TYPES, STATUSES, CONFIDENCE, SCHEMES, PROGRAMS, DATA_CLASSES,
 } from '../../lib/compsTaxonomy';
 
 const cn = (...xs) => xs.filter(Boolean).join(' ');
@@ -13,6 +13,12 @@ const CONF_COLORS = {
   Medium: 'bg-amber-100 text-amber-800',
   Low: 'bg-orange-100 text-orange-800',
   Illustrative: 'bg-slate-200 text-slate-600',
+};
+
+const CLASS_COLORS = {
+  Real: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  Benchmark: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
+  Illustrative: 'bg-slate-100 text-slate-500 border border-slate-200',
 };
 
 const MONEY_TOTAL = { '$bn': 1e9, '$m': 1e6, '$k': 1e3, '$': 1 };
@@ -143,15 +149,15 @@ function CostCharts({ metrics }) {
 const EMPTY_DEAL = {
   name: '', counterparty: '', seller: '', technology: 'Solar', deal_type: 'M&A',
   state: 'NSW', capacity_mw: '', capacity_mwh: '', capacity_mwac: '', capacity_mwdc: '',
-  status: 'Announced', transaction_date: '', currency: 'AUD', scheme: '', program: '', source: '', source_url: '', confidence: 'Medium', notes: '',
+  status: 'Announced', transaction_date: '', date_added: new Date().toISOString().slice(0, 10), data_class: 'Real', currency: 'AUD', scheme: '', program: '', source: '', source_url: '', confidence: 'Medium', notes: '',
 };
 
 export default function CompsPage() {
   const [deals, setDeals] = useState([]);
   const [metrics, setMetrics] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState('metrics'); // 'metrics' | 'deals' (within Data tab)
-  const [tab, setTab] = useState('summary');   // 'summary' | 'data' | 'schema'
+  const [view, setView] = useState('deals'); // 'deals' | 'metrics' (within Data tab)
+  const [tab, setTab] = useState('summary'); // 'summary' | 'data' | 'schema'
   const [showDealForm, setShowDealForm] = useState(false);
   const [showMetricForm, setShowMetricForm] = useState(false);
   const [resyncing, setResyncing] = useState(false);
@@ -162,6 +168,7 @@ export default function CompsPage() {
   const [fCat, setFCat] = useState('');
   const [fType, setFType] = useState('');
   const [fScheme, setFScheme] = useState('');
+  const [fClass, setFClass] = useState('');
   const [q, setQ] = useState('');
 
   const load = useCallback(async () => {
@@ -183,21 +190,23 @@ export default function CompsPage() {
     if (fCat && m.category !== fCat) return false;
     if (fType && m.deal_type !== fType) return false;
     if (fScheme && m.scheme !== fScheme) return false;
+    if (fClass && m.data_class !== fClass) return false;
     if (q) {
       const hay = `${m.deal_name} ${metricLabel(m.metric)} ${m.metric}`.toLowerCase();
       if (!hay.includes(q.toLowerCase())) return false;
     }
     return true;
-  }), [metrics, fTech, fState, fCat, fType, fScheme, q]);
+  }), [metrics, fTech, fState, fCat, fType, fScheme, fClass, q]);
 
   const filteredDeals = useMemo(() => deals.filter((d) => {
     if (fTech && d.technology !== fTech) return false;
     if (fState && d.state !== fState) return false;
     if (fType && d.deal_type !== fType) return false;
     if (fScheme && d.scheme !== fScheme) return false;
+    if (fClass && d.data_class !== fClass) return false;
     if (q && !d.name.toLowerCase().includes(q.toLowerCase())) return false;
     return true;
-  }), [deals, fTech, fState, fType, fScheme, q]);
+  }), [deals, fTech, fState, fType, fScheme, fClass, q]);
 
   const schemesInData = useMemo(() => [...new Set(deals.map((d) => d.scheme).filter(Boolean))].sort(), [deals]);
 
@@ -256,8 +265,12 @@ export default function CompsPage() {
     }
   }
 
-  const clearFilters = () => { setFTech(''); setFState(''); setFCat(''); setFType(''); setFScheme(''); setQ(''); };
-  const anyFilter = fTech || fState || fCat || fType || fScheme || q;
+  const clearFilters = () => { setFTech(''); setFState(''); setFCat(''); setFType(''); setFScheme(''); setFClass(''); setQ(''); };
+  const anyFilter = fTech || fState || fCat || fType || fScheme || fClass || q;
+  const filterProps = {
+    q, setQ, fCat, setFCat, fTech, setFTech, fState, setFState, fType, setFType,
+    fScheme, setFScheme, fClass, setFClass, schemes: schemesInData, anyFilter, onClear: clearFilters,
+  };
 
   return (
     <div>
@@ -273,8 +286,6 @@ export default function CompsPage() {
         </div>
         <div className="flex gap-2 shrink-0 items-center">
           <button onClick={resync} disabled={resyncing} title="Re-pull the curated dataset into the database" className="px-3 py-1.5 border border-gray-300 text-gray-600 text-sm rounded hover:bg-gray-50 disabled:opacity-50">{resyncing ? 'Refreshing…' : '↻ Refresh data'}</button>
-          <button onClick={() => setShowMetricForm((v) => !v)} className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">+ Metric</button>
-          <button onClick={() => setShowDealForm((v) => !v)} className="px-3 py-1.5 bg-slate-700 text-white text-sm rounded hover:bg-slate-800">+ Deal</button>
         </div>
       </div>
 
@@ -298,7 +309,12 @@ export default function CompsPage() {
       {loading ? (
         <div className="text-center py-12 text-gray-400 text-sm">Loading…</div>
       ) : tab === 'summary' ? (
-        <SummaryTab deals={deals} metrics={metrics} stats={stats} />
+        <>
+          <SummaryOverview deals={deals} metrics={metrics} stats={stats} />
+          <h2 className="text-sm font-semibold text-gray-700 mb-2 mt-1">Cost comparison <span className="text-xs font-normal text-gray-400">(filterable)</span></h2>
+          <FilterControls {...filterProps} right={<span className="ml-auto text-xs text-gray-400">{filteredMetrics.length} observations</span>} />
+          <CostCharts metrics={filteredMetrics} />
+        </>
       ) : tab === 'schema' ? (
         <SchemaReference />
       ) : (
@@ -306,7 +322,7 @@ export default function CompsPage() {
           {/* View toggle + add buttons (same row) */}
           <div className="flex items-center gap-2 mb-3">
             <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden">
-              {['metrics', 'deals'].map((v) => (
+              {['deals', 'metrics'].map((v) => (
                 <button key={v} onClick={() => setView(v)}
                   className={cn('px-3 py-1.5 text-sm capitalize', view === v ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50')}>
                   {v}
@@ -319,37 +335,7 @@ export default function CompsPage() {
           {showDealForm && <DealForm onSubmit={addDeal} onCancel={() => setShowDealForm(false)} />}
           {showMetricForm && <MetricForm deals={deals} onSubmit={addMetric} onCancel={() => setShowMetricForm(false)} />}
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-2 mb-3 items-center">
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search deal or metric…"
-              className="border border-gray-300 rounded px-3 py-1.5 text-sm w-56" />
-            <select value={fCat} onChange={(e) => setFCat(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
-              <option value="">All categories</option>
-              {COMP_CATEGORIES.map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}
-            </select>
-            <select value={fTech} onChange={(e) => setFTech(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
-              <option value="">All tech</option>
-              {TECHNOLOGIES.map((t) => <option key={t}>{t}</option>)}
-            </select>
-            <select value={fState} onChange={(e) => setFState(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
-              <option value="">All states</option>
-              {STATES.map((s) => <option key={s}>{s}</option>)}
-            </select>
-            <select value={fType} onChange={(e) => setFType(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
-              <option value="">All deal types</option>
-              {DEAL_TYPES.map((t) => <option key={t}>{t}</option>)}
-            </select>
-            {schemesInData.length > 0 && (
-              <select value={fScheme} onChange={(e) => setFScheme(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
-                <option value="">All schemes</option>
-                {schemesInData.map((p) => <option key={p}>{p}</option>)}
-              </select>
-            )}
-            {anyFilter && <button onClick={clearFilters} className="text-sm text-gray-500 hover:text-gray-800 underline">Clear</button>}
-            <span className="ml-auto text-xs text-gray-400">
-              {view === 'metrics' ? `${filteredMetrics.length} observations` : `${filteredDeals.length} deals`}
-            </span>
-          </div>
+          <FilterControls {...filterProps} right={<span className="ml-auto text-xs text-gray-400">{view === 'metrics' ? `${filteredMetrics.length} observations` : `${filteredDeals.length} deals`}</span>} />
 
           {view === 'metrics' ? (
             <MetricsView byCategory={byCategory} onDelete={delMetric} />
@@ -394,10 +380,49 @@ function BreakdownTable({ title, rows }) {
   );
 }
 
-function SummaryTab({ deals, metrics, stats }) {
+// Shared filter bar (used on Summary — above charts — and Data tab).
+function FilterControls({ q, setQ, fCat, setFCat, fTech, setFTech, fState, setFState, fType, setFType, fScheme, setFScheme, fClass, setFClass, schemes, anyFilter, onClear, right }) {
+  const sel = 'border border-gray-300 rounded px-2 py-1.5 text-sm';
+  return (
+    <div className="flex flex-wrap gap-2 mb-3 items-center">
+      <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search deal or metric…" className="border border-gray-300 rounded px-3 py-1.5 text-sm w-56" />
+      <select value={fClass} onChange={(e) => setFClass(e.target.value)} className={sel}>
+        <option value="">All classes</option>
+        {DATA_CLASSES.map((c) => <option key={c}>{c}</option>)}
+      </select>
+      <select value={fCat} onChange={(e) => setFCat(e.target.value)} className={sel}>
+        <option value="">All categories</option>
+        {COMP_CATEGORIES.map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}
+      </select>
+      <select value={fTech} onChange={(e) => setFTech(e.target.value)} className={sel}>
+        <option value="">All tech</option>
+        {TECHNOLOGIES.map((t) => <option key={t}>{t}</option>)}
+      </select>
+      <select value={fState} onChange={(e) => setFState(e.target.value)} className={sel}>
+        <option value="">All states</option>
+        {STATES.map((s) => <option key={s}>{s}</option>)}
+      </select>
+      <select value={fType} onChange={(e) => setFType(e.target.value)} className={sel}>
+        <option value="">All deal types</option>
+        {DEAL_TYPES.map((t) => <option key={t}>{t}</option>)}
+      </select>
+      {schemes.length > 0 && (
+        <select value={fScheme} onChange={(e) => setFScheme(e.target.value)} className={sel}>
+          <option value="">All schemes</option>
+          {schemes.map((p) => <option key={p}>{p}</option>)}
+        </select>
+      )}
+      {anyFilter && <button onClick={onClear} className="text-sm text-gray-500 hover:text-gray-800 underline">Clear</button>}
+      {right}
+    </div>
+  );
+}
+
+function SummaryOverview({ deals, metrics, stats }) {
   const byType = useMemo(() => countBy(deals, (d) => d.deal_type), [deals]);
   const byCat = useMemo(() => countBy(metrics, (m) => CATEGORY_BY_KEY[m.category]?.label || m.category), [metrics]);
   const byScheme = useMemo(() => countBy(deals.filter((d) => d.scheme), (d) => d.scheme), [deals]);
+  const byClass = useMemo(() => countBy(deals, (d) => d.data_class), [deals]);
   return (
     <div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
@@ -413,12 +438,12 @@ function SummaryTab({ deals, metrics, stats }) {
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+        <BreakdownTable title="Deals by class" rows={byClass} />
         <BreakdownTable title="Deals by type" rows={byType} />
         <BreakdownTable title="Metrics by category" rows={byCat} />
         <BreakdownTable title="Deals by scheme" rows={byScheme.length ? byScheme : [['(none tagged)', 0]]} />
       </div>
-      <CostCharts metrics={metrics} />
     </div>
   );
 }
@@ -506,7 +531,10 @@ function DealsView({ deals, onDelete }) {
           {deals.map((d) => (
             <tr key={d.id} className="hover:bg-gray-50">
               <td className="px-4 py-2">
-                <div className="font-medium text-gray-800">{d.name}</div>
+                <div className="font-medium text-gray-800">
+                  {d.name}
+                  {d.data_class && <span className={cn('ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium align-middle', CLASS_COLORS[d.data_class] || '')}>{d.data_class}</span>}
+                </div>
                 {d.counterparty && d.counterparty !== '—' && <div className="text-[11px] text-gray-400">{d.counterparty}{d.seller && d.seller !== '—' ? ` ← ${d.seller}` : ''}</div>}
                 {(d.source || d.source_url) && <div className="text-[11px] mt-0.5"><SourceLink source={d.source} url={d.source_url} /></div>}
               </td>
@@ -518,7 +546,10 @@ function DealsView({ deals, onDelete }) {
               <td className="px-3 py-2 text-gray-600">{d.technology || '—'}</td>
               <td className="px-3 py-2 text-gray-600">{d.state || '—'}</td>
               <td className="px-3 py-2 text-gray-600 whitespace-nowrap">{fmtCapacity(d)}</td>
-              <td className="px-3 py-2 text-gray-500 whitespace-nowrap">{d.transaction_date ? String(d.transaction_date).slice(0, 10) : '—'}</td>
+              <td className="px-3 py-2 text-gray-500 whitespace-nowrap">
+                {d.transaction_date ? String(d.transaction_date).slice(0, 10) : '—'}
+                {d.date_added && <div className="text-[10px] text-gray-400">added {String(d.date_added).slice(0, 10)}</div>}
+              </td>
               <td className="px-3 py-2 text-center text-gray-600">{d.metric_count ?? 0}</td>
               <td className="px-3 py-2">
                 {d.confidence && <span className={cn('inline-block px-1.5 py-0.5 rounded text-[10px] font-medium', CONF_COLORS[d.confidence] || 'bg-gray-100 text-gray-600')}>{d.confidence}</span>}
@@ -540,6 +571,7 @@ const DEAL_FIELDS = [
   { f: 'name', desc: 'Deal / asset / transaction name (unique key for resync)', type: 'text' },
   { f: 'counterparty', desc: 'Buyer / developer / owner / offtaker', type: 'text' },
   { f: 'seller', desc: 'Vendor (M&A)', type: 'text' },
+  { f: 'data_class', desc: 'Real deal/project vs Benchmark (GenCost, NSW guideline) vs Illustrative placeholder', enum: DATA_CLASSES, hl: true },
   { f: 'technology', desc: 'Asset technology', enum: TECHNOLOGIES },
   { f: 'deal_type', desc: 'Nature of the deal', enum: DEAL_TYPES },
   { f: 'scheme', desc: 'Support-scheme GROUP (rolls awards up)', enum: SCHEMES, hl: true },
@@ -549,7 +581,8 @@ const DEAL_FIELDS = [
   { f: 'capacity_mwh', desc: 'Energy capacity (drives $/MWh)', type: 'numeric' },
   { f: 'capacity_mwac / capacity_mwdc', desc: 'AC / DC capacity (DC:AC ratio)', type: 'numeric' },
   { f: 'status', desc: 'Lifecycle stage', enum: STATUSES },
-  { f: 'transaction_date', desc: 'Announced / completed date', type: 'date' },
+  { f: 'transaction_date', desc: 'Announced / completed date of the deal', type: 'date' },
+  { f: 'date_added', desc: 'Provenance: when added to the dataset (stable across resyncs)', type: 'date', hl: true },
   { f: 'currency', desc: 'Reporting currency', type: 'text (AUD)' },
   { f: 'source / source_url', desc: 'Publisher + clickable reference', type: 'text + url' },
   { f: 'confidence', desc: 'Data quality flag', enum: CONFIDENCE },
@@ -623,7 +656,7 @@ function SchemaReference() {
         <div className="text-sm font-semibold text-gray-700 mb-3">Controlled vocabularies</div>
         <div className="space-y-2.5">
           {[
-            ['Schemes', SCHEMES], ['Programs', PROGRAMS], ['Technologies', TECHNOLOGIES],
+            ['Classes', DATA_CLASSES], ['Schemes', SCHEMES], ['Programs', PROGRAMS], ['Technologies', TECHNOLOGIES],
             ['Deal types', DEAL_TYPES], ['States', STATES], ['Statuses', STATUSES],
             ['Confidence', CONFIDENCE], ['Units', UNITS], ['Bases', BASES],
           ].map(([label, items]) => (
@@ -648,6 +681,7 @@ function DealForm({ onSubmit, onCancel }) {
       <Field label="Counterparty / buyer"><input value={f.counterparty} onChange={set('counterparty')} className="inp" /></Field>
       <Field label="Seller / vendor"><input value={f.seller} onChange={set('seller')} className="inp" /></Field>
       <Field label="Deal type"><select value={f.deal_type} onChange={set('deal_type')} className="inp">{DEAL_TYPES.map((t) => <option key={t}>{t}</option>)}</select></Field>
+      <Field label="Class"><select value={f.data_class} onChange={set('data_class')} className="inp">{DATA_CLASSES.map((c) => <option key={c}>{c}</option>)}</select></Field>
       <Field label="Scheme">
         <input list="comps-schemes" value={f.scheme} onChange={set('scheme')} className="inp" placeholder="e.g. CISA, NSW LTESA, SA FERM" />
         <datalist id="comps-schemes">{SCHEMES.map((s) => <option key={s} value={s} />)}</datalist>
@@ -660,6 +694,7 @@ function DealForm({ onSubmit, onCancel }) {
       <Field label="State"><select value={f.state} onChange={set('state')} className="inp">{STATES.map((s) => <option key={s}>{s}</option>)}</select></Field>
       <Field label="Status"><select value={f.status} onChange={set('status')} className="inp">{STATUSES.map((s) => <option key={s}>{s}</option>)}</select></Field>
       <Field label="Transaction date"><input type="date" value={f.transaction_date} onChange={set('transaction_date')} className="inp" /></Field>
+      <Field label="Date added"><input type="date" value={f.date_added} onChange={set('date_added')} className="inp" /></Field>
       <Field label="Capacity MW"><input type="number" step="any" value={f.capacity_mw} onChange={set('capacity_mw')} className="inp" /></Field>
       <Field label="Capacity MWh"><input type="number" step="any" value={f.capacity_mwh} onChange={set('capacity_mwh')} className="inp" /></Field>
       <Field label="MWac"><input type="number" step="any" value={f.capacity_mwac} onChange={set('capacity_mwac')} className="inp" /></Field>
