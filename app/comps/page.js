@@ -154,6 +154,7 @@ export default function CompsPage() {
   const [showSchema, setShowSchema] = useState(false);
   const [showDealForm, setShowDealForm] = useState(false);
   const [showMetricForm, setShowMetricForm] = useState(false);
+  const [resyncing, setResyncing] = useState(false);
 
   // filters
   const [fTech, setFTech] = useState('');
@@ -239,6 +240,21 @@ export default function CompsPage() {
     await fetch('/api/comps/deals', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
     load();
   }
+  async function resync() {
+    if (!confirm('Refresh from the curated dataset? This re-pulls every dataset deal (overwriting edits to those rows); your manually-added deals are kept.')) return;
+    setResyncing(true);
+    try {
+      const res = await fetch('/api/comps/resync', { method: 'POST' });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || 'failed');
+      await load();
+      alert(`Refreshed ${d.synced} deals from the dataset.`);
+    } catch (e) {
+      alert(`Refresh failed: ${e.message}`);
+    } finally {
+      setResyncing(false);
+    }
+  }
 
   const clearFilters = () => { setFTech(''); setFState(''); setFCat(''); setFType(''); setFScheme(''); setQ(''); };
   const anyFilter = fTech || fState || fCat || fType || fScheme || q;
@@ -256,6 +272,7 @@ export default function CompsPage() {
           </p>
         </div>
         <div className="flex gap-2 shrink-0 items-center">
+          <button onClick={resync} disabled={resyncing} title="Re-pull the curated dataset into the database" className="px-3 py-1.5 border border-gray-300 text-gray-600 text-sm rounded hover:bg-gray-50 disabled:opacity-50">{resyncing ? 'Refreshing…' : '↻ Refresh data'}</button>
           <button onClick={() => setShowMetricForm((v) => !v)} className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">+ Metric</button>
           <button onClick={() => setShowDealForm((v) => !v)} className="px-3 py-1.5 bg-slate-700 text-white text-sm rounded hover:bg-slate-800">+ Deal</button>
         </div>

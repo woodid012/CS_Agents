@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { sql } from '../../../../lib/db';
-import { ensureCompsSchema, seedCompsIfEmpty } from '../../../../lib/compsDb';
+import { ensureCompsSchema, syncDealsAdditive } from '../../../../lib/compsDb';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
     await ensureCompsSchema();
-    await seedCompsIfEmpty();
+    try { await syncDealsAdditive(); } catch (e) { console.error('comps additive sync skipped:', e.message); }
     const rows = await sql`
       SELECT d.*,
         (SELECT COUNT(*)::int FROM comp_metrics m WHERE m.deal_id = d.id) AS metric_count
