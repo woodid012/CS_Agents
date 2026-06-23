@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import * as XLSX from 'xlsx';
 
 const AU_STATES = ['NSW', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT', 'ACT'];
-const ARCHETYPES = ['Gentailer', 'IPP', 'Fund', 'Corporate', 'Retailer', 'Utility', 'Developer', 'Other'];
+const ARCHETYPES = ['Strategic', 'Financial', 'Gentailer', 'Retailer', 'Corporate', 'Trading House', 'Developer'];
 const STATUSES = ['Active', 'Passed', 'Not engaged'];
 const ROLE_FILTERS = [
   { key: 'all', label: 'All' },
