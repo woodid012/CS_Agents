@@ -575,6 +575,100 @@ function RoleBadge({ row }) {
   return <span className="text-gray-300 text-[10px]">—</span>;
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// Schema tab — self-documenting data model (mirrors the Comps "Schema" tab)
+// ─────────────────────────────────────────────────────────────────────────
+
+// counterparties table. `enum` references a controlled vocabulary.
+const CP_FIELDS = [
+  { f: 'name', desc: 'Counterparty name — required; the unique business key', type: 'text', hl: true },
+  { f: 'parent_owner', desc: 'Parent company / ultimate owner', type: 'text' },
+  { f: 'is_bidder / is_offtaker', desc: 'Role flags — can be a bidder, an offtaker, or both (B+O)', enum: ['Bidder', 'Offtaker', 'B+O'], hl: true },
+  { f: 'geography', desc: 'Home country (Australia, UK, US…)', type: 'text' },
+  { f: 'states', desc: 'Australian states / NEM regions of interest', enum: AU_STATES },
+  { f: 'tier', desc: 'Priority tier (bidder context)', enum: ['1', '2', '3'] },
+  { f: 'archetype', desc: 'Business model', enum: ARCHETYPES },
+  { f: 'status', desc: 'Engagement status', enum: STATUSES },
+  { f: 'notes', desc: 'Commentary, background, key context', type: 'text' },
+];
+
+// meetings table (one-to-many under a counterparty).
+const MEETING_FIELDS = [
+  { f: 'meeting_date', desc: 'Date of the meeting', type: 'date' },
+  { f: 'attendees', desc: 'Who attended (free text)', type: 'text' },
+  { f: 'notes', desc: 'Discussion notes', type: 'text' },
+  { f: 'next_steps', desc: 'Agreed follow-ups', type: 'text' },
+];
+
+// Fields the API derives/aggregates and returns on the roster (not stored as-is).
+const DERIVED_FIELDS = [
+  { f: 'meeting_count', desc: 'Number of meetings, aggregated by the API' },
+  { f: 'last_meeting_date', desc: 'Most recent meeting date, aggregated' },
+  { f: 'project_names / project_ids', desc: 'Linked projects via the counterparty_projects join' },
+];
+
+function Chips({ items }) {
+  return (
+    <div className="flex flex-wrap gap-1">
+      {items.map((x) => <span key={x} className="px-1.5 py-0.5 rounded bg-white border border-gray-200 text-[11px] text-gray-600">{x}</span>)}
+    </div>
+  );
+}
+
+function FieldTable({ title, sub, fields, showType = true }) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div className="px-4 py-2 text-sm font-semibold text-gray-700 border-b border-gray-200 bg-gray-50">
+        {title} {sub && <span className="font-normal text-gray-400">({sub})</span>}
+      </div>
+      <table className="w-full text-sm">
+        <tbody className="divide-y divide-gray-100">
+          {fields.map((r) => (
+            <tr key={r.f} className={cn('hover:bg-gray-50', r.hl && 'bg-blue-50/40')}>
+              <td className="px-4 py-1.5 font-mono text-[12px] text-gray-800 whitespace-nowrap align-top">{r.f}</td>
+              <td className="px-4 py-1.5 text-gray-600 align-top">{r.desc}</td>
+              {showType && (
+                <td className="px-4 py-1.5 align-top">
+                  {r.enum ? <Chips items={r.enum} /> : <span className="text-[11px] text-gray-400">{r.type || '—'}</span>}
+                </td>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function SchemaReference() {
+  return (
+    <div className="px-6 py-4 space-y-4 max-w-4xl">
+      <div className="bg-slate-50 border border-gray-200 rounded-lg p-4 text-xs text-gray-600 leading-relaxed">
+        Relational model: one <code className="bg-white px-1 rounded border">counterparties</code> row per organisation,
+        with one-to-many <code className="bg-white px-1 rounded border">meetings</code> and a many-to-many link to{' '}
+        <code className="bg-white px-1 rounded border">projects</code> through{' '}
+        <code className="bg-white px-1 rounded border">counterparty_projects</code>. A single counterparty can be a
+        bidder, an offtaker, or both. DDL lives in <code className="bg-white px-1 rounded border">schema.sql</code>;
+        controlled vocabularies (states, archetypes, statuses) are defined at the top of{' '}
+        <code className="bg-white px-1 rounded border">app/page.js</code>.
+      </div>
+
+      <FieldTable title="Counterparty fields" sub="counterparties" fields={CP_FIELDS} />
+      <FieldTable title="Meeting fields" sub="meetings — one-to-many" fields={MEETING_FIELDS} />
+      <FieldTable title="Derived fields" sub="computed by the API for the roster" fields={DERIVED_FIELDS} showType={false} />
+
+      <div className="bg-white border border-gray-200 rounded-lg p-4 text-xs text-gray-600">
+        <div className="text-sm font-semibold text-gray-700 mb-2">Relationships</div>
+        <ul className="space-y-1 list-disc pl-4">
+          <li><code className="bg-slate-50 px-1 rounded border">counterparties</code> 1 → many <code className="bg-slate-50 px-1 rounded border">meetings</code> (deleting a counterparty cascades its meetings)</li>
+          <li><code className="bg-slate-50 px-1 rounded border">counterparties</code> many ↔ many <code className="bg-slate-50 px-1 rounded border">projects</code> via <code className="bg-slate-50 px-1 rounded border">counterparty_projects</code></li>
+          <li><code className="bg-slate-50 px-1 rounded border">counterparty_news</code> links recent news to a counterparty (surfaced on Analytics)</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
 export default function CounterpartiesPage() {
   const [rows, setRows] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -595,6 +689,8 @@ export default function CounterpartiesPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerInitial, setDrawerInitial] = useState(null);
   const [drawerIsNew, setDrawerIsNew] = useState(false);
+
+  const [tab, setTab] = useState('roster'); // 'summary' | 'roster' | 'schema'
 
   function toggleSort(key) {
     if (sortKey === key) {
@@ -830,6 +926,28 @@ export default function CounterpartiesPage() {
         </div>
       </div>
 
+      {/* Sub-tabs */}
+      <div className="bg-white border-b border-gray-200 px-6">
+        <div className="flex items-center gap-1">
+          {[['roster', 'Roster'], ['schema', 'Schema']].map(([k, label]) => (
+            <button
+              key={k}
+              onClick={() => setTab(k)}
+              className={cn(
+                'px-4 py-2 text-sm font-medium -mb-px border-b-2 transition-colors',
+                tab === k ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-800',
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {tab === 'schema' && <SchemaReference />}
+
+      {tab === 'roster' && (
+      <>
       {/* Filter bar */}
       <div className="px-6 py-3 bg-white border-b border-gray-200 flex flex-wrap items-center gap-2 sticky top-0 z-10">
         <input
@@ -959,6 +1077,8 @@ export default function CounterpartiesPage() {
           </tbody>
         </table>
       </div>
+      </>
+      )}
 
       <CounterpartyDrawer
         open={drawerOpen}
