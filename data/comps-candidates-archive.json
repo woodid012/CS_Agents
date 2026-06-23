@@ -1,0 +1,372 @@
+{
+  "processed": [
+    {
+      "archived_at": "2026-06-23T11:21:04.771Z",
+      "review": "approved",
+      "review_note": "Source confirmed (energy-storage.news): Pacific Green sells 250MW/500MWh Limestone Coast North BESS, SA, to Intera Renewables (Palisade-managed) for A$460m (US$293m), 21 Feb 2025, operational 2027. All figures match. EV/MWh ~A$920k is high for 2h but reasonable as a marquee-asset enterprise value. High confidence justified by primary trade source.",
+      "name": "Palisade (Intera) / Limestone Coast North BESS",
+      "counterparty": "Palisade Investment Partners (via Intera Renewables)",
+      "seller": "Pacific Green Technologies",
+      "technology": "BESS",
+      "deal_type": "Asset acquisition",
+      "data_class": "Real",
+      "state": "SA",
+      "capacity_mw": 250,
+      "capacity_mwh": 500,
+      "status": "Announced",
+      "transaction_date": "2025-02-21",
+      "date_added": "2026-06-23",
+      "currency": "AUD",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/pacific-green-sells-500mwh-south-australian-bess-for-au460-million/",
+      "confidence": "High",
+      "notes": "A$460m enterprise value (US$293m) for a 250 MW/500 MWh BESS in SA's Limestone Coast region. First large-scale BESS acquisition for Palisade/Intera. Phase 1 of Pacific Green's 500MW/1.5GWh Limestone Coast Energy Park. Expected operational by early 2027.",
+      "metrics": [
+        {
+          "category": "valuation",
+          "metric": "enterprise_value",
+          "value": 460,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "High",
+          "notes": "A$460m EV at financial close, Feb 2025. ~A$1.84m/MW and ~A$920k/MWh."
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T11:21:04.771Z",
+      "review": "approved",
+      "review_note": "Source confirmed (pe-insights): KKR buys Zenith Energy from PEP/OPTrust/Foresight for A$1.7bn (~US$1.1bn), 710MW across ~15 WA/NT off-grid sites, ~12x contracted earnings, close late 2025. Figures match. EV is media-reported — Medium confidence correctly applied. A$2.4m/MW sane for off-grid IPP.",
+      "name": "KKR / Zenith Energy (Australia)",
+      "counterparty": "KKR (Asia Pacific Infrastructure Investors II)",
+      "seller": "Pacific Equity Partners, OPTrust, Foresight Group",
+      "technology": "Hybrid",
+      "deal_type": "M&A",
+      "data_class": "Real",
+      "state": "WA",
+      "capacity_mw": 710,
+      "status": "Announced",
+      "transaction_date": "2025-06-16",
+      "date_added": "2026-06-23",
+      "currency": "AUD",
+      "source": "PE Insights / KKR",
+      "source_url": "https://pe-insights.com/kkr-acquires-australias-zenith-energy-in-1-1bn-deal-to-target-energy-transition-growth/",
+      "confidence": "Medium",
+      "notes": "A$1.7bn (USD ~1.1bn) deal for Australia's leading off-grid IPP. ~710 MW contracted capacity across ~15 remote/microgrid sites in WA and NT. Zenith completed A$1.9bn debt refinancing. Founder/management retain minority. Close expected late 2025. EV not officially confirmed — Bloomberg/media figure.",
+      "metrics": [
+        {
+          "category": "valuation",
+          "metric": "enterprise_value",
+          "value": 1700,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "Medium",
+          "notes": "A$1.7bn — media-reported figure (Bloomberg); not officially disclosed by KKR. ~A$2.4m/MW on 710 MW."
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T11:21:04.771Z",
+      "review": "approved",
+      "review_note": "Source confirmed (Squadron Energy): A$1bn debt, 10 capital partners, financial close 4 Dec 2025, ~450MW, record single-asset wind financing. Figures match. CAUTION: source phrases capacity as '450MW (Stage 1); combined Stages 1+2 exceed 1GW' — the named stage is ambiguous; the financing milestone and figures are solid regardless. PPA tenor (20yr) is a Low-confidence analogy, correctly flagged.",
+      "name": "Clarke Creek Wind Farm Stage 2 (Squadron Energy)",
+      "counterparty": "Squadron Energy (Tattarang / Forrest)",
+      "technology": "Wind",
+      "deal_type": "Development benchmark",
+      "data_class": "Real",
+      "state": "QLD",
+      "capacity_mw": 450,
+      "status": "Construction",
+      "transaction_date": "2025-12-04",
+      "date_added": "2026-06-23",
+      "currency": "AUD",
+      "source": "Squadron Energy",
+      "source_url": "https://squadronenergy.com/news/squadron-energy-secures-landmark-financing-for-clarke-creek-wind-farm/",
+      "confidence": "High",
+      "notes": "A$1bn debt facility (10-bank syndicate, financial close 4 Dec 2025) for Stage 2 of Clarke Creek Wind Farm (~450 MW). Combined Stages 1+2 exceed 1 GW — largest single-asset wind financing in Australian market history. Stage 1 (also ~450 MW) already operating. No capex or PPA price disclosed.",
+      "metrics": [
+        {
+          "category": "financing",
+          "metric": "debt_total",
+          "value": 1000,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "High",
+          "notes": "A$1bn from 10 banks — record single-asset wind financing in Australia. ~A$2.2m/MW of debt."
+        },
+        {
+          "category": "offtake",
+          "metric": "ppa_tenor",
+          "value": 20,
+          "unit": "years",
+          "basis": "count",
+          "confidence": "Low",
+          "notes": "CS Energy 20-yr PPA on Stage 1 Boulder Creek (comparable project structure); Clarke Creek offtake terms not publicly disclosed."
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T11:21:04.771Z",
+      "review": "approved",
+      "review_note": "Source confirmed (pv magazine AU): A$830m (US$553m) debt from 7 named banks, 11 Dec 2025, supporting >600MW new projects + 800+MW operating. Figures match exactly. Distinct from existing 'Potentia Energy / 1GW+ AU portfolio' acquisition (Apr 2025) — this is a financing event, not a duplicate. High confidence justified.",
+      "name": "Potentia Energy portfolio financing (Enel/Inpex)",
+      "counterparty": "Potentia Energy (Enel Green Power + Inpex)",
+      "technology": "Solar + BESS",
+      "deal_type": "Development benchmark",
+      "data_class": "Real",
+      "state": "National",
+      "capacity_mw": 800,
+      "status": "Operating",
+      "transaction_date": "2025-12-11",
+      "date_added": "2026-06-23",
+      "currency": "AUD",
+      "source": "pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2025/12/11/potentia-energy-secures-830-million-financing-to-support-portfolio-growth/",
+      "confidence": "High",
+      "notes": "A$830m portfolio debt from 7 banks (Bank of China, BNP Paribas, HSBC, Mizuho, SocGen, SMBC, Westpac) secured Dec 2025. Covers 800+ MW of existing wind/solar/hybrid assets (Bungala 275MW, Clare 128MW, Girgarre 93MW, Cohuna 34MW, Royalla 23MW, Greenough River 40MW, Quorn Park 98MW + BESS). National portfolio — individual per-MW benchmarks are blended.",
+      "metrics": [
+        {
+          "category": "financing",
+          "metric": "debt_total",
+          "value": 830,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "High",
+          "notes": "Portfolio debt facility across 800+ MW operating assets. ~A$1.04m/MW blended debt (solar-heavy)."
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T11:21:04.771Z",
+      "review": "approved",
+      "review_note": "Source confirmed (RenewEconomy): 228MW, A$740m, 38 turbines, 50/50 Aula/CS Energy JV, CS Energy 20yr PPA for all output, ~40km SW Rockhampton, FC late Sep 2024. All figures match. A$3.25m/MW is bang-on GenCost 2024-25 onshore wind (A$3.22m/MW) — excellent calibration.",
+      "name": "Boulder Creek Wind Farm (Aula / CS Energy)",
+      "counterparty": "Aula Energy + CS Energy (50/50 JV)",
+      "technology": "Wind",
+      "deal_type": "Development benchmark",
+      "data_class": "Real",
+      "state": "QLD",
+      "capacity_mw": 228,
+      "status": "Construction",
+      "transaction_date": "2024-09-27",
+      "date_added": "2026-06-23",
+      "currency": "AUD",
+      "source": "RenewEconomy",
+      "source_url": "https://reneweconomy.com.au/macquarie-offshoot-to-build-its-first-wind-farm-after-740-million-project-reaches-financial-close/",
+      "confidence": "Medium",
+      "notes": "~A$740m total project cost (38 GE Vernova turbines, 228 MW), ~40 km SW of Rockhampton QLD. Financial close 27 Sep 2024. CS Energy holds 100% PPA (20-yr); JV 50/50 ownership. Debt from CBA, NAB, ANZ, ING. Construction began Nov 2024; commercial operations 2027. Aula Energy is a Macquarie-backed vehicle.",
+      "metrics": [
+        {
+          "category": "capex",
+          "metric": "capex_total",
+          "value": 740,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "Medium",
+          "notes": "~A$3.25m/MW (QLD wind, 2024 vintage). Media-reported figure."
+        },
+        {
+          "category": "offtake",
+          "metric": "ppa_tenor",
+          "value": 20,
+          "unit": "years",
+          "basis": "count",
+          "confidence": "High",
+          "notes": "CS Energy 20-yr PPA for 100% of output."
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T11:21:04.771Z",
+      "review": "approved",
+      "review_note": "Source confirmed (RenewEconomy): 288MW SA, 40 Vestas V172-7.2MW, FC 31 Dec 2025, CIS Tender 4 award, AGL long-term PPA, ~70km east of Adelaide. All figures match. No capex metric asserted; PPA tenor (15yr) is a Low-confidence estimate, correctly flagged.",
+      "name": "Palmer Wind Farm (Tilt Renewables)",
+      "counterparty": "Tilt Renewables",
+      "technology": "Wind",
+      "deal_type": "CIS award",
+      "data_class": "Real",
+      "state": "SA",
+      "capacity_mw": 288,
+      "status": "FID",
+      "transaction_date": "2025-12-31",
+      "date_added": "2026-06-23",
+      "scheme": "CISA",
+      "program": "CIS Tender 4 — NEM Generation",
+      "currency": "AUD",
+      "source": "RenewEconomy",
+      "source_url": "https://reneweconomy.com.au/australias-most-powerful-turbines-unveiled-as-fourth-wind-farm-reaches-financial-close-in-xmas-flurry/",
+      "confidence": "Medium",
+      "notes": "288 MW SA wind farm (40 Vestas V172-7.2 MW turbines — most powerful in AU), ~70 km east of Adelaide. FID/financial close 31 Dec 2025. CIS Tender 4 award. AGL long-term PPA. Construction mid-2026; commissioning late 2027. Total project cost not disclosed; part of Tilt's A$2.25bn corporate refinancing.",
+      "metrics": [
+        {
+          "category": "offtake",
+          "metric": "ppa_tenor",
+          "value": 15,
+          "unit": "years",
+          "basis": "count",
+          "confidence": "Low",
+          "notes": "AGL PPA — 'long-term'; 15yr is estimated comparable to Waddi (same developer). Term not publicly disclosed."
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T11:21:04.771Z",
+      "review": "approved",
+      "review_note": "Source confirmed (Tilt Renewables): 108MW WA ~150km N of Perth, AGL 15yr PPA, FID Dec 2025 (first AU wind FID of 2025), A$3.9m community benefit over life, ops 2028. Capacity/PPA/community all match. Capex A$400m is NOT in the source (media estimate) — correctly flagged Low confidence.",
+      "name": "Waddi Wind Farm (Tilt Renewables)",
+      "counterparty": "Tilt Renewables",
+      "technology": "Wind",
+      "deal_type": "Development benchmark",
+      "data_class": "Real",
+      "state": "WA",
+      "capacity_mw": 108,
+      "status": "FID",
+      "transaction_date": "2025-12-16",
+      "date_added": "2026-06-23",
+      "currency": "AUD",
+      "source": "Tilt Renewables",
+      "source_url": "https://tiltrenewables.com/tilt-renewables-greenlights-waddi-wind-farm/",
+      "confidence": "Medium",
+      "notes": "108 MW WA wind farm (~150 km north of Perth), first wind FID in Australia in 2025. AGL 15-yr PPA. Vestas turbines. Construction 2026; operations 2028. Estimated capex ≥A$400m per media (US$265m). Part of Tilt's A$850m dual-tranche syndicated facility. Community benefit A$3.9m over life.",
+      "metrics": [
+        {
+          "category": "capex",
+          "metric": "capex_total",
+          "value": 400,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "Low",
+          "notes": "~A$400m media estimate (A$3.7m/MW); part of Tilt's A$850m portfolio facility — project-level capex not separately disclosed."
+        },
+        {
+          "category": "offtake",
+          "metric": "ppa_tenor",
+          "value": 15,
+          "unit": "years",
+          "basis": "count",
+          "confidence": "High",
+          "notes": "AGL 15-year supply contract."
+        },
+        {
+          "category": "community",
+          "metric": "community_total",
+          "value": 3900000,
+          "unit": "$/yr",
+          "basis": "per_annum",
+          "confidence": "Medium",
+          "notes": "A$3.9m total over project life (~25yr); ~A$156k/yr average."
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T11:21:04.771Z",
+      "review": "approved",
+      "review_note": "Source confirmed (RenewEconomy): 150MW/600MWh (4h) TagEnergy BESS at Golden Plains site VIC, FC Dec 2025, lenders Westpac/Bank of China/Siemens FS, Snowy Hydro virtual toll, 168 Tesla Megapack 2XL, ops mid-2027. All figures match. Distinct asset from existing 'Golden Plains Wind Farm' (same site) — not a duplicate. PPA tenor (15yr) is a Low-confidence analogy, correctly flagged.",
+      "name": "Golden Plains BESS (TagEnergy)",
+      "counterparty": "TagEnergy",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "data_class": "Real",
+      "state": "VIC",
+      "capacity_mw": 150,
+      "capacity_mwh": 600,
+      "status": "Construction",
+      "transaction_date": "2025-12-01",
+      "date_added": "2026-06-23",
+      "currency": "AUD",
+      "source": "RenewEconomy",
+      "source_url": "https://reneweconomy.com.au/financial-close-reached-for-four-hour-big-battery-to-be-built-next-to-australias-biggest-wind-farm/",
+      "confidence": "Medium",
+      "notes": "150 MW/600 MWh (4h) BESS at Golden Plains Wind Farm site, VIC. Financial close Dec 2025. Lenders: Westpac, Bank of China, Siemens Financial Services. Long-term virtual tolling agreement with Snowy Hydro for most of capacity. Tesla 168 Megapack 2XL; EPC by CPP. Commissioning mid-2027. Project cost not disclosed.",
+      "metrics": [
+        {
+          "category": "performance",
+          "metric": "duration_hours",
+          "value": 4,
+          "unit": "hours",
+          "basis": "count",
+          "confidence": "High"
+        },
+        {
+          "category": "offtake",
+          "metric": "ppa_tenor",
+          "value": 15,
+          "unit": "years",
+          "basis": "count",
+          "confidence": "Low",
+          "notes": "Snowy Hydro virtual tolling — term not disclosed. 15yr is estimate by analogy with Akaysha Elaine (same structure, same counterparty)."
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T11:21:04.771Z",
+      "review": "approved",
+      "review_note": "Source confirmed (The Urban Developer): 550MW NEXTDC sovereign AI campus at Eastern Creek, A$7bn investment, site bought ~A$353m (2024), OpenAI anchor under 'OpenAI for Countries', first phase H2 2027. All figures match. A$7bn capex and 550MW both media/announcement figures — Medium confidence appropriate.",
+      "name": "NEXTDC S7 / OpenAI Eastern Creek campus",
+      "counterparty": "NEXTDC (ASX:NXT)",
+      "technology": "Data centre",
+      "deal_type": "Development benchmark",
+      "data_class": "Real",
+      "state": "NSW",
+      "capacity_mw": 550,
+      "status": "Development",
+      "transaction_date": "2025-12-09",
+      "date_added": "2026-06-23",
+      "currency": "AUD",
+      "source": "The Urban Developer / NEXTDC",
+      "source_url": "https://www.theurbandeveloper.com/articles/eastern-creek-data-centre-550mw-openai-nextdc",
+      "confidence": "Medium",
+      "notes": "550 MW sovereign AI campus at Eastern Creek, Western Sydney. A$7bn total investment. OpenAI is anchor offtaker under MOU (OpenAI for Countries program). NEXTDC acquired the site in 2024 for ~A$353m. First phase expected H2 2027 (subject to approvals). Closed-loop liquid cooling; powered by long-term renewable PPAs. Exceeds CDC's 504 MW facility as largest planned in Southern Hemisphere.",
+      "metrics": [
+        {
+          "category": "capex",
+          "metric": "capex_total",
+          "value": 7000,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "Medium",
+          "notes": "A$7bn total investment — media-reported figure. Includes land (A$353m site) + construction."
+        },
+        {
+          "category": "demand",
+          "metric": "it_load",
+          "value": 550,
+          "unit": "MW",
+          "basis": "total",
+          "confidence": "Medium",
+          "notes": "550 MW IT load capacity per The Urban Developer."
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T11:21:04.771Z",
+      "review": "approved",
+      "review_note": "Source confirmed (Microsoft newsroom): A$25bn (US$18bn) to expand Azure AI infra by >140% by end-2029, announced 23 Apr 2026 by Nadella + PM Albanese; covers infra, cybersecurity, skills, AI safety. All figures match primary source. Multi-year capex commitment (no MW) — correctly framed as a hyperscaler-scale benchmark; High confidence justified by first-party source.",
+      "name": "Microsoft Australia AI infrastructure commitment",
+      "counterparty": "Microsoft Corporation",
+      "technology": "Data centre",
+      "deal_type": "Development benchmark",
+      "data_class": "Real",
+      "state": "National",
+      "status": "Development",
+      "transaction_date": "2026-04-23",
+      "date_added": "2026-06-23",
+      "currency": "AUD",
+      "source": "Microsoft / CNBC",
+      "source_url": "https://news.microsoft.com/source/asia/features/investing-in-australias-ai-future/",
+      "confidence": "High",
+      "notes": "A$25bn (USD$18bn) capital commitment to expand Australia's Azure AI cloud infrastructure by >140% by end-2029. Announced 23 Apr 2026 by Satya Nadella + PM Albanese. Covers cybersecurity, AI supercomputing and workforce training. Existing footprint 29 sites across 3 Azure regions. MW capacity not disclosed — capex-only benchmark for hyperscaler infra scale in AU.",
+      "metrics": [
+        {
+          "category": "capex",
+          "metric": "capex_total",
+          "value": 25000,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "High",
+          "notes": "Multi-year capex 2026–2029; not a single-asset figure. Useful as a hyperscaler-commitment scale benchmark alongside AWS A$20bn."
+        }
+      ]
+    }
+  ]
+}
