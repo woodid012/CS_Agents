@@ -1,0 +1,642 @@
+{
+  "_meta": {
+    "description": "Curated public comps for Australian renewable energy deals & benchmarks, ~2021-2026. Every row carries a source name + URL. Loaded by scripts/scrape-comps.js and used as the auto-seed for /comps (lib/compsDb.js).",
+    "scraped_at": "2026-06-23",
+    "scope": "Australia. M&A/transaction valuations are public. Per-project cost-stack detail (AC/DC/EPC splits, system strength, land, rent, MLF) is largely confidential — those rows are either CSIRO GenCost benchmarks, the NSW Benefit Sharing Guideline, or clearly flagged 'Illustrative'.",
+    "disclaimer": "Figures compiled from public reporting and may be approximate, rounded, or blended (e.g. EV/MW across operating + pipeline). Verify against primary documents before relying on them. Confidence flags: High = primary/authoritative source; Medium = reputable secondary; Low = derived/blended; Illustrative = placeholder archetype."
+  },
+  "deals": [
+    {
+      "name": "HMC Capital / Neoen Victoria portfolio",
+      "counterparty": "HMC Capital (StorageAU / Energy Transition)",
+      "seller": "Neoen (ACCC-mandated divestment from Brookfield deal)",
+      "technology": "Hybrid",
+      "deal_type": "Asset acquisition",
+      "state": "VIC",
+      "capacity_mw": 652,
+      "capacity_mwh": 450,
+      "status": "Completed",
+      "transaction_date": "2025-08-01",
+      "currency": "AUD",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/australia-hmc-capital-completes-au950-million-acquisition-of-neoens-victoria-portfolio/",
+      "confidence": "High",
+      "notes": "652 MW operating: Bulgana (224 MW wind), Numurkah (128 MW solar), Victorian Big Battery (300 MW/450 MWh), plus ~2.8 GW dev pipeline. Divested by Neoen to satisfy the ACCC during Brookfield's takeover. Completed 1 Aug 2025.",
+      "metrics": [
+        { "category": "valuation", "metric": "enterprise_value", "value": 950, "unit": "$m", "basis": "total", "confidence": "High" },
+        { "category": "valuation", "metric": "ev_per_mw", "value": 1457000, "unit": "$/MW", "basis": "per_mw", "confidence": "Low", "notes": "A$950m / 652 MW operating; blended across wind/solar/BESS and includes 2.8 GW pipeline, so overstated for operating-only." }
+      ]
+    },
+    {
+      "name": "Brookfield / Neoen (take-private)",
+      "counterparty": "Brookfield + co-investors (Temasek, CalPERS)",
+      "seller": "Neoen shareholders (Impala, FSP)",
+      "technology": "Platform",
+      "deal_type": "M&A",
+      "state": "National",
+      "status": "Completed",
+      "transaction_date": "2025-03-19",
+      "currency": "AUD",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/brookfield-to-acquire-neoen-for-e6-1-billion/",
+      "confidence": "High",
+      "notes": "EUR 6.1bn equity value (100%) at EUR 39.85/share. ~53% block acquired Dec 2024; squeeze-out / take-private completed Mar 2025. Global platform incl. major AU assets (Hornsdale; VBB pre-divestment).",
+      "metrics": [
+        { "category": "valuation", "metric": "enterprise_value", "value": 10000, "unit": "$m", "basis": "total", "confidence": "Medium", "notes": "EUR 6.1bn equity value ~= A$10bn. Global platform, not AU-only." }
+      ]
+    },
+    {
+      "name": "Sembcorp Industries / Alinta Energy",
+      "counterparty": "Sembcorp Industries",
+      "seller": "Chow Tai Fook Enterprises",
+      "technology": "Platform",
+      "deal_type": "M&A",
+      "state": "National",
+      "capacity_mw": 3400,
+      "status": "Completed",
+      "transaction_date": "2025-12-11",
+      "currency": "AUD",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/sembcorp-completes-us4-32-billion-acquisition-of-alinta-energy-adds-10-4gw-australian-pipeline/",
+      "confidence": "High",
+      "notes": "A$6.5bn enterprise value (US$4.32bn). 3.4 GW operational (gas, wind, solar, coal) + 10.4 GW pipeline. FIRB + ACCC approved. Announced 11 Dec 2025.",
+      "metrics": [
+        { "category": "valuation", "metric": "enterprise_value", "value": 6500, "unit": "$m", "basis": "total", "confidence": "High" },
+        { "category": "valuation", "metric": "ev_per_mw", "value": 1912000, "unit": "$/MW", "basis": "per_mw", "confidence": "Low", "notes": "A$6.5bn / 3.4 GW incl. thermal — directional only, not RE-pure." }
+      ]
+    },
+    {
+      "name": "La Caisse (CDPQ) / Edify Energy",
+      "counterparty": "La Caisse (CDPQ)",
+      "seller": "Edify Energy",
+      "technology": "Solar + BESS",
+      "deal_type": "Platform",
+      "state": "National",
+      "capacity_mw": 900,
+      "capacity_mwh": 3600,
+      "status": "Announced",
+      "transaction_date": "2025-09-22",
+      "currency": "AUD",
+      "source": "ESG Today",
+      "source_url": "https://www.esgtoday.com/la-caisse-acquires-australian-renewables-company-edify/",
+      "confidence": "Medium",
+      "notes": "~C$1bn (~A$1.1bn / US$725m) incl. growth equity. Funds two ready-to-build solar+battery projects (900 MW/3,600 MWh; offtake to Rio Tinto + Federal Govt) and an 11 GW+ pipeline.",
+      "metrics": [
+        { "category": "valuation", "metric": "enterprise_value", "value": 1100, "unit": "$m", "basis": "total", "confidence": "Medium", "notes": "C$1bn total incl. development equity, not a clean asset EV." }
+      ]
+    },
+    {
+      "name": "Squadron Energy / CWP Renewables",
+      "counterparty": "Squadron Energy (Tattarang / Forrest)",
+      "seller": "Partners Group",
+      "technology": "Wind",
+      "deal_type": "M&A",
+      "state": "National",
+      "capacity_mw": 1100,
+      "status": "Completed",
+      "transaction_date": "2022-12-01",
+      "currency": "AUD",
+      "source": "IPE Real Assets",
+      "source_url": "https://realassets.ipe.com/news/partners-group-sells-cwp-renewables-to-squadron-for-a4bn/10063880.article",
+      "confidence": "High",
+      "notes": "A$4bn. ~1.1 GW operating wind (Sapphire, Murra Warra I & II) + ~20 GW pipeline. One of the largest AU renewables transactions to date.",
+      "metrics": [
+        { "category": "valuation", "metric": "enterprise_value", "value": 4000, "unit": "$m", "basis": "total", "confidence": "High" },
+        { "category": "valuation", "metric": "ev_per_mw", "value": 3636000, "unit": "$/MW", "basis": "per_mw", "confidence": "Low", "notes": "A$4bn / 1.1 GW operating — heavily overstated as it also buys a ~20 GW pipeline." }
+      ]
+    },
+    {
+      "name": "PowAR / Tilt Renewables (AU assets)",
+      "counterparty": "Powering Australian Renewables (AGL 20%, QIC 40%, Future Fund 40%)",
+      "seller": "Tilt Renewables",
+      "technology": "Wind",
+      "deal_type": "M&A",
+      "state": "National",
+      "capacity_mw": 836,
+      "status": "Completed",
+      "transaction_date": "2021-08-04",
+      "currency": "AUD",
+      "source": "pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2021/08/04/powering-australian-renewables-completes-2-7-billion-tilt-renewables-takeover/",
+      "confidence": "Medium",
+      "notes": "Total scheme ~A$2.75bn (NZ$3.1bn EV). PowAR took the AU assets; Mercury NZ took the NZ assets. Tilt operated 836 MW across 7 wind farms (AU+NZ) + pipeline.",
+      "metrics": [
+        { "category": "valuation", "metric": "enterprise_value", "value": 2750, "unit": "$m", "basis": "total", "confidence": "Medium", "notes": "Whole-of-scheme incl. NZ assets sold to Mercury; AU-only value is lower." }
+      ]
+    },
+    {
+      "name": "KKR / OTPP / PSP — Spark Infrastructure",
+      "counterparty": "KKR, Ontario Teachers' (OTPP), PSP Investments",
+      "seller": "Spark Infrastructure shareholders",
+      "technology": "Platform",
+      "deal_type": "M&A",
+      "state": "National",
+      "status": "Completed",
+      "transaction_date": "2021-12-22",
+      "currency": "AUD",
+      "source": "Ontario Teachers' Pension Plan",
+      "source_url": "https://www.otpp.com/en-ca/about-us/news-and-insights/2021/kkr-ontario-teachers-and-psp-investments-complete-acquisition-of-spark-infrastructure/",
+      "confidence": "High",
+      "notes": "~A$5.2bn all-cash. Spark holds stakes in TransGrid, SA Power Networks and Victoria Power Networks — grid infrastructure enabling the RE transition (network, not generation). Included as an adjacent-infra comp.",
+      "metrics": [
+        { "category": "valuation", "metric": "enterprise_value", "value": 5200, "unit": "$m", "basis": "total", "confidence": "High", "notes": "Electricity networks platform, not generation capacity." }
+      ]
+    },
+    {
+      "name": "J-Power / Genex Power",
+      "counterparty": "Electric Power Development (J-Power)",
+      "seller": "Genex Power / Skip Capital",
+      "technology": "Hybrid",
+      "deal_type": "M&A",
+      "state": "QLD",
+      "capacity_mw": 400,
+      "status": "Completed",
+      "transaction_date": "2024-07-31",
+      "currency": "AUD",
+      "source": "pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2024/08/01/genex-power-381-million-takeover-by-japanese-utility-j-power-is-finalised/",
+      "confidence": "High",
+      "notes": "A$381m (A$0.275/share). ~400 MW committed (incl. Kidston pumped hydro 250 MW) + ~2.3 GW pipeline.",
+      "metrics": [
+        { "category": "valuation", "metric": "enterprise_value", "value": 381, "unit": "$m", "basis": "total", "confidence": "High" },
+        { "category": "valuation", "metric": "ev_per_mw", "value": 952500, "unit": "$/MW", "basis": "per_mw", "confidence": "Low", "notes": "A$381m / 400 MW; mix of pumped hydro + solar + BESS, plus pipeline." }
+      ]
+    },
+
+    {
+      "name": "Waratah Super Battery (Akaysha / BlackRock)",
+      "counterparty": "Akaysha Energy (BlackRock)",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "NSW",
+      "capacity_mw": 850,
+      "capacity_mwh": 1680,
+      "status": "Construction",
+      "transaction_date": "2024-10-01",
+      "currency": "AUD",
+      "source": "EnergyCo NSW",
+      "source_url": "https://www.energyco.nsw.gov.au/our-projects/waratah-super-battery-project",
+      "confidence": "Medium",
+      "notes": "~A$700m cost cap. EnergyCo SIPS 'shock absorber' for the NSW grid. First 350 MW online Aug 2025; full 850 MW expected 2026. ~2h duration.",
+      "metrics": [
+        { "category": "capex", "metric": "capex_total", "value": 700, "unit": "$m", "basis": "total", "confidence": "Medium", "notes": "Publicly cited cost cap; auto-normalises to ~A$0.82m/MW and ~A$417k/MWh." },
+        { "category": "performance", "metric": "duration_hours", "value": 2, "unit": "hours", "basis": "count", "confidence": "High", "notes": "1,680 MWh / 850 MW ~= 2.0h." }
+      ]
+    },
+    {
+      "name": "Victorian Big Battery (Neoen / Tesla)",
+      "counterparty": "Neoen (now HMC Capital)",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "VIC",
+      "capacity_mw": 300,
+      "capacity_mwh": 450,
+      "status": "Operating",
+      "transaction_date": "2021-12-08",
+      "currency": "AUD",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/victorian-big-battery-australias-biggest-battery-storage-system-at-450mwh-is-online/",
+      "confidence": "Medium",
+      "notes": "~A$160m project (CEFC provided A$160m finance). 212 Tesla Megapacks. 2021 vintage — useful as an early build-cost datapoint vs. 2024-25 GenCost.",
+      "metrics": [
+        { "category": "capex", "metric": "capex_total", "value": 160, "unit": "$m", "basis": "total", "confidence": "Medium", "notes": "~A$533k/MW, ~A$356k/MWh (2021 vintage)." },
+        { "category": "performance", "metric": "duration_hours", "value": 1.5, "unit": "hours", "basis": "count", "confidence": "High" }
+      ]
+    },
+    {
+      "name": "Orana BESS (Akaysha / BlackRock)",
+      "counterparty": "Akaysha Energy (BlackRock)",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "NSW",
+      "capacity_mw": 415,
+      "capacity_mwh": 1660,
+      "status": "Operating",
+      "transaction_date": "2024-07-15",
+      "currency": "AUD",
+      "source": "pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2024/07/15/akaysha-lands-650-million-to-fund-1660-mwh-orana-battery-build/",
+      "confidence": "Medium",
+      "notes": "A$650m debt financing (then the largest BESS financing globally), from 11 banks mid-2024. Total project cost not publicly disclosed. 448 Tesla Megapacks, 4h duration.",
+      "metrics": [
+        { "category": "financing", "metric": "debt_total", "value": 650, "unit": "$m", "basis": "total", "confidence": "High", "notes": "Debt only (11-bank syndicate). Auto-normalises to ~A$391k/MWh of debt." },
+        { "category": "performance", "metric": "duration_hours", "value": 4, "unit": "hours", "basis": "count", "confidence": "High" }
+      ]
+    },
+    {
+      "name": "Quinbrook Supernode BESS (Stages 1-2)",
+      "counterparty": "Quinbrook Infrastructure Partners",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "QLD",
+      "capacity_mw": 520,
+      "capacity_mwh": 1856,
+      "status": "Construction",
+      "transaction_date": "2025-01-01",
+      "currency": "AUD",
+      "source": "Quinbrook / Energy-Storage.news",
+      "source_url": "https://www.quinbrook.com/news-insights/quinbrook-closes-aud722-million-debt-financing-for-landmark-supernode-battery-storage-project/",
+      "confidence": "High",
+      "notes": "A$722m debt close (Jan 2025) — Australia's largest standalone BESS project financing to date. Stages 1+2 = 520 MW/1,856 MWh. Offtake to Origin Energy. ~3.6h duration.",
+      "metrics": [
+        { "category": "financing", "metric": "debt_total", "value": 722, "unit": "$m", "basis": "total", "confidence": "High", "notes": "Auto-normalises to ~A$1.39m/MW and ~A$389k/MWh of debt." },
+        { "category": "performance", "metric": "duration_hours", "value": 3.6, "unit": "hours", "basis": "count", "confidence": "High" }
+      ]
+    },
+    {
+      "name": "Akaysha QLD BESS (Brendale + Ulinda Park)",
+      "counterparty": "Akaysha Energy (BlackRock)",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "QLD",
+      "capacity_mwh": 710,
+      "status": "Construction",
+      "transaction_date": "2024-04-30",
+      "currency": "AUD",
+      "source": "pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2024/04/30/akaysha-fast-tracks-710-mwh-of-battery-projects-with-new-financing/",
+      "confidence": "Medium",
+      "notes": "A$250m debt (7-bank syndicate) across two QLD projects totalling 710 MWh. Combined-project figure, so per-unit is blended.",
+      "metrics": [
+        { "category": "financing", "metric": "debt_total", "value": 250, "unit": "$m", "basis": "total", "confidence": "Medium", "notes": "Across two projects; ~A$352k/MWh of debt." }
+      ]
+    },
+    {
+      "name": "Golden Plains Wind Farm (TagEnergy)",
+      "counterparty": "TagEnergy",
+      "technology": "Wind",
+      "deal_type": "Development benchmark",
+      "state": "VIC",
+      "capacity_mw": 1333,
+      "status": "Construction",
+      "transaction_date": "2024-06-19",
+      "currency": "AUD",
+      "source": "CEFC / RenewEconomy",
+      "source_url": "https://www.cefc.com.au/media/media-release/cefc-backs-more-clean-energy-with-new-commitment-to-golden-plains-wind-farm/",
+      "confidence": "Medium",
+      "notes": "~A$4bn total project. 1,333 MW (756 MW Stage 1 East + 577 MW Stage 2 West) — largest wind farm in the Southern Hemisphere. Full completion mid-2027.",
+      "metrics": [
+        { "category": "capex", "metric": "capex_total", "value": 4000, "unit": "$m", "basis": "total", "confidence": "Medium", "notes": "~A$3.0m/MW across both stages." },
+        { "category": "financing", "metric": "debt_total", "value": 350, "unit": "$m", "basis": "total", "confidence": "Medium", "notes": "CEFC commitment only ($222.5m Stage 1 + $127.5m Stage 2); full bank syndicate is larger and undisclosed." }
+      ]
+    },
+    {
+      "name": "Western Downs Green Power Hub — Solar (Neoen)",
+      "counterparty": "Neoen",
+      "technology": "Solar",
+      "deal_type": "Development benchmark",
+      "state": "QLD",
+      "capacity_mw": 460,
+      "status": "Operating",
+      "transaction_date": "2020-09-01",
+      "currency": "AUD",
+      "source": "NS Energy / Neoen",
+      "source_url": "https://www.nsenergybusiness.com/projects/western-downs-green-power-hub/",
+      "confidence": "Medium",
+      "notes": "~A$600m total project cost for the 460 MWp solar farm (financed 2020, 7-lender syndicate). Among Australia's largest operating solar farms. 2020 vintage build-cost datapoint.",
+      "metrics": [
+        { "category": "capex", "metric": "capex_total", "value": 600, "unit": "$m", "basis": "total", "confidence": "Medium", "notes": "~A$1.30m/MWp (2020 vintage; cf. GenCost 2024-25 $1.344m/MW)." }
+      ]
+    },
+    {
+      "name": "New England Solar (ACEN)",
+      "counterparty": "ACEN Australia (ex-UPC)",
+      "technology": "Solar + BESS",
+      "deal_type": "Development benchmark",
+      "state": "NSW",
+      "capacity_mw": 720,
+      "capacity_mwh": 400,
+      "status": "Operating",
+      "transaction_date": "2023-01-01",
+      "currency": "AUD",
+      "source": "ACEN Australia",
+      "source_url": "https://acenrenewables.com.au/project/new-england-solar/",
+      "confidence": "Medium",
+      "notes": "720 MW solar (Stage 1 400 MW operating since 2023; Stage 2 320 MW + 200 MW/400 MWh BESS) on a ~2,000 ha site near Uralla. ACEN raised A$750m portfolio debt + A$150m green term loan.",
+      "metrics": [
+        { "category": "land", "metric": "land_area", "value": 2000, "unit": "ha", "basis": "total", "confidence": "High", "notes": "~2.8 ha/MW — real land-footprint comp for utility solar." }
+      ]
+    },
+    {
+      "name": "Eraring Battery (Origin Energy)",
+      "counterparty": "Origin Energy",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "NSW",
+      "capacity_mw": 700,
+      "capacity_mwh": 3160,
+      "status": "Operating",
+      "transaction_date": "2026-01-08",
+      "currency": "AUD",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/australias-1770mwh-eraring-battery-1-commences-commercial-operations/",
+      "confidence": "Medium",
+      "notes": "Largest battery in the Southern Hemisphere: 700 MW/3,160 MWh across stages (~4.5h avg). Built on the retiring Eraring coal site. Stage 4 (Wartsila/Enerven) +A$80m. No clean total capex disclosed.",
+      "metrics": [
+        { "category": "performance", "metric": "duration_hours", "value": 4.5, "unit": "hours", "basis": "count", "confidence": "Medium", "notes": "Average across four stages." }
+      ]
+    },
+    {
+      "name": "Goyder South Stage 1 Wind (Neoen)",
+      "counterparty": "Neoen",
+      "technology": "Wind",
+      "deal_type": "Development benchmark",
+      "state": "SA",
+      "capacity_mw": 412,
+      "status": "Operating",
+      "transaction_date": "2022-12-01",
+      "currency": "AUD",
+      "source": "RenewEconomy / Neoen",
+      "source_url": "https://reneweconomy.com.au/south-australias-biggest-wind-farm-and-blyth-battery-hits-financial-close-on-track-to-power-bhp-copper-mine/",
+      "confidence": "Medium",
+      "notes": "412 MW (75 turbines), SA's biggest wind farm. Debt-financed in two tranches (209 MW + 203 MW). Underpinned by a 14-yr 100 MW PPA with the ACT Govt and a 10-yr 40 MW PPA with Flow Power; powers BHP's copper operations.",
+      "metrics": [
+        { "category": "offtake", "metric": "ppa_tenor", "value": 14, "unit": "years", "basis": "count", "confidence": "High", "notes": "ACT Government 100 MW contract; Flow Power 40 MW is 10-yr." }
+      ]
+    },
+    {
+      "name": "Iberdrola / Infigen Energy",
+      "counterparty": "Iberdrola",
+      "seller": "Infigen Energy shareholders",
+      "technology": "Wind",
+      "deal_type": "M&A",
+      "state": "National",
+      "capacity_mw": 670,
+      "status": "Completed",
+      "transaction_date": "2020-09-09",
+      "currency": "AUD",
+      "source": "pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2020/07/24/iberdrola-locks-in-improved-takeover-offer-for-infigen/",
+      "confidence": "High",
+      "notes": "A$893m (A$0.92/share). 670 MW wind + 268 MW firming (incl. 25 MW/52 MWh Tesla battery) + 246 MW PPA offtake + >1 GW pipeline. Iberdrola's platform entry into Australia (2020; just outside the 5-yr window but a key benchmark).",
+      "metrics": [
+        { "category": "valuation", "metric": "enterprise_value", "value": 893, "unit": "$m", "basis": "total", "confidence": "High" },
+        { "category": "valuation", "metric": "ev_per_mw", "value": 1333000, "unit": "$/MW", "basis": "per_mw", "confidence": "Low", "notes": "A$893m / 670 MW wind; also buys firming + pipeline." }
+      ]
+    },
+    {
+      "name": "Brookfield consortium / AusNet Services",
+      "counterparty": "Brookfield + Sunsuper, AIMCo, IMCO, HOOPP",
+      "seller": "AusNet Services shareholders",
+      "technology": "Platform",
+      "deal_type": "M&A",
+      "state": "VIC",
+      "status": "Completed",
+      "transaction_date": "2022-02-18",
+      "currency": "AUD",
+      "source": "Infrastructure Investor",
+      "source_url": "https://www.infrastructureinvestor.com/ausnet-accepts-brookfields-a10-2bn-takeover-bid/",
+      "confidence": "High",
+      "notes": "A$2.65/share. Victorian electricity transmission + electricity/gas distribution networks — grid infrastructure enabling the RE transition (not generation). Last listed AU electricity infra company to be privatised.",
+      "metrics": [
+        { "category": "valuation", "metric": "equity_value", "value": 10200, "unit": "$m", "basis": "total", "confidence": "High", "notes": "Equity value." },
+        { "category": "valuation", "metric": "enterprise_value", "value": 17800, "unit": "$m", "basis": "total", "confidence": "High", "notes": "Incl. assumed debt." }
+      ]
+    },
+    {
+      "name": "Collie Battery Stage 1 (Neoen)",
+      "counterparty": "Neoen",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "WA",
+      "capacity_mw": 219,
+      "capacity_mwh": 877,
+      "status": "Operating",
+      "transaction_date": "2024-10-01",
+      "currency": "AUD",
+      "source": "pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2024/05/03/perth-contractor-lands-160-million-contract-for-collie-battery/",
+      "confidence": "Medium",
+      "notes": "219 MW/877 MWh (4h) in WA's SWIS. A$160m EPC contract (Perth contractor). Part of Neoen's ~A$1.1bn portfolio financing. Capacity contract pays ~A$591k/MW/yr on 300 MW (~A$354m total).",
+      "metrics": [
+        { "category": "capex_split", "metric": "epc_cost", "value": 182000, "unit": "$/MWh", "basis": "per_mwh", "confidence": "Medium", "notes": "A$160m EPC / 877 MWh." },
+        { "category": "performance", "metric": "duration_hours", "value": 4, "unit": "hours", "basis": "count", "confidence": "High" }
+      ]
+    },
+    {
+      "name": "Hornsdale Power Reserve (Neoen / Tesla)",
+      "counterparty": "Neoen",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "SA",
+      "capacity_mw": 150,
+      "capacity_mwh": 194,
+      "status": "Operating",
+      "transaction_date": "2020-09-03",
+      "currency": "AUD",
+      "source": "pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2020/09/03/neoen-completes-hornsdale-big-battery-expansion/",
+      "confidence": "Low",
+      "notes": "Australia's first big battery. 150 MW/194 MWh after 2020 expansion (+50 MW/64.5 MWh cost ~A$82m/EUR53m; co-funded SA Govt A$15m + ARENA A$8m + CEFC A$50m loan). Original 100 MW/129 MWh ~A$90m (2017).",
+      "metrics": [
+        { "category": "capex", "metric": "capex_total", "value": 172, "unit": "$m", "basis": "total", "confidence": "Low", "notes": "Cumulative ~A$90m (2017) + ~A$82m (2020 expansion) across vintages; ~A$887k/MWh blended." },
+        { "category": "performance", "metric": "duration_hours", "value": 1.3, "unit": "hours", "basis": "count", "confidence": "High" }
+      ]
+    },
+    {
+      "name": "Stockyard Hill Wind Farm (Goldwind)",
+      "counterparty": "Goldwind Australia",
+      "seller": "Origin Energy (development)",
+      "technology": "Wind",
+      "deal_type": "Development benchmark",
+      "state": "VIC",
+      "capacity_mw": 530,
+      "status": "Operating",
+      "transaction_date": "2021-07-01",
+      "currency": "AUD",
+      "source": "RenewEconomy",
+      "source_url": "https://reneweconomy.com.au/origin-stuns-industry-with-record-low-price-for-530mw-wind-farm-70946/",
+      "confidence": "Low",
+      "notes": "530 MW, VIC. ~A$700m construction (Goldwind self-supplied turbines — outlier-low $/MW). Goldwind bought the development from Origin for A$110m (2017). Origin PPA set a record-low price <A$60/MWh.",
+      "metrics": [
+        { "category": "capex", "metric": "capex_total", "value": 700, "unit": "$m", "basis": "total", "confidence": "Low", "notes": "~A$1.32m/MW — implausibly low vs GenCost $3.2m/MW; Goldwind vertical integration, 2018 vintage." },
+        { "category": "offtake", "metric": "ppa_price", "value": 55, "unit": "$/MWh", "basis": "per_mwh", "confidence": "Medium", "notes": "Origin offtake <A$60/MWh (closer to $50) — record low at the time." },
+        { "category": "offtake", "metric": "ppa_tenor", "value": 11, "unit": "years", "basis": "count", "confidence": "Medium", "notes": "~2019/2021 to 2030." }
+      ]
+    },
+
+    {
+      "name": "CSIRO GenCost 2024-25 — Large-scale solar PV",
+      "technology": "Solar",
+      "deal_type": "Development benchmark",
+      "state": "National",
+      "status": "Benchmark",
+      "transaction_date": "2025-07-28",
+      "currency": "AUD",
+      "source": "CSIRO GenCost 2024-25 (via pv magazine)",
+      "source_url": "https://www.pv-magazine-australia.com/2025/07/29/csiro-report-shows-firmed-renewables-remain-lowest-cost-option/",
+      "confidence": "High",
+      "notes": "Authoritative national capex benchmark. Solar -8% YoY (second consecutive year).",
+      "metrics": [
+        { "category": "capex", "metric": "capex_per_mw", "value": 1344000, "unit": "$/MW", "basis": "per_mw", "confidence": "High", "notes": "$1,344/kW (GenCost 2024-25 final)." }
+      ]
+    },
+    {
+      "name": "CSIRO GenCost 2024-25 — Onshore wind",
+      "technology": "Wind",
+      "deal_type": "Development benchmark",
+      "state": "National",
+      "status": "Benchmark",
+      "transaction_date": "2025-07-28",
+      "currency": "AUD",
+      "source": "CSIRO GenCost 2024-25 (via pv magazine)",
+      "source_url": "https://www.pv-magazine-australia.com/2025/07/29/csiro-report-shows-firmed-renewables-remain-lowest-cost-option/",
+      "confidence": "High",
+      "notes": "Authoritative national capex benchmark. Onshore wind +6% YoY (incl. work-camp costs).",
+      "metrics": [
+        { "category": "capex", "metric": "capex_per_mw", "value": 3221000, "unit": "$/MW", "basis": "per_mw", "confidence": "High", "notes": "$3,221/kW (GenCost 2024-25 final)." }
+      ]
+    },
+    {
+      "name": "CSIRO GenCost 2024-25 — Battery storage 2h",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "National",
+      "status": "Benchmark",
+      "transaction_date": "2025-07-28",
+      "currency": "AUD",
+      "source": "CSIRO GenCost 2024-25 (via pv magazine)",
+      "source_url": "https://www.pv-magazine-australia.com/2025/07/29/csiro-report-shows-firmed-renewables-remain-lowest-cost-option/",
+      "confidence": "High",
+      "notes": "2-hour grid-scale battery. Large-scale battery capex -20% YoY.",
+      "metrics": [
+        { "category": "capex", "metric": "capex_per_mwh", "value": 580000, "unit": "$/MWh", "basis": "per_mwh", "confidence": "High", "notes": "$580/kWh total (battery $309 + BoP $271)." },
+        { "category": "capex_split", "metric": "bess_pack_cost", "value": 309000, "unit": "$/MWh", "basis": "per_mwh", "confidence": "High", "notes": "Battery/pack portion of $580/kWh." },
+        { "category": "capex", "metric": "capex_per_mw", "value": 1160000, "unit": "$/MW", "basis": "per_mw", "confidence": "High", "notes": "$580/kWh x 2h." }
+      ]
+    },
+    {
+      "name": "CSIRO GenCost 2024-25 — Battery storage 4h",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "National",
+      "status": "Benchmark",
+      "transaction_date": "2025-07-28",
+      "currency": "AUD",
+      "source": "CSIRO GenCost 2024-25 (via pv magazine)",
+      "source_url": "https://www.pv-magazine-australia.com/2025/07/29/csiro-report-shows-firmed-renewables-remain-lowest-cost-option/",
+      "confidence": "High",
+      "notes": "4-hour grid-scale battery.",
+      "metrics": [
+        { "category": "capex", "metric": "capex_per_mwh", "value": 406000, "unit": "$/MWh", "basis": "per_mwh", "confidence": "High", "notes": "$406/kWh total (battery $269 + BoP $137)." },
+        { "category": "capex_split", "metric": "bess_pack_cost", "value": 269000, "unit": "$/MWh", "basis": "per_mwh", "confidence": "High", "notes": "Battery/pack portion of $406/kWh." },
+        { "category": "capex", "metric": "capex_per_mw", "value": 1624000, "unit": "$/MW", "basis": "per_mw", "confidence": "High", "notes": "$406/kWh x 4h." }
+      ]
+    },
+
+    {
+      "name": "NSW Benefit Sharing Guideline (2024) — Solar",
+      "technology": "Solar",
+      "deal_type": "Development benchmark",
+      "state": "NSW",
+      "status": "Benchmark",
+      "transaction_date": "2024-11-01",
+      "currency": "AUD",
+      "source": "NSW Planning — Benefit Sharing Guideline",
+      "source_url": "https://www.planning.nsw.gov.au/sites/default/files/2024-11/benefit-sharing-guideline.pdf",
+      "confidence": "High",
+      "notes": "NSW standard community benefit rate, CPI-indexed, over project life.",
+      "metrics": [
+        { "category": "community", "metric": "community_per_mw_yr", "value": 850, "unit": "$/MW/yr", "basis": "per_mw_yr", "confidence": "High", "notes": "Solar standard rate." }
+      ]
+    },
+    {
+      "name": "NSW Benefit Sharing Guideline (2024) — Wind",
+      "technology": "Wind",
+      "deal_type": "Development benchmark",
+      "state": "NSW",
+      "status": "Benchmark",
+      "transaction_date": "2024-11-01",
+      "currency": "AUD",
+      "source": "NSW Planning — Benefit Sharing Guideline",
+      "source_url": "https://www.planning.nsw.gov.au/sites/default/files/2024-11/benefit-sharing-guideline.pdf",
+      "confidence": "High",
+      "notes": "NSW standard community benefit rate, CPI-indexed, over project life.",
+      "metrics": [
+        { "category": "community", "metric": "community_per_mw_yr", "value": 1050, "unit": "$/MW/yr", "basis": "per_mw_yr", "confidence": "High", "notes": "Wind standard rate." }
+      ]
+    },
+    {
+      "name": "NSW Benefit Sharing Guideline (2024) — BESS",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "NSW",
+      "status": "Benchmark",
+      "transaction_date": "2024-11-01",
+      "currency": "AUD",
+      "source": "NSW Planning — Benefit Sharing Guideline",
+      "source_url": "https://www.planning.nsw.gov.au/sites/default/files/2024-11/benefit-sharing-guideline.pdf",
+      "confidence": "High",
+      "notes": "NSW standard community benefit rate for storage, CPI-indexed, over project life.",
+      "metrics": [
+        { "category": "community", "metric": "community_per_mwh_yr", "value": 150, "unit": "$/MWh", "basis": "per_mw_yr", "confidence": "High", "notes": "BESS standard rate: $150/MWh per year." }
+      ]
+    },
+
+    {
+      "name": "Utility solar — NSW ~200 MWac (illustrative archetype)",
+      "technology": "Solar",
+      "deal_type": "Development benchmark",
+      "state": "NSW",
+      "capacity_mw": 200,
+      "capacity_mwac": 200,
+      "capacity_mwdc": 270,
+      "status": "Benchmark",
+      "currency": "AUD",
+      "source": "Illustrative archetype — verify before use",
+      "confidence": "Illustrative",
+      "notes": "Placeholder cost-stack for items not publicly disclosed per project (AC/DC/EPC split, connection, system strength, land, MLF). Replace with real deal data as curated.",
+      "metrics": [
+        { "category": "capex_split", "metric": "epc_pct", "value": 75, "unit": "%", "basis": "percent", "confidence": "Illustrative" },
+        { "category": "capex_split", "metric": "dc_cost", "value": 450000, "unit": "$/MW", "basis": "per_mw", "confidence": "Illustrative", "notes": "Modules + structures + array." },
+        { "category": "capex_split", "metric": "ac_cost", "value": 250000, "unit": "$/MW", "basis": "per_mw", "confidence": "Illustrative", "notes": "Inverters + MV/HV + substation." },
+        { "category": "capex_split", "metric": "module_cost", "value": 0.13, "unit": "$/W", "basis": "per_kw", "confidence": "Illustrative" },
+        { "category": "connection", "metric": "connection_per_mw", "value": 120000, "unit": "$/MW", "basis": "per_mw", "confidence": "Illustrative" },
+        { "category": "connection", "metric": "system_strength_charge", "value": 8, "unit": "$m", "basis": "one_off", "confidence": "Illustrative", "notes": "TNSP system-strength remediation (one-off)." },
+        { "category": "connection", "metric": "mlf", "value": 0.95, "unit": "ratio", "basis": "ratio", "confidence": "Illustrative" },
+        { "category": "opex", "metric": "opex_per_mw_yr", "value": 18000, "unit": "$/MW/yr", "basis": "per_mw_yr", "confidence": "Illustrative" },
+        { "category": "land", "metric": "land_area", "value": 400, "unit": "ha", "basis": "total", "confidence": "Illustrative" },
+        { "category": "land", "metric": "rent_per_mw_yr", "value": 5000, "unit": "$/MW/yr", "basis": "per_mw_yr", "confidence": "Illustrative" },
+        { "category": "performance", "metric": "capacity_factor", "value": 28, "unit": "%", "basis": "percent", "confidence": "Illustrative" },
+        { "category": "performance", "metric": "dc_ac_ratio", "value": 1.35, "unit": "ratio", "basis": "ratio", "confidence": "Illustrative" }
+      ]
+    },
+    {
+      "name": "Onshore wind — VIC ~300 MW (illustrative archetype)",
+      "technology": "Wind",
+      "deal_type": "Development benchmark",
+      "state": "VIC",
+      "capacity_mw": 300,
+      "status": "Benchmark",
+      "currency": "AUD",
+      "source": "Illustrative archetype — verify before use",
+      "confidence": "Illustrative",
+      "notes": "Placeholder cost-stack. Capex benchmark also covered authoritatively by GenCost onshore wind.",
+      "metrics": [
+        { "category": "connection", "metric": "connection_per_mw", "value": 150000, "unit": "$/MW", "basis": "per_mw", "confidence": "Illustrative" },
+        { "category": "opex", "metric": "opex_per_mw_yr", "value": 40000, "unit": "$/MW/yr", "basis": "per_mw_yr", "confidence": "Illustrative" },
+        { "category": "performance", "metric": "capacity_factor", "value": 38, "unit": "%", "basis": "percent", "confidence": "Illustrative" }
+      ]
+    },
+    {
+      "name": "Standalone BESS — QLD 100 MW / 200 MWh (illustrative archetype)",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "QLD",
+      "capacity_mw": 100,
+      "capacity_mwh": 200,
+      "status": "Benchmark",
+      "currency": "AUD",
+      "source": "Illustrative archetype — verify before use",
+      "confidence": "Illustrative",
+      "notes": "Placeholder for cost-stack items not in GenCost (EPC %, connection, system strength). Capex benchmark covered by GenCost 2h battery.",
+      "metrics": [
+        { "category": "capex_split", "metric": "epc_pct", "value": 70, "unit": "%", "basis": "percent", "confidence": "Illustrative" },
+        { "category": "connection", "metric": "connection_per_mw", "value": 100000, "unit": "$/MW", "basis": "per_mw", "confidence": "Illustrative" },
+        { "category": "connection", "metric": "system_strength_per_mw", "value": 50000, "unit": "$/MW", "basis": "per_mw", "confidence": "Illustrative" },
+        { "category": "opex", "metric": "opex_per_mw_yr", "value": 12000, "unit": "$/MW/yr", "basis": "per_mw_yr", "confidence": "Illustrative" },
+        { "category": "performance", "metric": "rte", "value": 87, "unit": "%", "basis": "percent", "confidence": "Illustrative" }
+      ]
+    }
+  ]
+}

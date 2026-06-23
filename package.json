@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "scrape-comps": "node scripts/scrape-comps.js",
+    "build-comps-page": "node scripts/build-standalone.js"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
