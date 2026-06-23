@@ -31,12 +31,12 @@ export async function POST(req) {
     const [row] = await sql`
       INSERT INTO comp_deals
         (name, counterparty, seller, technology, deal_type, state, capacity_mw,
-         capacity_mwh, capacity_mwac, capacity_mwdc, status, transaction_date,
+         capacity_mwh, capacity_mwac, status, transaction_date,
          date_added, data_class, currency, scheme, program, source, source_url, confidence, notes)
       VALUES
         (${b.name.trim()}, ${b.counterparty || null}, ${b.seller || null}, ${b.technology || null},
          ${b.deal_type || null}, ${b.state || null}, ${num(b.capacity_mw)},
-         ${num(b.capacity_mwh)}, ${num(b.capacity_mwac)}, ${num(b.capacity_mwdc)},
+         ${num(b.capacity_mwh)}, ${num(b.capacity_mwac)},
          ${b.status || null}, ${b.transaction_date || null}, ${b.date_added || null}, ${b.data_class || null}, ${b.currency || 'AUD'},
          ${b.scheme || null}, ${b.program || null}, ${b.source || null}, ${b.source_url || null}, ${b.confidence || null}, ${b.notes || null})
       RETURNING *

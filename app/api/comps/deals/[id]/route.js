@@ -32,7 +32,6 @@ export async function PATCH(req, { params }) {
   if ('capacity_mw' in b)      await sql`UPDATE comp_deals SET capacity_mw=${num(b.capacity_mw)}, updated_at=NOW() WHERE id=${id}`;
   if ('capacity_mwh' in b)     await sql`UPDATE comp_deals SET capacity_mwh=${num(b.capacity_mwh)}, updated_at=NOW() WHERE id=${id}`;
   if ('capacity_mwac' in b)    await sql`UPDATE comp_deals SET capacity_mwac=${num(b.capacity_mwac)}, updated_at=NOW() WHERE id=${id}`;
-  if ('capacity_mwdc' in b)    await sql`UPDATE comp_deals SET capacity_mwdc=${num(b.capacity_mwdc)}, updated_at=NOW() WHERE id=${id}`;
 
   const [row] = await sql`SELECT * FROM comp_deals WHERE id = ${id}`;
   return NextResponse.json(row);

@@ -2258,11 +2258,10 @@
       "state": "NSW",
       "capacity_mw": 200,
       "capacity_mwac": 200,
-      "capacity_mwdc": 270,
       "status": "Benchmark",
       "currency": "AUD",
       "source": "Illustrative archetype — verify before use",
-      "confidence": "Illustrative",
+      "confidence": "Low",
       "notes": "Placeholder cost-stack for items not publicly disclosed per project (AC/DC/EPC split, connection, system strength, land, MLF). Replace with real deal data as curated.",
       "metrics": [
         {
@@ -2271,7 +2270,7 @@
           "value": 75,
           "unit": "%",
           "basis": "percent",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "capex_split",
@@ -2279,7 +2278,7 @@
           "value": 450000,
           "unit": "$/MW",
           "basis": "per_mw",
-          "confidence": "Illustrative",
+          "confidence": "Low",
           "notes": "Modules + structures + array."
         },
         {
@@ -2288,7 +2287,7 @@
           "value": 250000,
           "unit": "$/MW",
           "basis": "per_mw",
-          "confidence": "Illustrative",
+          "confidence": "Low",
           "notes": "Inverters + MV/HV + substation."
         },
         {
@@ -2297,7 +2296,7 @@
           "value": 0.13,
           "unit": "$/W",
           "basis": "per_kw",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "connection",
@@ -2305,7 +2304,7 @@
           "value": 120000,
           "unit": "$/MW",
           "basis": "per_mw",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "connection",
@@ -2313,7 +2312,7 @@
           "value": 8,
           "unit": "$m",
           "basis": "one_off",
-          "confidence": "Illustrative",
+          "confidence": "Low",
           "notes": "TNSP system-strength remediation (one-off)."
         },
         {
@@ -2322,7 +2321,7 @@
           "value": 0.95,
           "unit": "ratio",
           "basis": "ratio",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "opex",
@@ -2330,7 +2329,7 @@
           "value": 18000,
           "unit": "$/MW/yr",
           "basis": "per_mw_yr",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "land",
@@ -2338,7 +2337,7 @@
           "value": 400,
           "unit": "ha",
           "basis": "total",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "land",
@@ -2346,7 +2345,7 @@
           "value": 5000,
           "unit": "$/MW/yr",
           "basis": "per_mw_yr",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "performance",
@@ -2354,7 +2353,7 @@
           "value": 28,
           "unit": "%",
           "basis": "percent",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "performance",
@@ -2362,11 +2361,11 @@
           "value": 1.35,
           "unit": "ratio",
           "basis": "ratio",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         }
       ],
       "date_added": "2026-06-23",
-      "data_class": "Illustrative"
+      "data_class": "Benchmark"
     },
     {
       "name": "Onshore wind — VIC ~300 MW (illustrative archetype)",
@@ -2377,7 +2376,7 @@
       "status": "Benchmark",
       "currency": "AUD",
       "source": "Illustrative archetype — verify before use",
-      "confidence": "Illustrative",
+      "confidence": "Low",
       "notes": "Placeholder cost-stack. Capex benchmark also covered authoritatively by GenCost onshore wind.",
       "metrics": [
         {
@@ -2386,7 +2385,7 @@
           "value": 150000,
           "unit": "$/MW",
           "basis": "per_mw",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "opex",
@@ -2394,7 +2393,7 @@
           "value": 40000,
           "unit": "$/MW/yr",
           "basis": "per_mw_yr",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "performance",
@@ -2402,11 +2401,11 @@
           "value": 38,
           "unit": "%",
           "basis": "percent",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         }
       ],
       "date_added": "2026-06-23",
-      "data_class": "Illustrative"
+      "data_class": "Benchmark"
     },
     {
       "name": "Standalone BESS — QLD 100 MW / 200 MWh (illustrative archetype)",
@@ -2418,7 +2417,7 @@
       "status": "Benchmark",
       "currency": "AUD",
       "source": "Illustrative archetype — verify before use",
-      "confidence": "Illustrative",
+      "confidence": "Low",
       "notes": "Placeholder for cost-stack items not in GenCost (EPC %, connection, system strength). Capex benchmark covered by GenCost 2h battery.",
       "metrics": [
         {
@@ -2427,7 +2426,7 @@
           "value": 70,
           "unit": "%",
           "basis": "percent",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "connection",
@@ -2435,7 +2434,7 @@
           "value": 100000,
           "unit": "$/MW",
           "basis": "per_mw",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "connection",
@@ -2443,7 +2442,7 @@
           "value": 50000,
           "unit": "$/MW",
           "basis": "per_mw",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "opex",
@@ -2451,7 +2450,7 @@
           "value": 12000,
           "unit": "$/MW/yr",
           "basis": "per_mw_yr",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         },
         {
           "category": "performance",
@@ -2459,11 +2458,11 @@
           "value": 87,
           "unit": "%",
           "basis": "percent",
-          "confidence": "Illustrative"
+          "confidence": "Low"
         }
       ],
       "date_added": "2026-06-23",
-      "data_class": "Illustrative"
+      "data_class": "Benchmark"
     },
     {
       "name": "Palisade (Intera) / Limestone Coast North BESS",

@@ -12,13 +12,11 @@ const CONF_COLORS = {
   High: 'bg-emerald-100 text-emerald-800',
   Medium: 'bg-amber-100 text-amber-800',
   Low: 'bg-orange-100 text-orange-800',
-  Illustrative: 'bg-slate-200 text-slate-600',
 };
 
 const CLASS_COLORS = {
   Real: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
   Benchmark: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
-  Illustrative: 'bg-slate-100 text-slate-500 border border-slate-200',
 };
 
 const MONEY_TOTAL = { '$bn': 1e9, '$m': 1e6, '$k': 1e3, '$': 1 };
@@ -148,7 +146,7 @@ function CostCharts({ metrics }) {
 
 const EMPTY_DEAL = {
   name: '', counterparty: '', seller: '', technology: 'Solar', deal_type: 'M&A',
-  state: 'NSW', capacity_mw: '', capacity_mwh: '', capacity_mwac: '', capacity_mwdc: '',
+  state: 'NSW', capacity_mw: '', capacity_mwh: '', capacity_mwac: '',
   status: 'Announced', transaction_date: '', date_added: new Date().toISOString().slice(0, 10), data_class: 'Real', currency: 'AUD', scheme: '', program: '', source: '', source_url: '', confidence: 'Medium', notes: '',
 };
 
@@ -571,7 +569,7 @@ const DEAL_FIELDS = [
   { f: 'name', desc: 'Deal / asset / transaction name (unique key for resync)', type: 'text' },
   { f: 'counterparty', desc: 'Buyer / developer / owner / offtaker', type: 'text' },
   { f: 'seller', desc: 'Vendor (M&A)', type: 'text' },
-  { f: 'data_class', desc: 'Real deal/project vs Benchmark (GenCost, NSW guideline) vs Illustrative placeholder', enum: DATA_CLASSES, hl: true },
+  { f: 'data_class', desc: 'Real deal/project vs Benchmark (GenCost, NSW guideline, reference data)', enum: DATA_CLASSES, hl: true },
   { f: 'technology', desc: 'Asset technology', enum: TECHNOLOGIES },
   { f: 'deal_type', desc: 'Nature of the deal', enum: DEAL_TYPES },
   { f: 'scheme', desc: 'Support-scheme GROUP (rolls awards up)', enum: SCHEMES, hl: true },
@@ -579,7 +577,7 @@ const DEAL_FIELDS = [
   { f: 'state', desc: 'Australian state / NEM region', enum: STATES },
   { f: 'capacity_mw', desc: 'Power capacity (drives $/MW)', type: 'numeric' },
   { f: 'capacity_mwh', desc: 'Energy capacity (drives $/MWh)', type: 'numeric' },
-  { f: 'capacity_mwac / capacity_mwdc', desc: 'AC / DC capacity (DC:AC ratio)', type: 'numeric' },
+  { f: 'capacity_mwac', desc: 'AC capacity (solar — the standard rating)', type: 'numeric' },
   { f: 'status', desc: 'Lifecycle stage', enum: STATUSES },
   { f: 'transaction_date', desc: 'Announced / completed date of the deal', type: 'date' },
   { f: 'date_added', desc: 'Provenance: when added to the dataset (stable across resyncs)', type: 'date', hl: true },
@@ -698,7 +696,6 @@ function DealForm({ onSubmit, onCancel }) {
       <Field label="Capacity MW"><input type="number" step="any" value={f.capacity_mw} onChange={set('capacity_mw')} className="inp" /></Field>
       <Field label="Capacity MWh"><input type="number" step="any" value={f.capacity_mwh} onChange={set('capacity_mwh')} className="inp" /></Field>
       <Field label="MWac"><input type="number" step="any" value={f.capacity_mwac} onChange={set('capacity_mwac')} className="inp" /></Field>
-      <Field label="MWdc"><input type="number" step="any" value={f.capacity_mwdc} onChange={set('capacity_mwdc')} className="inp" /></Field>
       <Field label="Confidence"><select value={f.confidence} onChange={set('confidence')} className="inp">{CONFIDENCE.map((c) => <option key={c}>{c}</option>)}</select></Field>
       <Field label="Source"><input value={f.source} onChange={set('source')} className="inp" placeholder="e.g. Energy-Storage.news" /></Field>
       <Field label="Source URL" wide><input value={f.source_url} onChange={set('source_url')} className="inp" placeholder="https://…" /></Field>

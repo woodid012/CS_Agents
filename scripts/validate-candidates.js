@@ -53,8 +53,7 @@ function validateDeal(d, idx, seenNames) {
   const id = d.name ? `"${d.name}"` : `#${idx}`;
 
   if (!d.name || !String(d.name).trim()) errs.push('missing name');
-  const illustrative = d.confidence === 'Illustrative';
-  if (!d.source_url && !illustrative) errs.push('missing source_url (required unless confidence=Illustrative)');
+  if (!d.source_url) errs.push('missing source_url');
   if (d.source_url && !/^https?:\/\//.test(d.source_url)) errs.push(`source_url not a URL: ${d.source_url}`);
   if (!d.source) warns.push('missing source (publisher name)');
   if (!d.confidence) warns.push('missing confidence');
@@ -68,7 +67,7 @@ function validateDeal(d, idx, seenNames) {
   if (d.state && !STATES.has(d.state)) warns.push(`state not in taxonomy: ${d.state}`);
   if (d.scheme && !SCHEMES.has(d.scheme)) warns.push(`scheme not in taxonomy (ok if new): ${d.scheme}`);
 
-  for (const k of ['capacity_mw', 'capacity_mwh', 'capacity_mwac', 'capacity_mwdc']) {
+  for (const k of ['capacity_mw', 'capacity_mwh', 'capacity_mwac']) {
     if (d[k] != null && (typeof d[k] !== 'number' || d[k] <= 0)) errs.push(`${k} must be a positive number`);
   }
 

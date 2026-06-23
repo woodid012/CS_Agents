@@ -186,18 +186,17 @@ CREATE TABLE IF NOT EXISTS comp_deals (
   state            TEXT,                 -- NSW, VIC, QLD, SA, WA, TAS, ...
   capacity_mw      NUMERIC,              -- power capacity (for $/MW)
   capacity_mwh     NUMERIC,              -- energy capacity (for $/MWh)
-  capacity_mwac    NUMERIC,              -- AC capacity (solar)
-  capacity_mwdc    NUMERIC,              -- DC capacity (solar; with MWac gives DC/AC ratio)
+  capacity_mwac    NUMERIC,              -- AC capacity (solar — the standard rating)
   status           TEXT,                 -- Announced, Completed, FID, Operating, Benchmark, ...
   transaction_date DATE,                 -- the deal's announce/complete date
   date_added       DATE,                 -- provenance: when the comp was added to the dataset
-  data_class       TEXT,                 -- Real | Benchmark | Illustrative
+  data_class       TEXT,                 -- Real | Benchmark
   currency         TEXT DEFAULT 'AUD',
   scheme           TEXT,                 -- support scheme group, e.g. 'CISA', 'NSW LTESA', 'SA FERM'
   program          TEXT,                 -- tender round within the scheme, e.g. 'CIS Tender 3 — NEM Dispatchable'
   source           TEXT,                 -- publisher / source name
   source_url       TEXT,                 -- clean reference link to the source
-  confidence       TEXT,                 -- High / Medium / Low / Illustrative
+  confidence       TEXT,                 -- High / Medium / Low
   notes            TEXT,
   created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()

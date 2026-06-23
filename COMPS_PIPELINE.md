@@ -53,7 +53,6 @@ npm run scrape-comps                   # (re)sync data/comps-scrape.json -> onli
 ## Guarantees
 - Nothing reaches `comps-scrape.json` without passing `validate-candidates.js`
   **and** a gatekeeper `approved`.
-- Every promoted row carries a `source_url` (enforced unless `confidence:
-  "Illustrative"`).
+- Every promoted row carries a `source_url` (enforced for all candidates).
 - Duplicates (by name) and double-counted totals/per-unit rows are rejected.
 - Approved/rejected candidates are archived with a timestamp for an audit trail.

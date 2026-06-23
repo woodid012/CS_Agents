@@ -74,8 +74,8 @@ approves/rejects and merges. Deterministic scripts (`validate-candidates.js`,
 
 > Note: M&A transaction values are public; per-project cost-stack detail
 > (AC/DC/EPC splits, system strength, land, rent, MLF) is largely confidential,
-> so those rows are CSIRO GenCost benchmarks, the NSW Benefit Sharing Guideline,
-> or clearly flagged `Illustrative`. See the `_meta.disclaimer` in the JSON.
+> so those rows are flagged `Benchmark` (CSIRO GenCost, the NSW Benefit Sharing
+> Guideline, archetypes). See the `_meta.disclaimer` in the JSON.
 
 ### Other
 - **Development Tracker** (`/development-tracker`) — project pipeline tracking
