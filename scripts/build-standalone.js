@@ -184,7 +184,7 @@ function fmtVal(r){
   const n=(x)=>x.toLocaleString(undefined,{maximumFractionDigits:2});
   if(u==='$bn')return '$'+n(v)+'bn'; if(u==='$m')return '$'+n(v)+'m'; if(u==='$k')return '$'+n(v)+'k'; if(u==='$')return '$'+n(v);
   if(u==='%')return n(v)+'%'; if(u==='x')return n(v)+'x'; if(u==='ratio')return n(v);
-  if(u==='years')return n(v)+' yr'; if(u==='hours')return n(v)+' h';
+  if(u==='years')return n(v)+' yr'; if(u==='year')return String(Math.round(v)); if(u==='hours')return n(v)+' h'; if(u==='km')return n(v)+' km';
   if(u.startsWith('$'))return '$'+n(v)+u.slice(1);
   return n(v)+' '+u;
 }

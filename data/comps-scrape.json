@@ -574,6 +574,229 @@
     },
 
     {
+      "name": "HumeLink (Transgrid)",
+      "counterparty": "Transgrid",
+      "technology": "Transmission",
+      "deal_type": "Transmission",
+      "state": "NSW",
+      "status": "Construction",
+      "transaction_date": "2024-08-01",
+      "currency": "AUD",
+      "source": "RenewEconomy / Transgrid",
+      "source_url": "https://reneweconomy.com.au/construction-starts-on-australias-most-expensive-transmission-project-to-connect-snowy/",
+      "confidence": "High",
+      "notes": "~500 kV, ~365 km (Wagga–Bannaby–Maragle) connecting Snowy 2.0. AER approved $4.57bn (Aug 2024); est. ~$4.88bn. $2.9bn construction contracts (Acciona/GenusPlus; UGL/CPB). Australia's most expensive transmission project.",
+      "metrics": [
+        { "category": "connection", "metric": "transmission_capex", "value": 4880, "unit": "$m", "basis": "total", "confidence": "High", "notes": "AER-approved $4.57bn; total est. ~$4.88bn." }
+      ]
+    },
+    {
+      "name": "Marinus Link (Stage 1)",
+      "counterparty": "Marinus Link Pty Ltd (Vic/Tas/Cth)",
+      "technology": "Transmission",
+      "deal_type": "Transmission",
+      "state": "TAS",
+      "capacity_mw": 750,
+      "status": "FID",
+      "transaction_date": "2025-08-01",
+      "currency": "AUD",
+      "source": "Wikipedia / AER",
+      "source_url": "https://en.wikipedia.org/wiki/Marinus_Link",
+      "confidence": "Medium",
+      "notes": "750 MW Tas–Vic HVDC interconnector; ~250 km subsea + ~90 km land cable. Stage 1 ~A$3.86bn; full project est. ~A$4.8bn (AER, Mar 2025). FID Aug 2025; complete ~2030.",
+      "metrics": [
+        { "category": "connection", "metric": "transmission_capex", "value": 3860, "unit": "$m", "basis": "total", "confidence": "Medium", "notes": "Stage 1 (750 MW) — ~A$5.15m/MW of transfer capacity." }
+      ]
+    },
+    {
+      "name": "Snowy 2.0 (Snowy Hydro)",
+      "counterparty": "Snowy Hydro",
+      "technology": "Pumped hydro",
+      "deal_type": "Development benchmark",
+      "state": "NSW",
+      "capacity_mw": 2200,
+      "capacity_mwh": 350000,
+      "status": "Construction",
+      "transaction_date": "2023-01-01",
+      "currency": "AUD",
+      "source": "RenewEconomy / Wikipedia",
+      "source_url": "https://reneweconomy.com.au/snowy-2-0-pumped-hydro-fiasco-faces-another-major-cost-blowout-analysts-expect-more-delays/",
+      "confidence": "Low",
+      "notes": "2.2 GW / ~350 GWh (~160h) pumped hydro. 2023 reset to ~A$12bn; trending toward ~A$20bn (2025 reassessment). Long-duration economics: very low $/MWh, high $/MW.",
+      "metrics": [
+        { "category": "capex", "metric": "capex_total", "value": 12000, "unit": "$m", "basis": "total", "confidence": "Low", "notes": "2023 reset; trending to ~A$20bn. ~A$5.5m/MW; ~A$34k/MWh." }
+      ]
+    },
+    {
+      "name": "Borumba Pumped Hydro (Queensland Hydro)",
+      "counterparty": "Queensland Hydro",
+      "technology": "Pumped hydro",
+      "deal_type": "Development benchmark",
+      "state": "QLD",
+      "capacity_mw": 2000,
+      "capacity_mwh": 48000,
+      "status": "Development",
+      "transaction_date": "2024-12-01",
+      "currency": "AUD",
+      "source": "RenewEconomy",
+      "source_url": "https://reneweconomy.com.au/queenslands-giant-borumba-storage-plan-will-cost-double-early-estimates-batteries-are-cheaper/",
+      "confidence": "Low",
+      "notes": "2 GW / 48 GWh (24h) pumped hydro near Imbil. Initial ~A$14.2bn; blown out to ~A$18bn (Dec 2024). Business case under review (mid-2026).",
+      "metrics": [
+        { "category": "capex", "metric": "capex_total", "value": 14200, "unit": "$m", "basis": "total", "confidence": "Low", "notes": "Initial estimate; ~A$18bn after blowout. ~A$7.1m/MW; ~A$296k/MWh." }
+      ]
+    },
+    {
+      "name": "Star of the South (offshore wind)",
+      "counterparty": "Southerly Ten (Cbus + federal)",
+      "technology": "Offshore Wind",
+      "deal_type": "Development benchmark",
+      "state": "VIC",
+      "capacity_mw": 2200,
+      "status": "Development",
+      "transaction_date": "2024-05-01",
+      "currency": "AUD",
+      "source": "Star of the South / Infrastructure Pipeline",
+      "source_url": "https://infrastructurepipeline.org/project/star-of-the-south",
+      "confidence": "Low",
+      "notes": "Up to 2.2 GW in the Gippsland offshore wind zone. Estimated A$8–10bn. Feasibility licence May 2024; targeting first power before 2030. First-of-a-kind AU offshore wind cost benchmark.",
+      "metrics": [
+        { "category": "capex", "metric": "capex_total", "value": 9000, "unit": "$m", "basis": "total", "confidence": "Low", "notes": "Mid of A$8–10bn range; ~A$4.1m/MW (offshore wind)." }
+      ]
+    },
+    {
+      "name": "Potentia Energy / 1GW+ AU portfolio",
+      "counterparty": "Potentia Energy (Enel Green Power + INPEX)",
+      "seller": "CVC DIF + Cbus Super",
+      "technology": "Solar + BESS",
+      "deal_type": "Asset acquisition",
+      "state": "National",
+      "capacity_mw": 700,
+      "status": "Completed",
+      "transaction_date": "2025-04-03",
+      "currency": "AUD",
+      "source": "Enel / pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2025/04/03/potentia-energy-completes-acquisition-of-over-1-gw-renewable-energy-assets/",
+      "confidence": "Medium",
+      "notes": ">1 GW portfolio: ~700 MW operational wind/solar + ~430 MW late-stage dev, incl. stake in Bright Energy Investments (Synergy JV, WA). Deal value undisclosed; US$550m financing raised to expand.",
+      "metrics": []
+    },
+    {
+      "name": "CIP Murchison Green Hydrogen",
+      "counterparty": "Copenhagen Infrastructure Partners",
+      "technology": "Hydrogen",
+      "deal_type": "Development benchmark",
+      "state": "WA",
+      "capacity_mw": 6000,
+      "status": "Development",
+      "transaction_date": "2025-03-20",
+      "currency": "AUD",
+      "source": "CIP / GlobeNewswire",
+      "source_url": "https://www.globenewswire.com/news-release/2025/03/20/3045909/0/en/Copenhagen-Infrastructure-Partners-Secures-Australian-Hydrogen-Headstart-Funding-Strengthening-Commitment-to-Green-Ammonia.html",
+      "confidence": "Medium",
+      "notes": "~1.8 Mtpa green ammonia powered by ~6 GW onshore wind + solar (WA). Secured A$814m under the Federal Hydrogen Headstart program (Mar 2025). Wider-scope green-hydrogen datapoint.",
+      "metrics": []
+    },
+    {
+      "name": "Akaysha Elaine BESS (Victoria)",
+      "counterparty": "Akaysha Energy (BlackRock)",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "VIC",
+      "capacity_mw": 311,
+      "capacity_mwh": 1244,
+      "status": "Construction",
+      "transaction_date": "2025-09-24",
+      "currency": "AUD",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/akaysha-energy-bags-au460-million-for-1244mwh-bess-in-victoria-australia/",
+      "confidence": "Medium",
+      "notes": "311 MW/1,244 MWh (4h). A$460m financing. 15-yr virtual tolling agreement with Snowy Hydro (220 MW contracted) — largest 4h virtual toll in the market.",
+      "metrics": [
+        { "category": "financing", "metric": "debt_total", "value": 460, "unit": "$m", "basis": "total", "confidence": "Medium", "notes": "~A$370k/MWh of debt." },
+        { "category": "offtake", "metric": "ppa_tenor", "value": 15, "unit": "years", "basis": "count", "confidence": "High", "notes": "Snowy Hydro virtual tolling agreement (220 MW contracted)." },
+        { "category": "performance", "metric": "duration_hours", "value": 4, "unit": "hours", "basis": "count", "confidence": "High" }
+      ]
+    },
+    {
+      "name": "Rio Tinto–Windlab Bungaban Wind PPA",
+      "counterparty": "Rio Tinto (offtaker)",
+      "seller": "Windlab (developer)",
+      "technology": "Wind",
+      "deal_type": "Offtake",
+      "state": "QLD",
+      "capacity_mw": 1400,
+      "status": "Announced",
+      "transaction_date": "2024-02-21",
+      "currency": "AUD",
+      "source": "Smart Energy Decisions",
+      "source_url": "https://www.smartenergydecisions.com/renewable-energy/2024/02/21/rio-tinto-signs-wind-ppa",
+      "confidence": "High",
+      "notes": "Australia's largest renewable PPA: Rio buys 80% of the planned 1.4 GW Bungaban wind project (Windlab) for its Gladstone operations. Price confidential; term + volume disclosed.",
+      "metrics": [
+        { "category": "offtake", "metric": "ppa_tenor", "value": 25, "unit": "years", "basis": "count", "confidence": "High" },
+        { "category": "offtake", "metric": "contracted_pct", "value": 80, "unit": "%", "basis": "percent", "confidence": "High" }
+      ]
+    },
+    {
+      "name": "Rio Tinto–Edify Smoky Creek Solar + BESS PPA",
+      "counterparty": "Rio Tinto (offtaker)",
+      "seller": "Edify Energy (developer)",
+      "technology": "Solar + BESS",
+      "deal_type": "Offtake",
+      "state": "QLD",
+      "capacity_mw": 600,
+      "status": "Announced",
+      "transaction_date": "2025-03-12",
+      "currency": "AUD",
+      "source": "Rio Tinto / Edify Energy",
+      "source_url": "https://www.riotinto.com/en/news/releases/2025/rio-tinto-and-edify-energy-sign-landmark-solar-and-battery-agreement-for-rio-tintos-gladstone-operations",
+      "confidence": "High",
+      "notes": "Rio buys 90% of power + battery output from Edify's 600 MW Smoky Creek & Guthrie's Gap solar (540 MW contracted) for Gladstone. Part of a 2.7 GW Gladstone renewables push. Price confidential.",
+      "metrics": [
+        { "category": "offtake", "metric": "contracted_pct", "value": 90, "unit": "%", "basis": "percent", "confidence": "High" }
+      ]
+    },
+    {
+      "name": "BHP Olympic Dam–Neoen 24/7 PPA",
+      "counterparty": "BHP (offtaker)",
+      "seller": "Neoen (Goyder North)",
+      "technology": "Wind",
+      "deal_type": "Offtake",
+      "state": "SA",
+      "capacity_mw": 100,
+      "status": "Announced",
+      "transaction_date": "2025-09-24",
+      "currency": "AUD",
+      "source": "pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2025/09/24/bhp-signs-new-baseload-ppa-with-neoen-for-24-7-renewable-energy/",
+      "confidence": "High",
+      "notes": "100 MW 24/7 baseload for BHP's SA copper operations (incl. Olympic Dam) from Neoen's Goyder North wind + battery. Firm term + start date disclosed; price confidential.",
+      "metrics": [
+        { "category": "offtake", "metric": "ppa_tenor", "value": 10, "unit": "years", "basis": "count", "confidence": "High" },
+        { "category": "offtake", "metric": "ppa_start_year", "value": 2029, "unit": "year", "basis": "count", "confidence": "High", "notes": "Commences July 2029." }
+      ]
+    },
+    {
+      "name": "BHP–Southern Cross Energy (TransAlta) PPA",
+      "counterparty": "BHP Nickel West (offtaker)",
+      "seller": "Southern Cross Energy (TransAlta Renewables)",
+      "technology": "Hybrid",
+      "deal_type": "Offtake",
+      "state": "WA",
+      "status": "Completed",
+      "transaction_date": "2021-01-01",
+      "currency": "AUD",
+      "source": "Renewables Now",
+      "source_url": "https://renewablesnow.com/news/bhp-nickel-west-adds-15-yrs-and-renewables-to-aussie-ppa-718288/",
+      "confidence": "Medium",
+      "notes": "15-yr PPA extension through 31 Dec 2038 adding solar/wind/storage (18.5 MW solar at Leinster/Mt Keith). Long industrial renewable PPA.",
+      "metrics": [
+        { "category": "offtake", "metric": "ppa_tenor", "value": 15, "unit": "years", "basis": "count", "confidence": "Medium", "notes": "Extension through 31 Dec 2038." },
+        { "category": "offtake", "metric": "ppa_start_year", "value": 2023, "unit": "year", "basis": "count", "confidence": "Low", "notes": "Renewable component ~2023; runs to 2038." }
+      ]
+    },
+    {
       "name": "Utility solar — NSW ~200 MWac (illustrative archetype)",
       "technology": "Solar",
       "deal_type": "Development benchmark",

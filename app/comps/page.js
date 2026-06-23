@@ -55,7 +55,9 @@ function fmtValue(row) {
     case 'x':   return `${n(v)}x`;
     case 'ratio': return n(v);
     case 'years': return `${n(v)} yr`;
+    case 'year': return String(Math.round(v));
     case 'hours': return `${n(v)} h`;
+    case 'km': return `${n(v)} km`;
     default:
       // money-per-unit ($/MW, $/MWh, $/MW/yr, $/W, $/ha, …) keep the unit suffix
       if (u.startsWith('$')) return `$${n(v)}${u.slice(1)}`;
