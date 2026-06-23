@@ -535,28 +535,104 @@ function DealsView({ deals, onDelete }) {
 }
 
 // ── Schema reference (self-documenting taxonomy) ──────────────────────────
+// Deal-level fields (comp_deals). `enum` references a controlled vocabulary.
+const DEAL_FIELDS = [
+  { f: 'name', desc: 'Deal / asset / transaction name (unique key for resync)', type: 'text' },
+  { f: 'counterparty', desc: 'Buyer / developer / owner / offtaker', type: 'text' },
+  { f: 'seller', desc: 'Vendor (M&A)', type: 'text' },
+  { f: 'technology', desc: 'Asset technology', enum: TECHNOLOGIES },
+  { f: 'deal_type', desc: 'Nature of the deal', enum: DEAL_TYPES },
+  { f: 'scheme', desc: 'Support-scheme GROUP (rolls awards up)', enum: SCHEMES, hl: true },
+  { f: 'program', desc: 'Tender round within the scheme (free text)', enum: PROGRAMS, hl: true },
+  { f: 'state', desc: 'Australian state / NEM region', enum: STATES },
+  { f: 'capacity_mw', desc: 'Power capacity (drives $/MW)', type: 'numeric' },
+  { f: 'capacity_mwh', desc: 'Energy capacity (drives $/MWh)', type: 'numeric' },
+  { f: 'capacity_mwac / capacity_mwdc', desc: 'AC / DC capacity (DC:AC ratio)', type: 'numeric' },
+  { f: 'status', desc: 'Lifecycle stage', enum: STATUSES },
+  { f: 'transaction_date', desc: 'Announced / completed date', type: 'date' },
+  { f: 'currency', desc: 'Reporting currency', type: 'text (AUD)' },
+  { f: 'source / source_url', desc: 'Publisher + clickable reference', type: 'text + url' },
+  { f: 'confidence', desc: 'Data quality flag', enum: CONFIDENCE },
+  { f: 'notes', desc: 'Context, caveats', type: 'text' },
+];
+
+function Chips({ items }) {
+  return (
+    <div className="flex flex-wrap gap-1">
+      {items.map((x) => <span key={x} className="px-1.5 py-0.5 rounded bg-white border border-gray-200 text-[11px] text-gray-600">{x}</span>)}
+    </div>
+  );
+}
+
 function SchemaReference() {
   return (
-    <div className="bg-slate-50 border border-gray-200 rounded-lg p-4 mb-4">
-      <p className="text-xs text-gray-500 mb-3">
-        The schema is intentionally tall: each row is one observation
-        (<code className="bg-white px-1 rounded border">deal → category → metric → value + unit + basis</code>).
-        Categories &amp; metrics below are the canonical taxonomy (<code className="bg-white px-1 rounded border">lib/compsTaxonomy.js</code>).
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {COMP_CATEGORIES.map((c) => (
-          <div key={c.key} className="bg-white border border-gray-200 rounded p-3">
-            <div className={cn('inline-block px-2 py-0.5 rounded text-xs font-medium border mb-2', c.color)}>{c.label}</div>
-            <ul className="text-[11px] text-gray-600 space-y-0.5">
-              {c.metrics.map((m) => (
-                <li key={m.key} className="flex justify-between gap-2">
-                  <span>{m.label}</span>
-                  <span className="text-gray-400 whitespace-nowrap">{m.defaultUnit}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+    <div className="space-y-4">
+      <div className="bg-slate-50 border border-gray-200 rounded-lg p-4 text-xs text-gray-600">
+        Tall (entity–attribute–value) model: one <code className="bg-white px-1 rounded border">comp_deals</code> row
+        per deal/asset/transaction, and one <code className="bg-white px-1 rounded border">comp_metrics</code> row
+        per observed stat — <code className="bg-white px-1 rounded border">deal → category → metric → value + unit + basis</code>.
+        New comp types are just new taxonomy entries — no migration. Source of truth: <code className="bg-white px-1 rounded border">lib/compsTaxonomy.js</code>.
+      </div>
+
+      {/* Deal fields */}
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div className="px-4 py-2 text-sm font-semibold text-gray-700 border-b border-gray-200 bg-gray-50">Deal fields <span className="font-normal text-gray-400">(comp_deals)</span></div>
+        <table className="w-full text-sm">
+          <tbody className="divide-y divide-gray-100">
+            {DEAL_FIELDS.map((r) => (
+              <tr key={r.f} className={cn('hover:bg-gray-50', r.hl && 'bg-blue-50/40')}>
+                <td className="px-4 py-1.5 font-mono text-[12px] text-gray-800 whitespace-nowrap align-top">
+                  {r.f}{r.hl && <span className="ml-1.5 text-[9px] font-sans uppercase tracking-wide text-blue-600">scheme ext.</span>}
+                </td>
+                <td className="px-4 py-1.5 text-gray-600 align-top">{r.desc}</td>
+                <td className="px-4 py-1.5 align-top">{r.enum ? <Chips items={r.enum} /> : <span className="text-[11px] text-gray-400">{r.type}</span>}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="px-4 py-2 text-[11px] text-gray-400 border-t border-gray-100">
+          <b>scheme</b> is the high-level grouping (CISA, NSW LTESA, SA FERM, …) — distinct from the metric <i>categories</i> below;
+          <b> program</b> is the specific tender round. Both are deal-level, so a single award carries scheme + program + its metrics.
+        </div>
+      </div>
+
+      {/* Metric taxonomy */}
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <div className="text-sm font-semibold text-gray-700 mb-3">Metric taxonomy <span className="font-normal text-gray-400">(comp_metrics — category → metric · default unit)</span></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {COMP_CATEGORIES.map((c) => (
+            <div key={c.key} className="border border-gray-200 rounded p-3">
+              <div className={cn('inline-block px-2 py-0.5 rounded text-xs font-medium border mb-2', c.color)}>{c.label}
+                <span className="ml-1.5 font-normal opacity-60">{c.metrics.length}</span>
+              </div>
+              <ul className="text-[11px] text-gray-600 space-y-0.5">
+                {c.metrics.map((m) => (
+                  <li key={m.key} className="flex justify-between gap-2">
+                    <span>{m.label}</span>
+                    <span className="text-gray-400 whitespace-nowrap">{m.defaultUnit}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Controlled vocabularies */}
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <div className="text-sm font-semibold text-gray-700 mb-3">Controlled vocabularies</div>
+        <div className="space-y-2.5">
+          {[
+            ['Schemes', SCHEMES], ['Programs', PROGRAMS], ['Technologies', TECHNOLOGIES],
+            ['Deal types', DEAL_TYPES], ['States', STATES], ['Statuses', STATUSES],
+            ['Confidence', CONFIDENCE], ['Units', UNITS], ['Bases', BASES],
+          ].map(([label, items]) => (
+            <div key={label} className="grid grid-cols-[110px_1fr] gap-2 items-start">
+              <div className="text-xs font-medium text-gray-500 pt-0.5">{label}</div>
+              <Chips items={items} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
