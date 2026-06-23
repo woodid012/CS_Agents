@@ -36,6 +36,7 @@ for (const d of deals) {
       deal_name: d.name,
       technology: d.technology || null,
       deal_type: d.deal_type || null,
+      program: d.program || null,
       state: d.state || null,
       capacity_mw: d.capacity_mw ?? null,
       capacity_mwh: d.capacity_mwh ?? null,
@@ -55,7 +56,7 @@ for (const d of deals) {
 
 const dealsLite = deals.map((d) => ({
   id: d.id, name: d.name, counterparty: d.counterparty, seller: d.seller,
-  technology: d.technology, deal_type: d.deal_type, state: d.state,
+  technology: d.technology, deal_type: d.deal_type, program: d.program || null, state: d.state,
   capacity_mw: d.capacity_mw ?? null, capacity_mwh: d.capacity_mwh ?? null,
   status: d.status, transaction_date: d.transaction_date, currency: d.currency,
   source: d.source, source_url: d.source_url, confidence: d.confidence, notes: d.notes,
@@ -149,6 +150,7 @@ const html = `<!DOCTYPE html>
     <select id="fTech"></select>
     <select id="fState"></select>
     <select id="fType"></select>
+    <select id="fProgram"></select>
     <button class="link" id="clear">Clear</button>
     <span class="count" id="count"></span>
   </div>
@@ -195,7 +197,7 @@ function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,(m)=>({'&':'&amp;
 
 // state
 let view='metrics';
-const F={q:'',cat:'',tech:'',state:'',type:''};
+const F={q:'',cat:'',tech:'',state:'',type:'',program:''};
 
 function uniq(arr){ return [...new Set(arr.filter(Boolean))].sort(); }
 function fillSelect(el,opts,all){ el.innerHTML='<option value="">'+all+'</option>'+opts.map(o=>'<option value="'+esc(o.v??o)+'">'+esc(o.l??o)+'</option>').join(''); }
@@ -206,6 +208,7 @@ function filteredMetrics(){
     if(F.tech&&m.technology!==F.tech)return false;
     if(F.state&&m.state!==F.state)return false;
     if(F.type&&m.deal_type!==F.type)return false;
+    if(F.program&&m.program!==F.program)return false;
     if(F.q){ const h=(m.deal_name+' '+mLabel(m.metric)+' '+m.metric).toLowerCase(); if(!h.includes(F.q.toLowerCase()))return false; }
     return true;
   });
@@ -215,6 +218,7 @@ function filteredDeals(){
     if(F.tech&&d.technology!==F.tech)return false;
     if(F.state&&d.state!==F.state)return false;
     if(F.type&&d.deal_type!==F.type)return false;
+    if(F.program&&d.program!==F.program)return false;
     if(F.q&&!d.name.toLowerCase().includes(F.q.toLowerCase()))return false;
     return true;
   });
@@ -228,8 +232,14 @@ function renderCards(){
 }
 
 function chart(elId,key){
-  const rows=filteredMetrics().map(m=>({m,pu:perUnit(m)[key]})).filter(x=>x.pu>0)
-    .sort((a,b)=>b.pu-a.pu).slice(0,14);
+  const cand=filteredMetrics().map(m=>({m,pu:perUnit(m)[key]})).filter(x=>x.pu>0);
+  // De-duplicate: a deal's total (EV, capex, debt) and an explicit per-unit
+  // metric can normalise to the same number. Prefer the explicit per-unit row,
+  // then keep one bar per (deal, rounded value).
+  cand.sort((a,b)=>{ const ax=(a.m.unit==='$/MW'||a.m.unit==='$/MWh')?0:1, bx=(b.m.unit==='$/MW'||b.m.unit==='$/MWh')?0:1; return ax-bx; });
+  const seen=new Set(), uniq=[];
+  for(const x of cand){ const k=x.m.deal_id+'|'+Math.round(x.pu/1000); if(seen.has(k))continue; seen.add(k); uniq.push(x); }
+  const rows=uniq.sort((a,b)=>b.pu-a.pu).slice(0,14);
   const el=document.getElementById(elId);
   if(!rows.length){ el.innerHTML='<div class="muted" style="font-size:12px">No '+key.replace('per','per ')+' values in the current filter.</div>'; return; }
   const max=Math.max(...rows.map(r=>r.pu));
@@ -267,11 +277,13 @@ function renderMetrics(){
 function renderDeals(){
   const rows=filteredDeals();
   if(!rows.length)return '<div class="panel muted" style="text-align:center">No deals match the filters.</div>';
-  return '<div class="grp"><table><thead><tr><th>Deal</th><th>Type</th><th>Tech</th><th>State</th><th>Capacity</th><th>Date</th><th class="c">Metrics</th><th>Conf.</th></tr></thead><tbody>'+
+  return '<div class="grp"><table><thead><tr><th>Deal</th><th>Type</th><th>Program / tender</th><th>Tech</th><th>State</th><th>Capacity</th><th>Date</th><th class="c">Metrics</th><th>Conf.</th></tr></thead><tbody>'+
     rows.map(d=>'<tr>'+
       '<td><div>'+esc(d.name)+'</div>'+(d.counterparty&&d.counterparty!=='—'?'<div class="dealmeta">'+esc(d.counterparty)+(d.seller&&d.seller!=='—'?' ← '+esc(d.seller):'')+'</div>':'')+
         ((d.source||d.source_url)?'<div class="dealmeta">'+srcLink(d.source,d.source_url)+'</div>':'')+'</td>'+
-      '<td>'+esc(d.deal_type||'—')+'</td><td>'+esc(d.technology||'—')+'</td><td>'+esc(d.state||'—')+'</td>'+
+      '<td>'+esc(d.deal_type||'—')+'</td>'+
+      '<td>'+(d.program?'<span class="badge" style="background:#dbeafe;color:#1e40af">'+esc(d.program)+'</span>':'<span class="muted">—</span>')+'</td>'+
+      '<td>'+esc(d.technology||'—')+'</td><td>'+esc(d.state||'—')+'</td>'+
       '<td>'+fmtCap(d)+'</td><td>'+(d.transaction_date?String(d.transaction_date).slice(0,10):'—')+'</td>'+
       '<td class="c">'+(d.metric_count||0)+'</td><td>'+badge(d.confidence)+'</td>'+
     '</tr>').join('')+

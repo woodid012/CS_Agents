@@ -47,10 +47,13 @@ row per deal/asset/transaction, one `comp_metrics` row per observed stat. This
 means a new comp type is just a new entry in the taxonomy — **no DB migration**.
 
 - Canonical taxonomy: `lib/compsTaxonomy.js` (categories, metrics, units, basis)
-- Referenced dataset: `data/comps-scrape.json` — ~28 curated public AU comps
-  from ~2021–2026 (M&A valuations, project capex, debt financings, GenCost
-  benchmarks, NSW Benefit Sharing rates) plus flagged illustrative archetypes.
-  Each row has a source URL.
+- Referenced dataset: `data/comps-scrape.json` — ~60 curated public AU comps
+  from ~2020–2026 (M&A valuations; project capex/debt; transmission, pumped
+  hydro, offshore wind & hydrogen projects; PPAs with term + start year;
+  CIS tender awards tagged by round; GenCost benchmarks; NSW Benefit Sharing
+  rates) plus flagged illustrative archetypes. Each row has a source URL.
+- Deals carry a `program` field (e.g. "CIS Tender 3 — NEM Dispatchable") so
+  awards can be filtered/tracked by scheme and tender round.
 - Loader / re-sync: `node scripts/scrape-comps.js` (or `npm run scrape-comps`)
   pushes the JSON into Neon idempotently (match-by-name, delete + re-insert).
 - Tables also auto-create and seed on first visit to `/comps` from the same

@@ -23,8 +23,7 @@
       "confidence": "High",
       "notes": "652 MW operating: Bulgana (224 MW wind), Numurkah (128 MW solar), Victorian Big Battery (300 MW/450 MWh), plus ~2.8 GW dev pipeline. Divested by Neoen to satisfy the ACCC during Brookfield's takeover. Completed 1 Aug 2025.",
       "metrics": [
-        { "category": "valuation", "metric": "enterprise_value", "value": 950, "unit": "$m", "basis": "total", "confidence": "High" },
-        { "category": "valuation", "metric": "ev_per_mw", "value": 1457000, "unit": "$/MW", "basis": "per_mw", "confidence": "Low", "notes": "A$950m / 652 MW operating; blended across wind/solar/BESS and includes 2.8 GW pipeline, so overstated for operating-only." }
+        { "category": "valuation", "metric": "enterprise_value", "value": 950, "unit": "$m", "basis": "total", "confidence": "High", "notes": "$/MW (auto-derived) is blended across wind/solar/BESS and includes ~2.8 GW pipeline — overstated for operating-only." }
       ]
     },
     {
@@ -61,8 +60,7 @@
       "confidence": "High",
       "notes": "A$6.5bn enterprise value (US$4.32bn). 3.4 GW operational (gas, wind, solar, coal) + 10.4 GW pipeline. FIRB + ACCC approved. Announced 11 Dec 2025.",
       "metrics": [
-        { "category": "valuation", "metric": "enterprise_value", "value": 6500, "unit": "$m", "basis": "total", "confidence": "High" },
-        { "category": "valuation", "metric": "ev_per_mw", "value": 1912000, "unit": "$/MW", "basis": "per_mw", "confidence": "Low", "notes": "A$6.5bn / 3.4 GW incl. thermal — directional only, not RE-pure." }
+        { "category": "valuation", "metric": "enterprise_value", "value": 6500, "unit": "$m", "basis": "total", "confidence": "High", "notes": "$/MW (auto-derived) is across 3.4 GW incl. thermal — directional only, not RE-pure." }
       ]
     },
     {
@@ -101,8 +99,7 @@
       "confidence": "High",
       "notes": "A$4bn. ~1.1 GW operating wind (Sapphire, Murra Warra I & II) + ~20 GW pipeline. One of the largest AU renewables transactions to date.",
       "metrics": [
-        { "category": "valuation", "metric": "enterprise_value", "value": 4000, "unit": "$m", "basis": "total", "confidence": "High" },
-        { "category": "valuation", "metric": "ev_per_mw", "value": 3636000, "unit": "$/MW", "basis": "per_mw", "confidence": "Low", "notes": "A$4bn / 1.1 GW operating — heavily overstated as it also buys a ~20 GW pipeline." }
+        { "category": "valuation", "metric": "enterprise_value", "value": 4000, "unit": "$m", "basis": "total", "confidence": "High", "notes": "$/MW (auto-derived) on 1.1 GW operating is heavily overstated — also buys a ~20 GW pipeline." }
       ]
     },
     {
@@ -158,8 +155,7 @@
       "confidence": "High",
       "notes": "A$381m (A$0.275/share). ~400 MW committed (incl. Kidston pumped hydro 250 MW) + ~2.3 GW pipeline.",
       "metrics": [
-        { "category": "valuation", "metric": "enterprise_value", "value": 381, "unit": "$m", "basis": "total", "confidence": "High" },
-        { "category": "valuation", "metric": "ev_per_mw", "value": 952500, "unit": "$/MW", "basis": "per_mw", "confidence": "Low", "notes": "A$381m / 400 MW; mix of pumped hydro + solar + BESS, plus pipeline." }
+        { "category": "valuation", "metric": "enterprise_value", "value": 381, "unit": "$m", "basis": "total", "confidence": "High", "notes": "$/MW (auto-derived) on 400 MW; mix of pumped hydro + solar + BESS, plus pipeline." }
       ]
     },
 
@@ -370,8 +366,7 @@
       "confidence": "High",
       "notes": "A$893m (A$0.92/share). 670 MW wind + 268 MW firming (incl. 25 MW/52 MWh Tesla battery) + 246 MW PPA offtake + >1 GW pipeline. Iberdrola's platform entry into Australia (2020; just outside the 5-yr window but a key benchmark).",
       "metrics": [
-        { "category": "valuation", "metric": "enterprise_value", "value": 893, "unit": "$m", "basis": "total", "confidence": "High" },
-        { "category": "valuation", "metric": "ev_per_mw", "value": 1333000, "unit": "$/MW", "basis": "per_mw", "confidence": "Low", "notes": "A$893m / 670 MW wind; also buys firming + pipeline." }
+        { "category": "valuation", "metric": "enterprise_value", "value": 893, "unit": "$m", "basis": "total", "confidence": "High", "notes": "$/MW (auto-derived) on 670 MW wind; also buys firming + pipeline." }
       ]
     },
     {
@@ -794,6 +789,293 @@
       "metrics": [
         { "category": "offtake", "metric": "ppa_tenor", "value": 15, "unit": "years", "basis": "count", "confidence": "Medium", "notes": "Extension through 31 Dec 2038." },
         { "category": "offtake", "metric": "ppa_start_year", "value": 2023, "unit": "year", "basis": "count", "confidence": "Low", "notes": "Renewable component ~2023; runs to 2038." }
+      ]
+    },
+    {
+      "name": "CIS Tender 1 — NEM Generation (round)",
+      "technology": "Hybrid",
+      "deal_type": "CIS award",
+      "state": "National",
+      "capacity_mw": 6400,
+      "capacity_mwh": 3600,
+      "status": "Announced",
+      "transaction_date": "2024-12-11",
+      "currency": "AUD",
+      "program": "CIS Tender 1 — NEM Generation",
+      "source": "WattClarity / DCCEEW",
+      "source_url": "https://wattclarity.com.au/articles/2024/12/standalone-solar-and-wind-dominate-list-of-19-successful-projects-from-latest-cis-tender/",
+      "confidence": "High",
+      "notes": "19 successful projects, 6.4 GW (8 hybrids add 3.6 GWh storage). First NEM generation tender; opened 31 May 2024. CIS = revenue underwriting (price floor/ceiling), strike prices not disclosed.",
+      "metrics": []
+    },
+    {
+      "name": "CIS Tender 2 — WEM Dispatchable (round)",
+      "technology": "BESS",
+      "deal_type": "CIS award",
+      "state": "WA",
+      "capacity_mw": 654,
+      "capacity_mwh": 2595,
+      "status": "Announced",
+      "transaction_date": "2025-03-20",
+      "currency": "AUD",
+      "program": "CIS Tender 2 — WEM Dispatchable",
+      "source": "DCCEEW / AEMO Services",
+      "source_url": "https://www.dcceew.gov.au/energy/renewable/capacity-investment-scheme/closed-cis-tenders",
+      "confidence": "High",
+      "notes": "4 projects, 654 MW / 2,595 MWh (WEM). Binding community commitments: $145m shared benefits + $41.5m First Nations initiatives.",
+      "metrics": []
+    },
+    {
+      "name": "CIS Tender 3 — NEM Dispatchable (round)",
+      "technology": "BESS",
+      "deal_type": "CIS award",
+      "state": "National",
+      "capacity_mw": 4130,
+      "capacity_mwh": 15370,
+      "status": "Announced",
+      "transaction_date": "2025-09-17",
+      "currency": "AUD",
+      "program": "CIS Tender 3 — NEM Dispatchable",
+      "source": "pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2025/09/17/cis-tender-supports-16-big-battery-projects-totalling-more-than-15-gwh/",
+      "confidence": "High",
+      "notes": "16 battery projects from 124 applicants, 4.13 GW / 15.37 GWh — Australia's largest battery tender to date. VIC led with 1.33 GW. Opened 13 Nov 2024.",
+      "metrics": []
+    },
+    {
+      "name": "CIS Tender 4 — NEM Generation (round)",
+      "technology": "Solar + BESS",
+      "deal_type": "CIS award",
+      "state": "National",
+      "capacity_mw": 6600,
+      "capacity_mwh": 11400,
+      "status": "Announced",
+      "transaction_date": "2025-10-09",
+      "currency": "AUD",
+      "program": "CIS Tender 4 — NEM Generation",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/australias-capacity-investment-scheme-tender-4-sees-11-4gwh-of-solar-plus-storage-awarded/",
+      "confidence": "High",
+      "notes": "20 projects, 6.6 GW generation; co-located hybrids add 11.4 GWh (3.5 GW) of storage.",
+      "metrics": []
+    },
+    {
+      "name": "CIS Tender 5 — WEM Generation (round)",
+      "technology": "Solar + BESS",
+      "deal_type": "CIS award",
+      "state": "WA",
+      "capacity_mw": 1900,
+      "status": "Announced",
+      "transaction_date": "2026-05-02",
+      "currency": "AUD",
+      "program": "CIS Tender 5 — WEM Generation",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/western-australia-awards-1-9gw-of-renewables-and-3-7gwh-of-battery-storage-under-cis-tenders-5-and-6/",
+      "confidence": "High",
+      "notes": "7 projects, 1.9 GW renewable generation (WEM/SWIS). Awarded alongside Tender 6.",
+      "metrics": []
+    },
+    {
+      "name": "CIS Tender 6 — WEM Dispatchable (round)",
+      "technology": "BESS",
+      "deal_type": "CIS award",
+      "state": "WA",
+      "capacity_mw": 482,
+      "capacity_mwh": 3683,
+      "status": "Announced",
+      "transaction_date": "2026-05-02",
+      "currency": "AUD",
+      "program": "CIS Tender 6 — WEM Dispatchable",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/western-australia-awards-1-9gw-of-renewables-and-3-7gwh-of-battery-storage-under-cis-tenders-5-and-6/",
+      "confidence": "High",
+      "notes": "3 battery projects, 482 MW / 3,683 MWh — long durations (~6.9–8h) for WA's coal exit by 2030.",
+      "metrics": []
+    },
+    {
+      "name": "CIS Tender 7 — NEM Generation (round)",
+      "technology": "Solar + BESS",
+      "deal_type": "CIS award",
+      "state": "National",
+      "capacity_mw": 7800,
+      "status": "Announced",
+      "transaction_date": "2026-05-23",
+      "currency": "AUD",
+      "program": "CIS Tender 7 — NEM Generation",
+      "source": "PV Tech",
+      "source_url": "https://www.pv-tech.org/australia-awards-7-8gw-of-renewable-energy-under-capacity-investment-scheme-tender-7/",
+      "confidence": "High",
+      "notes": "19 projects, 7.8 GW — largest CIS generation tender to date.",
+      "metrics": []
+    },
+    {
+      "name": "Akaysha Deer Park BESS",
+      "counterparty": "Akaysha Energy (BlackRock)",
+      "technology": "BESS",
+      "deal_type": "CIS award",
+      "state": "VIC",
+      "capacity_mw": 275,
+      "capacity_mwh": 1100,
+      "status": "Development",
+      "transaction_date": "2025-09-17",
+      "currency": "AUD",
+      "program": "CIS Tender 3 — NEM Dispatchable",
+      "source": "Energy Magazine",
+      "source_url": "https://www.energymagazine.com.au/why-global-juggernauts-are-flocking-to-australian-renewables",
+      "confidence": "Medium",
+      "notes": "275 MW/1,100 MWh (4h) BESS in Victoria; awarded a CIS Tender 3 contract.",
+      "metrics": [
+        { "category": "performance", "metric": "duration_hours", "value": 4, "unit": "hours", "basis": "count", "confidence": "High" }
+      ]
+    },
+    {
+      "name": "Akaysha Ulinda Park BESS Stage 2",
+      "counterparty": "Akaysha Energy (BlackRock)",
+      "technology": "BESS",
+      "deal_type": "CIS award",
+      "state": "QLD",
+      "capacity_mw": 195,
+      "capacity_mwh": 780,
+      "status": "Development",
+      "transaction_date": "2025-09-17",
+      "currency": "AUD",
+      "program": "CIS Tender 3 — NEM Dispatchable",
+      "source": "Energy Magazine",
+      "source_url": "https://www.energymagazine.com.au/why-global-juggernauts-are-flocking-to-australian-renewables",
+      "confidence": "Medium",
+      "notes": "195 MW/780 MWh (4h) BESS in Queensland; awarded a CIS Tender 3 contract.",
+      "metrics": [
+        { "category": "performance", "metric": "duration_hours", "value": 4, "unit": "hours", "basis": "count", "confidence": "High" }
+      ]
+    },
+    {
+      "name": "ACEN Birriwa Solar + BESS",
+      "counterparty": "ACEN Australia",
+      "technology": "Solar + BESS",
+      "deal_type": "CIS award",
+      "state": "NSW",
+      "capacity_mw": 600,
+      "capacity_mwh": 2400,
+      "status": "Development",
+      "transaction_date": "2025-10-09",
+      "currency": "AUD",
+      "program": "CIS Tender 4 — NEM Generation",
+      "source": "Energy Magazine",
+      "source_url": "https://www.energymagazine.com.au/why-global-juggernauts-are-flocking-to-australian-renewables",
+      "confidence": "Medium",
+      "notes": "600 MW solar + 2.4 GWh BESS in the NSW Central-West Orana REZ; CIS Tender 4 hybrid.",
+      "metrics": []
+    },
+    {
+      "name": "Trina Killawarra Solar-Battery Hybrid",
+      "counterparty": "Trina Solar",
+      "technology": "Solar + BESS",
+      "deal_type": "CIS award",
+      "state": "WA",
+      "capacity_mw": 350,
+      "capacity_mwh": 2100,
+      "status": "Development",
+      "transaction_date": "2026-05-02",
+      "currency": "AUD",
+      "program": "CIS Tender 5 — WEM Generation",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/western-australia-awards-1-9gw-of-renewables-and-3-7gwh-of-battery-storage-under-cis-tenders-5-and-6/",
+      "confidence": "Medium",
+      "notes": "350 MW/2,100 MWh solar-battery hybrid — the sole hybrid under WEM Tender 5.",
+      "metrics": []
+    },
+    {
+      "name": "Neoen Yathroo Wind Farm",
+      "counterparty": "Neoen Australia",
+      "technology": "Wind",
+      "deal_type": "CIS award",
+      "state": "WA",
+      "capacity_mw": 420,
+      "status": "Development",
+      "transaction_date": "2026-05-02",
+      "currency": "AUD",
+      "program": "CIS Tender 5 — WEM Generation",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/western-australia-awards-1-9gw-of-renewables-and-3-7gwh-of-battery-storage-under-cis-tenders-5-and-6/",
+      "confidence": "Medium",
+      "notes": "420 MW wind farm (WA); CIS Tender 5.",
+      "metrics": []
+    },
+    {
+      "name": "Neoen Narrogin Wind Farm",
+      "counterparty": "Neoen Australia",
+      "technology": "Wind",
+      "deal_type": "CIS award",
+      "state": "WA",
+      "capacity_mw": 168,
+      "status": "Development",
+      "transaction_date": "2026-05-02",
+      "currency": "AUD",
+      "program": "CIS Tender 5 — WEM Generation",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/western-australia-awards-1-9gw-of-renewables-and-3-7gwh-of-battery-storage-under-cis-tenders-5-and-6/",
+      "confidence": "Medium",
+      "notes": "168 MW wind farm (WA); CIS Tender 5.",
+      "metrics": []
+    },
+    {
+      "name": "Neoen Yathroo Battery",
+      "counterparty": "Neoen Australia",
+      "technology": "BESS",
+      "deal_type": "CIS award",
+      "state": "WA",
+      "capacity_mw": 200,
+      "capacity_mwh": 1600,
+      "status": "Development",
+      "transaction_date": "2026-05-02",
+      "currency": "AUD",
+      "program": "CIS Tender 6 — WEM Dispatchable",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/western-australia-awards-1-9gw-of-renewables-and-3-7gwh-of-battery-storage-under-cis-tenders-5-and-6/",
+      "confidence": "Medium",
+      "notes": "200 MW/1,600 MWh (8h) battery (WA); CIS Tender 6.",
+      "metrics": [
+        { "category": "performance", "metric": "duration_hours", "value": 8, "unit": "hours", "basis": "count", "confidence": "High" }
+      ]
+    },
+    {
+      "name": "Collie Battery & Solar Hybrid (Enpowered/Plenary)",
+      "counterparty": "Enpowered + Plenary Group",
+      "technology": "Solar + BESS",
+      "deal_type": "CIS award",
+      "state": "WA",
+      "capacity_mw": 200,
+      "capacity_mwh": 1518,
+      "status": "Development",
+      "transaction_date": "2026-05-02",
+      "currency": "AUD",
+      "program": "CIS Tender 6 — WEM Dispatchable",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/western-australia-awards-1-9gw-of-renewables-and-3-7gwh-of-battery-storage-under-cis-tenders-5-and-6/",
+      "confidence": "Medium",
+      "notes": "200 MW/1,518 MWh (~7.6h) battery + solar hybrid at Collie (WA); CIS Tender 6.",
+      "metrics": [
+        { "category": "performance", "metric": "duration_hours", "value": 7.6, "unit": "hours", "basis": "count", "confidence": "Medium" }
+      ]
+    },
+    {
+      "name": "Frontier Waroona Renewable Energy Project Stage 1",
+      "counterparty": "Frontier Energy",
+      "technology": "BESS",
+      "deal_type": "CIS award",
+      "state": "WA",
+      "capacity_mw": 82,
+      "capacity_mwh": 565,
+      "status": "Development",
+      "transaction_date": "2026-05-02",
+      "currency": "AUD",
+      "program": "CIS Tender 6 — WEM Dispatchable",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/western-australia-awards-1-9gw-of-renewables-and-3-7gwh-of-battery-storage-under-cis-tenders-5-and-6/",
+      "confidence": "Medium",
+      "notes": "82 MW/565 MWh (~6.9h) at Waroona (WA); CIS Tender 6.",
+      "metrics": [
+        { "category": "performance", "metric": "duration_hours", "value": 6.9, "unit": "hours", "basis": "count", "confidence": "Medium" }
       ]
     },
     {

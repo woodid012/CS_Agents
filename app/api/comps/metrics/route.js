@@ -17,7 +17,7 @@ export async function GET(req) {
 
     const rows = await sql`
       SELECT m.*,
-             d.name AS deal_name, d.technology, d.deal_type, d.state,
+             d.name AS deal_name, d.technology, d.deal_type, d.state, d.program,
              d.capacity_mw, d.capacity_mwh, d.transaction_date, d.currency
       FROM comp_metrics m
       JOIN comp_deals d ON d.id = m.deal_id
