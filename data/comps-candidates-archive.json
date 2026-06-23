@@ -367,6 +367,321 @@
           "notes": "Multi-year capex 2026–2029; not a single-asset figure. Useful as a hyperscaler-commitment scale benchmark alongside AWS A$20bn."
         }
       ]
+    },
+    {
+      "archived_at": "2026-06-23T21:45:15.800Z",
+      "review": "approved",
+      "review_note": "Source (Partners Group press release, 6 Mar 2025) confirms up to AUD 1.2bn to transform GreenSquareDC; first Sydney site expandable to 96 MW; land options across Sydney/Melbourne/Perth. Notes correctly flag 96 MW = single-site expansion and 1.2bn = platform commitment, so $/MW is indicative only. Not a duplicate of existing entries. Confirmed IT load: 96 MW (site expansion target).",
+      "name": "Partners Group / GreenSquareDC",
+      "counterparty": "Partners Group",
+      "seller": "GreenSquareDC (existing shareholders)",
+      "technology": "Data centre",
+      "deal_type": "Platform",
+      "data_class": "Real",
+      "state": "National",
+      "capacity_mw": 96,
+      "status": "Announced",
+      "transaction_date": "2025-03-06",
+      "date_added": "2026-06-24",
+      "currency": "AUD",
+      "source": "Partners Group",
+      "source_url": "https://www.partnersgroup.com/en/news-and-views/press-releases/investment-news/detail?news_id=8fca69fb-5b66-407a-9fea-988952f4a120",
+      "confidence": "High",
+      "notes": "Partners Group to invest up to AUD 1.2bn to transform GreenSquareDC into a hyperscale/AI data centre platform across Sydney, Melbourne and Perth. First Sydney site is a brownfield with powered shell + adjoining landbank enabling expansion to 96 MW of compute capacity. IT load (96 MW) is the disclosed site expansion capacity, not platform-wide; investment is a platform commitment not a single-asset EV, so $/MW from these two figures is indicative only.",
+      "metrics": [
+        {
+          "category": "financing",
+          "metric": "equity_raised",
+          "value": 1200,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "High"
+        },
+        {
+          "category": "demand",
+          "metric": "it_load",
+          "value": 96,
+          "unit": "MW",
+          "basis": "total",
+          "confidence": "High"
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T21:45:15.800Z",
+      "review": "approved",
+      "review_note": "Source (AirTrunk primary) confirms MEL2 >354 MW capacity, >A$5bn direct investment, lifting Melbourne total to >630 MW (MEL1+MEL2 >A$7bn). Distinct from existing 'Blackstone+CPP/AirTrunk' M&A entry (that is the platform EV). Implied ~A$14m/MW capex is sane for a hyperscale build. Confirmed IT load: 354 MW. Approve.",
+      "name": "AirTrunk MEL2 (Melbourne campus)",
+      "counterparty": "AirTrunk",
+      "technology": "Data centre",
+      "deal_type": "Development benchmark",
+      "data_class": "Real",
+      "state": "VIC",
+      "capacity_mw": 354,
+      "status": "Development",
+      "transaction_date": "2025-12-24",
+      "date_added": "2026-06-24",
+      "currency": "AUD",
+      "source": "AirTrunk",
+      "source_url": "https://airtrunk.com/airtrunk-expands-australian-platform-with-a-second-hyperscale-data-centre-campus-in-melbourne/",
+      "confidence": "High",
+      "notes": "AirTrunk's second Melbourne hyperscale campus (MEL2) in Melbourne's north-west: 354 MW IT load, more than A$5bn new direct investment. Lifts AirTrunk's total deployable Melbourne capacity to over 630 MW (MEL1+MEL2 combined >A$7bn). IT load 354 MW. Capex/MW derivable from $5bn / 354 MW.",
+      "metrics": [
+        {
+          "category": "capex",
+          "metric": "capex_total",
+          "value": 5000,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "High"
+        },
+        {
+          "category": "demand",
+          "metric": "it_load",
+          "value": 354,
+          "unit": "MW",
+          "basis": "total",
+          "confidence": "High"
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T21:45:15.800Z",
+      "review": "approved",
+      "review_note": "Source (DCD) confirms 168 MW (twelve 14 MW halls), up to A$3.94bn, Fife Capital + Stockland, 90 Aldington Rd Kemps Creek, 1 GW substation, direct-to-chip liquid cooling. Implied ~A$23m/MW is plausible for a planned hyperscale DC. Single-site IT load clean. Not a duplicate. Confirmed IT load: 168 MW. Approve.",
+      "name": "Stockland / Fife Capital — Kemps Creek (Western Sydney)",
+      "counterparty": "Stockland / Fife Capital",
+      "technology": "Data centre",
+      "deal_type": "Development benchmark",
+      "data_class": "Real",
+      "state": "NSW",
+      "capacity_mw": 168,
+      "status": "Development",
+      "transaction_date": "2026-04-06",
+      "date_added": "2026-06-24",
+      "currency": "AUD",
+      "source": "Data Center Dynamics",
+      "source_url": "https://www.datacenterdynamics.com/en/news/stockland-files-to-build-168mw-data-center-in-sydney-australia/",
+      "confidence": "High",
+      "notes": "Planning application filed for a 168 MW hyperscale data centre (twelve 14 MW data halls) at 90 Aldington Road, Kemps Creek, West Sydney; up to AU$3.94bn investment. 1 GW substation also planned to serve the wider industrial park. Direct-to-chip liquid cooling. IT load 168 MW.",
+      "metrics": [
+        {
+          "category": "capex",
+          "metric": "capex_total",
+          "value": 3940,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "High"
+        },
+        {
+          "category": "demand",
+          "metric": "it_load",
+          "value": 168,
+          "unit": "MW",
+          "basis": "total",
+          "confidence": "High"
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T21:45:15.800Z",
+      "review": "approved",
+      "review_note": "Source (The Urban Developer) confirms NEXTDC M4, 162 MW, A$2bn, 127 Todd Road Port Melbourne (Fishermans Bend), direct-to-chip liquid cooling at 1000 kW racks. Distinct from existing 'NEXTDC (platform)' and 'NEXTDC S7' entries. Implied ~A$12m/MW plausible for a planned campus. Confirmed IT load: 162 MW. Approve.",
+      "name": "NEXTDC M4 (Fishermans Bend, Melbourne)",
+      "counterparty": "NEXTDC",
+      "technology": "Data centre",
+      "deal_type": "Development benchmark",
+      "data_class": "Real",
+      "state": "VIC",
+      "capacity_mw": 162,
+      "status": "Development",
+      "transaction_date": "2026-01-21",
+      "date_added": "2026-06-24",
+      "currency": "AUD",
+      "source": "The Urban Developer",
+      "source_url": "https://www.theurbandeveloper.com/articles/nextdc-m4-digital-campus-fishermans-bend-approval",
+      "confidence": "High",
+      "notes": "NEXTDC received Victorian Government development approval for the M4 technology campus at Fishermans Bend, Port Melbourne (former Westgate Park Printing Complex, 127 Todd Road). 162 MW, A$2bn. Direct-to-chip liquid cooling supporting 1000 kW rack densities. IT load 162 MW. Distinct from existing NEXTDC platform / NEXTDC S7 entries.",
+      "metrics": [
+        {
+          "category": "capex",
+          "metric": "capex_total",
+          "value": 2000,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "High"
+        },
+        {
+          "category": "demand",
+          "metric": "it_load",
+          "value": 162,
+          "unit": "MW",
+          "basis": "total",
+          "confidence": "High"
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T21:45:15.800Z",
+      "review": "approved",
+      "review_note": "Source (DCD) confirms Project Berlin: 850 MW S4+S7 Western Sydney, A$15bn over 10+ years, advisors Morgan Stanley + Cadence, NEXTDC retains minority/operates, FC 12-18 months. Long-dated programme aggregate (S7 also appears as a standalone 550 MW entry, but this is the distinct S4+S7 JV transaction, not a strict duplicate). Confidence Medium is correctly calibrated for a pre-close programme figure; metrics flagged as planned aggregate. Confirmed IT load: 850 MW (planned aggregate, not single asset). Approve.",
+      "name": "NEXTDC Project Berlin — Western Sydney 850MW JV (S4/S7)",
+      "counterparty": "NEXTDC (seeking JV partner)",
+      "technology": "Data centre",
+      "deal_type": "Development benchmark",
+      "data_class": "Real",
+      "state": "NSW",
+      "capacity_mw": 850,
+      "status": "Development",
+      "transaction_date": "2025-08-28",
+      "date_added": "2026-06-24",
+      "currency": "AUD",
+      "source": "Data Center Dynamics",
+      "source_url": "https://www.datacenterdynamics.com/en/news/nextdc-seeks-partner-for-850mw-data-center-jv-in-sydney-australia/",
+      "confidence": "Medium",
+      "notes": "NEXTDC seeking a JV partner (Project Berlin; advisors Morgan Stanley + Cadence Advisory) for 850 MW of new data-centre capacity in Western Sydney (S4 + S7), AU$15bn over 10+ years. NEXTDC to retain minority stake and operate. Financial close targeted 12-18 months. IT load 850 MW (planned aggregate). Capex is a long-dated programme figure, not single-asset EV.",
+      "metrics": [
+        {
+          "category": "capex",
+          "metric": "capex_total",
+          "value": 15000,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "Medium"
+        },
+        {
+          "category": "demand",
+          "metric": "it_load",
+          "value": 850,
+          "unit": "MW",
+          "basis": "total",
+          "confidence": "Medium"
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T21:45:15.800Z",
+      "review": "approved",
+      "review_note": "Source (DCNN) confirms IC3 Super West topped out at Macquarie Park: 47 MW total planned capacity, A$350m PHASE 1 investment delivering core+shell with 6 MW IT load fitted, opening Sep 2026. CORRECTED: the A$350m is Phase-1-only (source explicitly ties it to the 6 MW fitted), so capex must be read against the 6 MW fitted load, NOT the 47 MW total — do not derive $/MW from 350/47. Candidate correctly carries both it_load (47 MW total planned) and contracted_load (6 MW Phase-1 fitted). Capex note amended to flag Phase-1 scope. Confirmed IT load: 47 MW total planned / 6 MW fitted Phase 1. Approve.",
+      "name": "Macquarie Data Centres — IC3 Super West (Macquarie Park, Sydney)",
+      "counterparty": "Macquarie Data Centres (Macquarie Technology Group)",
+      "technology": "Data centre",
+      "deal_type": "Development benchmark",
+      "data_class": "Real",
+      "state": "NSW",
+      "capacity_mw": 47,
+      "status": "Construction",
+      "transaction_date": "2026-06-23",
+      "date_added": "2026-06-24",
+      "currency": "AUD",
+      "source": "Data Centre & Network News",
+      "source_url": "https://dcnnmagazine.com/build/macquarie-tops-out-350m-47mw-ai-data-centre/",
+      "confidence": "High",
+      "notes": "Macquarie Data Centres topped out IC3 Super West at its Macquarie Park (Sydney) campus: 47 MW total planned capacity (6 MW IT load fitted in Phase 1), ~A$350m investment, purpose-built for high-density AI / liquid cooling. Opening Q3 2026. IT load: 47 MW total planned; capacity_mw = 47 MW total, contracted/fitted Phase-1 load = 6 MW.",
+      "metrics": [
+        {
+          "category": "capex",
+          "metric": "capex_total",
+          "value": 350,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "High",
+          "notes": "Phase-1 investment only (core+shell with 6 MW fitted); not the full 47 MW build-out. Do not derive $/MW against 47 MW."
+        },
+        {
+          "category": "demand",
+          "metric": "it_load",
+          "value": 47,
+          "unit": "MW",
+          "basis": "total",
+          "confidence": "High",
+          "notes": "Total planned capacity; only 6 MW fitted in Phase 1 (see contracted_load)."
+        },
+        {
+          "category": "demand",
+          "metric": "contracted_load",
+          "value": 6,
+          "unit": "MW",
+          "basis": "total",
+          "confidence": "High"
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T21:45:15.800Z",
+      "review": "rejected",
+      "review_note": "Source verifies 430 MW of renewable GENERATION across 9 PPAs (NSW/VIC), not data-centre IT load. Two problems: (1) the only hard money metric (total_project_cost 20000 = A$20bn) duplicates the existing 'AWS Australia data-centre investment' deal already in comps-scrape.json (same A$20bn 2025-29 commitment); (2) capacity_mw=430 is generation, not IT/critical load, and contracted_pct=100% is unsupported. This is a generation-PPA story mislabelled as a data-centre comp with a duplicated capex figure. No new, correctly-labelled data-centre metric. Reject.",
+      "name": "Amazon (AWS) Australia data-centre renewable PPAs",
+      "counterparty": "Amazon (AWS)",
+      "technology": "Data centre",
+      "deal_type": "Offtake",
+      "data_class": "Real",
+      "state": "National",
+      "capacity_mw": 430,
+      "status": "Announced",
+      "transaction_date": "2026-04-01",
+      "date_added": "2026-06-24",
+      "currency": "AUD",
+      "source": "Energy-Storage.news",
+      "source_url": "https://www.energy-storage.news/amazon-australia-puts-battery-storage-centre-stage-as-it-inks-nine-ppas-for-data-centre-expansion/",
+      "confidence": "Medium",
+      "notes": "Amazon signed nine renewable PPAs totalling 430 MW of generation capacity (1 wind 201.8MW, 3 utility solar-plus-storage, 4 distributed solar-plus-storage, 1 battery add-on) across NSW and VIC to support data-centre/AI expansion. Underpins AWS's AU$20bn commitment to expand AU data-centre infrastructure by 2029. NOTE: 430 MW is renewable GENERATION capacity contracted, NOT data-centre IT load (no IT load MW disclosed); capacity_mw here = contracted generation, not IT critical load.",
+      "metrics": [
+        {
+          "category": "offtake",
+          "metric": "contracted_pct",
+          "value": 100,
+          "unit": "%",
+          "basis": "percent",
+          "confidence": "Low"
+        },
+        {
+          "category": "financing",
+          "metric": "total_project_cost",
+          "value": 20000,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "Medium"
+        }
+      ]
+    },
+    {
+      "archived_at": "2026-06-23T21:45:15.800Z",
+      "review": "rejected",
+      "review_note": "Source confirms Brooklyn ~A$2bn estimated value, but the 350 MW is power SECURED across TWO Melbourne sites (Brooklyn + Cherry Lane, Laverton North) — not Brooklyn-only IT load. capacity_mw=350 and it_load=350 are misattributed to the single Brooklyn site, and pairing the Brooklyn-only A$2bn capex against a two-site 350 MW load yields a meaningless ~A$5.7m/MW $/MW comp. Brooklyn-only IT load is not disclosed, so the load cannot be cleanly stated. Unverifiable as a single-asset benchmark — reject rather than guess. Confirmed IT load: not separable for Brooklyn (350 MW is a two-site allocation).",
+      "name": "Stockland — Brooklyn (Melbourne)",
+      "counterparty": "Stockland",
+      "technology": "Data centre",
+      "deal_type": "Development benchmark",
+      "data_class": "Real",
+      "state": "VIC",
+      "capacity_mw": 350,
+      "status": "Development",
+      "transaction_date": "2026-05-29",
+      "date_added": "2026-06-24",
+      "currency": "AUD",
+      "source": "The Urban Developer",
+      "source_url": "https://www.theurbandeveloper.com/articles/stockland-brooklyn-melbourne-data-centre-planning-application",
+      "confidence": "Medium",
+      "notes": "Stockland data-centre planning application at 413 Francis Street, Brooklyn (Melbourne), ~A$2bn estimated end value. Source states the 350 MW IT load is shared across two Melbourne sites (Brooklyn + Cherry Lane, Laverton North), so 350 MW is a combined-allocation figure, not necessarily Brooklyn-only — treat IT load with caution. Under Development Facilitation Program review by VIC Dept of Transport and Planning.",
+      "metrics": [
+        {
+          "category": "capex",
+          "metric": "capex_total",
+          "value": 2000,
+          "unit": "$m",
+          "basis": "total",
+          "confidence": "Medium"
+        },
+        {
+          "category": "demand",
+          "metric": "it_load",
+          "value": 350,
+          "unit": "MW",
+          "basis": "total",
+          "confidence": "Low"
+        }
+      ]
     }
   ]
 }
