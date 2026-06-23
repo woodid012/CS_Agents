@@ -191,7 +191,8 @@ CREATE TABLE IF NOT EXISTS comp_deals (
   status           TEXT,                 -- Announced, Completed, FID, Operating, Benchmark, ...
   transaction_date DATE,
   currency         TEXT DEFAULT 'AUD',
-  source           TEXT,
+  source           TEXT,                 -- publisher / source name
+  source_url       TEXT,                 -- clean reference link to the source
   confidence       TEXT,                 -- High / Medium / Low / Illustrative
   notes            TEXT,
   created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -201,12 +202,13 @@ CREATE TABLE IF NOT EXISTS comp_deals (
 CREATE TABLE IF NOT EXISTS comp_metrics (
   id          SERIAL PRIMARY KEY,
   deal_id     INTEGER NOT NULL REFERENCES comp_deals(id) ON DELETE CASCADE,
-  category    TEXT NOT NULL,             -- taxonomy category key (valuation, capex, connection, ...)
-  metric      TEXT NOT NULL,             -- taxonomy metric key (ev_per_mw, capex_per_mwh, ...)
+  category    TEXT NOT NULL,             -- taxonomy category key (valuation, capex, financing, ...)
+  metric      TEXT NOT NULL,             -- taxonomy metric key (ev_per_mw, capex_per_mwh, debt_total, ...)
   value       NUMERIC,
   unit        TEXT,                      -- $m, $/MW, $/MWh, $/MW/yr, %, x, ratio, ...
   basis       TEXT,                      -- total, per_mw, per_mwh, per_mw_yr, one_off, percent, ...
-  source      TEXT,
+  source      TEXT,                      -- publisher / source name (falls back to deal source)
+  source_url  TEXT,                      -- clean reference link to the source
   confidence  TEXT,
   notes       TEXT,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),

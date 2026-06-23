@@ -30,9 +30,13 @@ Curated stats & comparables tracked across deals — for internal benchmarking.
 
 - **Wide, open-ended scope**: valuations ($ total and per-unit), capex, capex
   splits (AC/DC/EPC/BoS), connection & system-strength charges, opex, land &
-  rent, community contributions, offtake/PPA, returns and performance.
+  rent, community contributions, **financing/debt**, offtake/PPA, returns and
+  performance.
+- **Every datapoint is referenced** — each row carries a source name and a
+  clickable `source_url`.
 - **Two views**: a per-metric table grouped by category (with automatic
-  $/MW and $/MWh normalisation), and a per-deal summary view.
+  $/MW and $/MWh normalisation — works for capex *and* debt), and a per-deal
+  summary view.
 - **Filter** by technology, state, category and deal type; free-text search.
 - **Add deals & metrics** inline; the metric picker is driven by the taxonomy
   and pre-fills the expected unit/basis.
@@ -43,10 +47,20 @@ row per deal/asset/transaction, one `comp_metrics` row per observed stat. This
 means a new comp type is just a new entry in the taxonomy — **no DB migration**.
 
 - Canonical taxonomy: `lib/compsTaxonomy.js` (categories, metrics, units, basis)
-- Starter dataset: `lib/compsSeed.js` (real public M&A comps + flagged
-  illustrative build-cost benchmarks)
-- Tables auto-create and seed on first visit to `/comps` (see `lib/compsDb.js`),
-  matching the `/api/projects` pattern. DDL also lives in `schema.sql`.
+- Referenced dataset: `data/comps-scrape.json` — ~28 curated public AU comps
+  from ~2021–2026 (M&A valuations, project capex, debt financings, GenCost
+  benchmarks, NSW Benefit Sharing rates) plus flagged illustrative archetypes.
+  Each row has a source URL.
+- Loader / re-sync: `node scripts/scrape-comps.js` (or `npm run scrape-comps`)
+  pushes the JSON into Neon idempotently (match-by-name, delete + re-insert).
+- Tables also auto-create and seed on first visit to `/comps` from the same
+  JSON (see `lib/compsDb.js`), matching the `/api/projects` pattern. DDL lives
+  in `schema.sql`.
+
+> Note: M&A transaction values are public; per-project cost-stack detail
+> (AC/DC/EPC splits, system strength, land, rent, MLF) is largely confidential,
+> so those rows are CSIRO GenCost benchmarks, the NSW Benefit Sharing Guideline,
+> or clearly flagged `Illustrative`. See the `_meta.disclaimer` in the JSON.
 
 ### Other
 - **Development Tracker** (`/development-tracker`) — project pipeline tracking

@@ -42,10 +42,10 @@ export async function POST(req) {
     const category = b.category || categoryForMetric(b.metric);
     const value = b.value === '' || b.value == null ? null : Number(b.value);
     const [row] = await sql`
-      INSERT INTO comp_metrics (deal_id, category, metric, value, unit, basis, source, confidence, notes)
+      INSERT INTO comp_metrics (deal_id, category, metric, value, unit, basis, source, source_url, confidence, notes)
       VALUES (${Number(b.deal_id)}, ${category}, ${b.metric}, ${value},
               ${b.unit || null}, ${b.basis || null}, ${b.source || null},
-              ${b.confidence || null}, ${b.notes || null})
+              ${b.source_url || null}, ${b.confidence || null}, ${b.notes || null})
       RETURNING *
     `;
     return NextResponse.json(row, { status: 201 });

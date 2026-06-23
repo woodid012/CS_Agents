@@ -70,10 +70,20 @@ function fmtCapacity(d) {
   return parts.join(' / ') || '—';
 }
 
+function SourceLink({ source, url }) {
+  if (!source && !url) return <span className="text-gray-300">—</span>;
+  const label = source || 'source';
+  return url ? (
+    <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700 hover:underline">{label} ↗</a>
+  ) : (
+    <span className="text-gray-400">{label}</span>
+  );
+}
+
 const EMPTY_DEAL = {
   name: '', counterparty: '', seller: '', technology: 'Solar', deal_type: 'M&A',
   state: 'NSW', capacity_mw: '', capacity_mwh: '', capacity_mwac: '', capacity_mwdc: '',
-  status: 'Announced', transaction_date: '', currency: 'AUD', source: '', confidence: 'Medium', notes: '',
+  status: 'Announced', transaction_date: '', currency: 'AUD', source: '', source_url: '', confidence: 'Medium', notes: '',
 };
 
 export default function CompsPage() {
@@ -300,7 +310,7 @@ function MetricsView({ byCategory, onDelete }) {
                     <td className="px-3 py-2">
                       {m.confidence && <span className={cn('inline-block px-1.5 py-0.5 rounded text-[10px] font-medium', CONF_COLORS[m.confidence] || 'bg-gray-100 text-gray-600')}>{m.confidence}</span>}
                     </td>
-                    <td className="px-3 py-2 text-[11px] text-gray-400 max-w-[200px] truncate" title={[m.source, m.notes].filter(Boolean).join(' — ')}>{m.source || '—'}</td>
+                    <td className="px-3 py-2 text-[11px] max-w-[220px] truncate" title={[m.source, m.notes].filter(Boolean).join(' — ')}><SourceLink source={m.source} url={m.source_url} /></td>
                     <td className="px-2 py-2 text-right">
                       <button onClick={() => onDelete(m.id)} className="text-xs text-red-400 hover:text-red-600">✕</button>
                     </td>
@@ -342,6 +352,7 @@ function DealsView({ deals, onDelete }) {
               <td className="px-4 py-2">
                 <div className="font-medium text-gray-800">{d.name}</div>
                 {d.counterparty && d.counterparty !== '—' && <div className="text-[11px] text-gray-400">{d.counterparty}{d.seller && d.seller !== '—' ? ` ← ${d.seller}` : ''}</div>}
+                {(d.source || d.source_url) && <div className="text-[11px] mt-0.5"><SourceLink source={d.source} url={d.source_url} /></div>}
               </td>
               <td className="px-3 py-2 text-gray-600">{d.deal_type || '—'}</td>
               <td className="px-3 py-2 text-gray-600">{d.technology || '—'}</td>
@@ -410,7 +421,8 @@ function DealForm({ onSubmit, onCancel }) {
       <Field label="MWac"><input type="number" step="any" value={f.capacity_mwac} onChange={set('capacity_mwac')} className="inp" /></Field>
       <Field label="MWdc"><input type="number" step="any" value={f.capacity_mwdc} onChange={set('capacity_mwdc')} className="inp" /></Field>
       <Field label="Confidence"><select value={f.confidence} onChange={set('confidence')} className="inp">{CONFIDENCE.map((c) => <option key={c}>{c}</option>)}</select></Field>
-      <Field label="Source"><input value={f.source} onChange={set('source')} className="inp" /></Field>
+      <Field label="Source"><input value={f.source} onChange={set('source')} className="inp" placeholder="e.g. Energy-Storage.news" /></Field>
+      <Field label="Source URL" wide><input value={f.source_url} onChange={set('source_url')} className="inp" placeholder="https://…" /></Field>
       <Field label="Notes" wide><input value={f.notes} onChange={set('notes')} className="inp" /></Field>
       <div className="md:col-span-4 flex gap-2 justify-end">
         <button type="button" onClick={onCancel} className="px-3 py-1.5 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-50">Cancel</button>
@@ -424,7 +436,7 @@ function DealForm({ onSubmit, onCancel }) {
 // ── Add Metric form ───────────────────────────────────────────────────────
 function MetricForm({ deals, onSubmit, onCancel }) {
   const [f, setF] = useState({
-    deal_id: '', metric: '', value: '', unit: '', basis: '', source: '', confidence: 'Medium', notes: '',
+    deal_id: '', metric: '', value: '', unit: '', basis: '', source: '', source_url: '', confidence: 'Medium', notes: '',
   });
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
 
@@ -457,7 +469,8 @@ function MetricForm({ deals, onSubmit, onCancel }) {
       <Field label="Unit"><select value={f.unit} onChange={set('unit')} className="inp"><option value="">—</option>{UNITS.map((u) => <option key={u}>{u}</option>)}</select></Field>
       <Field label="Basis"><select value={f.basis} onChange={set('basis')} className="inp"><option value="">—</option>{BASES.map((b) => <option key={b}>{b}</option>)}</select></Field>
       <Field label="Confidence"><select value={f.confidence} onChange={set('confidence')} className="inp">{CONFIDENCE.map((c) => <option key={c}>{c}</option>)}</select></Field>
-      <Field label="Source"><input value={f.source} onChange={set('source')} className="inp" /></Field>
+      <Field label="Source"><input value={f.source} onChange={set('source')} className="inp" placeholder="publisher" /></Field>
+      <Field label="Source URL" wide><input value={f.source_url} onChange={set('source_url')} className="inp" placeholder="https://…" /></Field>
       <Field label="Notes"><input value={f.notes} onChange={set('notes')} className="inp" /></Field>
       <div className="md:col-span-4 flex gap-2 justify-end">
         <button type="button" onClick={onCancel} className="px-3 py-1.5 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-50">Cancel</button>

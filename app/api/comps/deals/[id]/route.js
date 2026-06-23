@@ -22,6 +22,7 @@ export async function PATCH(req, { params }) {
   if ('transaction_date' in b) await sql`UPDATE comp_deals SET transaction_date=${b.transaction_date || null}, updated_at=NOW() WHERE id=${id}`;
   if ('currency' in b)         await sql`UPDATE comp_deals SET currency=${b.currency || null}, updated_at=NOW() WHERE id=${id}`;
   if ('source' in b)           await sql`UPDATE comp_deals SET source=${b.source || null}, updated_at=NOW() WHERE id=${id}`;
+  if ('source_url' in b)       await sql`UPDATE comp_deals SET source_url=${b.source_url || null}, updated_at=NOW() WHERE id=${id}`;
   if ('confidence' in b)       await sql`UPDATE comp_deals SET confidence=${b.confidence || null}, updated_at=NOW() WHERE id=${id}`;
   if ('notes' in b)            await sql`UPDATE comp_deals SET notes=${b.notes || null}, updated_at=NOW() WHERE id=${id}`;
   if ('capacity_mw' in b)      await sql`UPDATE comp_deals SET capacity_mw=${num(b.capacity_mw)}, updated_at=NOW() WHERE id=${id}`;
