@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   COMP_CATEGORIES, METRIC_BY_KEY, metricLabel,
-  UNITS, BASES, TECHNOLOGIES, STATES, DEAL_TYPES, STATUSES, CONFIDENCE, PROGRAMS,
+  UNITS, BASES, TECHNOLOGIES, STATES, DEAL_TYPES, STATUSES, CONFIDENCE, SCHEMES, PROGRAMS,
 } from '../../lib/compsTaxonomy';
 
 const cn = (...xs) => xs.filter(Boolean).join(' ');
@@ -85,7 +85,7 @@ function SourceLink({ source, url }) {
 const EMPTY_DEAL = {
   name: '', counterparty: '', seller: '', technology: 'Solar', deal_type: 'M&A',
   state: 'NSW', capacity_mw: '', capacity_mwh: '', capacity_mwac: '', capacity_mwdc: '',
-  status: 'Announced', transaction_date: '', currency: 'AUD', program: '', source: '', source_url: '', confidence: 'Medium', notes: '',
+  status: 'Announced', transaction_date: '', currency: 'AUD', scheme: '', program: '', source: '', source_url: '', confidence: 'Medium', notes: '',
 };
 
 export default function CompsPage() {
@@ -102,7 +102,7 @@ export default function CompsPage() {
   const [fState, setFState] = useState('');
   const [fCat, setFCat] = useState('');
   const [fType, setFType] = useState('');
-  const [fProgram, setFProgram] = useState('');
+  const [fScheme, setFScheme] = useState('');
   const [q, setQ] = useState('');
 
   const load = useCallback(async () => {
@@ -123,24 +123,24 @@ export default function CompsPage() {
     if (fState && m.state !== fState) return false;
     if (fCat && m.category !== fCat) return false;
     if (fType && m.deal_type !== fType) return false;
-    if (fProgram && m.program !== fProgram) return false;
+    if (fScheme && m.scheme !== fScheme) return false;
     if (q) {
       const hay = `${m.deal_name} ${metricLabel(m.metric)} ${m.metric}`.toLowerCase();
       if (!hay.includes(q.toLowerCase())) return false;
     }
     return true;
-  }), [metrics, fTech, fState, fCat, fType, fProgram, q]);
+  }), [metrics, fTech, fState, fCat, fType, fScheme, q]);
 
   const filteredDeals = useMemo(() => deals.filter((d) => {
     if (fTech && d.technology !== fTech) return false;
     if (fState && d.state !== fState) return false;
     if (fType && d.deal_type !== fType) return false;
-    if (fProgram && d.program !== fProgram) return false;
+    if (fScheme && d.scheme !== fScheme) return false;
     if (q && !d.name.toLowerCase().includes(q.toLowerCase())) return false;
     return true;
-  }), [deals, fTech, fState, fType, fProgram, q]);
+  }), [deals, fTech, fState, fType, fScheme, q]);
 
-  const programsInData = useMemo(() => [...new Set(deals.map((d) => d.program).filter(Boolean))].sort(), [deals]);
+  const schemesInData = useMemo(() => [...new Set(deals.map((d) => d.scheme).filter(Boolean))].sort(), [deals]);
 
   const byCategory = useMemo(() => {
     const groups = {};
@@ -182,8 +182,8 @@ export default function CompsPage() {
     load();
   }
 
-  const clearFilters = () => { setFTech(''); setFState(''); setFCat(''); setFType(''); setFProgram(''); setQ(''); };
-  const anyFilter = fTech || fState || fCat || fType || fProgram || q;
+  const clearFilters = () => { setFTech(''); setFState(''); setFCat(''); setFType(''); setFScheme(''); setQ(''); };
+  const anyFilter = fTech || fState || fCat || fType || fScheme || q;
 
   return (
     <div>
@@ -259,10 +259,10 @@ export default function CompsPage() {
           <option value="">All deal types</option>
           {DEAL_TYPES.map((t) => <option key={t}>{t}</option>)}
         </select>
-        {programsInData.length > 0 && (
-          <select value={fProgram} onChange={(e) => setFProgram(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
-            <option value="">All programs</option>
-            {programsInData.map((p) => <option key={p}>{p}</option>)}
+        {schemesInData.length > 0 && (
+          <select value={fScheme} onChange={(e) => setFScheme(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
+            <option value="">All schemes</option>
+            {schemesInData.map((p) => <option key={p}>{p}</option>)}
           </select>
         )}
         {anyFilter && <button onClick={clearFilters} className="text-sm text-gray-500 hover:text-gray-800 underline">Clear</button>}
@@ -351,7 +351,7 @@ function DealsView({ deals, onDelete }) {
           <tr>
             <th className="text-left px-4 py-2 font-medium">Deal</th>
             <th className="text-left px-3 py-2 font-medium">Type</th>
-            <th className="text-left px-3 py-2 font-medium">Program / tender</th>
+            <th className="text-left px-3 py-2 font-medium">Scheme / round</th>
             <th className="text-left px-3 py-2 font-medium">Tech</th>
             <th className="text-left px-3 py-2 font-medium">State</th>
             <th className="text-left px-3 py-2 font-medium">Capacity</th>
@@ -370,7 +370,10 @@ function DealsView({ deals, onDelete }) {
                 {(d.source || d.source_url) && <div className="text-[11px] mt-0.5"><SourceLink source={d.source} url={d.source_url} /></div>}
               </td>
               <td className="px-3 py-2 text-gray-600">{d.deal_type || '—'}</td>
-              <td className="px-3 py-2">{d.program ? <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200">{d.program}</span> : <span className="text-gray-300">—</span>}</td>
+              <td className="px-3 py-2">
+                {d.scheme ? <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200">{d.scheme}</span> : <span className="text-gray-300">—</span>}
+                {d.program && <div className="text-[10px] text-gray-400 mt-0.5">{d.program}</div>}
+              </td>
               <td className="px-3 py-2 text-gray-600">{d.technology || '—'}</td>
               <td className="px-3 py-2 text-gray-600">{d.state || '—'}</td>
               <td className="px-3 py-2 text-gray-600 whitespace-nowrap">{fmtCapacity(d)}</td>
@@ -428,7 +431,11 @@ function DealForm({ onSubmit, onCancel }) {
       <Field label="Counterparty / buyer"><input value={f.counterparty} onChange={set('counterparty')} className="inp" /></Field>
       <Field label="Seller / vendor"><input value={f.seller} onChange={set('seller')} className="inp" /></Field>
       <Field label="Deal type"><select value={f.deal_type} onChange={set('deal_type')} className="inp">{DEAL_TYPES.map((t) => <option key={t}>{t}</option>)}</select></Field>
-      <Field label="Program / tender">
+      <Field label="Scheme">
+        <input list="comps-schemes" value={f.scheme} onChange={set('scheme')} className="inp" placeholder="e.g. CISA, NSW LTESA, SA FERM" />
+        <datalist id="comps-schemes">{SCHEMES.map((s) => <option key={s} value={s} />)}</datalist>
+      </Field>
+      <Field label="Program / round">
         <input list="comps-programs" value={f.program} onChange={set('program')} className="inp" placeholder="e.g. CIS Tender 3 — NEM Dispatchable" />
         <datalist id="comps-programs">{PROGRAMS.map((p) => <option key={p} value={p} />)}</datalist>
       </Field>

@@ -191,7 +191,8 @@ CREATE TABLE IF NOT EXISTS comp_deals (
   status           TEXT,                 -- Announced, Completed, FID, Operating, Benchmark, ...
   transaction_date DATE,
   currency         TEXT DEFAULT 'AUD',
-  program          TEXT,                 -- scheme / tender round, e.g. 'CIS Tender 3 — NEM Dispatchable'
+  scheme           TEXT,                 -- support scheme group, e.g. 'CISA', 'NSW LTESA', 'SA FERM'
+  program          TEXT,                 -- tender round within the scheme, e.g. 'CIS Tender 3 — NEM Dispatchable'
   source           TEXT,                 -- publisher / source name
   source_url       TEXT,                 -- clean reference link to the source
   confidence       TEXT,                 -- High / Medium / Low / Illustrative

@@ -33,13 +33,13 @@ export async function POST(req) {
       INSERT INTO comp_deals
         (name, counterparty, seller, technology, deal_type, state, capacity_mw,
          capacity_mwh, capacity_mwac, capacity_mwdc, status, transaction_date,
-         currency, program, source, source_url, confidence, notes)
+         currency, scheme, program, source, source_url, confidence, notes)
       VALUES
         (${b.name.trim()}, ${b.counterparty || null}, ${b.seller || null}, ${b.technology || null},
          ${b.deal_type || null}, ${b.state || null}, ${num(b.capacity_mw)},
          ${num(b.capacity_mwh)}, ${num(b.capacity_mwac)}, ${num(b.capacity_mwdc)},
          ${b.status || null}, ${b.transaction_date || null}, ${b.currency || 'AUD'},
-         ${b.program || null}, ${b.source || null}, ${b.source_url || null}, ${b.confidence || null}, ${b.notes || null})
+         ${b.scheme || null}, ${b.program || null}, ${b.source || null}, ${b.source_url || null}, ${b.confidence || null}, ${b.notes || null})
       RETURNING *
     `;
     return NextResponse.json(row, { status: 201 });

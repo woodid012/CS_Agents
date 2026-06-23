@@ -36,6 +36,7 @@ for (const d of deals) {
       deal_name: d.name,
       technology: d.technology || null,
       deal_type: d.deal_type || null,
+      scheme: d.scheme || null,
       program: d.program || null,
       state: d.state || null,
       capacity_mw: d.capacity_mw ?? null,
@@ -56,7 +57,7 @@ for (const d of deals) {
 
 const dealsLite = deals.map((d) => ({
   id: d.id, name: d.name, counterparty: d.counterparty, seller: d.seller,
-  technology: d.technology, deal_type: d.deal_type, program: d.program || null, state: d.state,
+  technology: d.technology, deal_type: d.deal_type, scheme: d.scheme || null, program: d.program || null, state: d.state,
   capacity_mw: d.capacity_mw ?? null, capacity_mwh: d.capacity_mwh ?? null,
   status: d.status, transaction_date: d.transaction_date, currency: d.currency,
   source: d.source, source_url: d.source_url, confidence: d.confidence, notes: d.notes,
@@ -150,7 +151,7 @@ const html = `<!DOCTYPE html>
     <select id="fTech"></select>
     <select id="fState"></select>
     <select id="fType"></select>
-    <select id="fProgram"></select>
+    <select id="fScheme"></select>
     <button class="link" id="clear">Clear</button>
     <span class="count" id="count"></span>
   </div>
@@ -197,7 +198,7 @@ function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,(m)=>({'&':'&amp;
 
 // state
 let view='metrics';
-const F={q:'',cat:'',tech:'',state:'',type:'',program:''};
+const F={q:'',cat:'',tech:'',state:'',type:'',scheme:''};
 
 function uniq(arr){ return [...new Set(arr.filter(Boolean))].sort(); }
 function fillSelect(el,opts,all){ el.innerHTML='<option value="">'+all+'</option>'+opts.map(o=>'<option value="'+esc(o.v??o)+'">'+esc(o.l??o)+'</option>').join(''); }
@@ -208,7 +209,7 @@ function filteredMetrics(){
     if(F.tech&&m.technology!==F.tech)return false;
     if(F.state&&m.state!==F.state)return false;
     if(F.type&&m.deal_type!==F.type)return false;
-    if(F.program&&m.program!==F.program)return false;
+    if(F.scheme&&m.scheme!==F.scheme)return false;
     if(F.q){ const h=(m.deal_name+' '+mLabel(m.metric)+' '+m.metric).toLowerCase(); if(!h.includes(F.q.toLowerCase()))return false; }
     return true;
   });
@@ -218,7 +219,7 @@ function filteredDeals(){
     if(F.tech&&d.technology!==F.tech)return false;
     if(F.state&&d.state!==F.state)return false;
     if(F.type&&d.deal_type!==F.type)return false;
-    if(F.program&&d.program!==F.program)return false;
+    if(F.scheme&&d.scheme!==F.scheme)return false;
     if(F.q&&!d.name.toLowerCase().includes(F.q.toLowerCase()))return false;
     return true;
   });
@@ -277,12 +278,12 @@ function renderMetrics(){
 function renderDeals(){
   const rows=filteredDeals();
   if(!rows.length)return '<div class="panel muted" style="text-align:center">No deals match the filters.</div>';
-  return '<div class="grp"><table><thead><tr><th>Deal</th><th>Type</th><th>Program / tender</th><th>Tech</th><th>State</th><th>Capacity</th><th>Date</th><th class="c">Metrics</th><th>Conf.</th></tr></thead><tbody>'+
+  return '<div class="grp"><table><thead><tr><th>Deal</th><th>Type</th><th>Scheme / round</th><th>Tech</th><th>State</th><th>Capacity</th><th>Date</th><th class="c">Metrics</th><th>Conf.</th></tr></thead><tbody>'+
     rows.map(d=>'<tr>'+
       '<td><div>'+esc(d.name)+'</div>'+(d.counterparty&&d.counterparty!=='—'?'<div class="dealmeta">'+esc(d.counterparty)+(d.seller&&d.seller!=='—'?' ← '+esc(d.seller):'')+'</div>':'')+
         ((d.source||d.source_url)?'<div class="dealmeta">'+srcLink(d.source,d.source_url)+'</div>':'')+'</td>'+
       '<td>'+esc(d.deal_type||'—')+'</td>'+
-      '<td>'+(d.program?'<span class="badge" style="background:#dbeafe;color:#1e40af">'+esc(d.program)+'</span>':'<span class="muted">—</span>')+'</td>'+
+      '<td>'+(d.scheme?'<span class="badge" style="background:#dbeafe;color:#1e40af">'+esc(d.scheme)+'</span>'+(d.program?'<div class="dealmeta">'+esc(d.program)+'</div>':''):'<span class="muted">—</span>')+'</td>'+
       '<td>'+esc(d.technology||'—')+'</td><td>'+esc(d.state||'—')+'</td>'+
       '<td>'+fmtCap(d)+'</td><td>'+(d.transaction_date?String(d.transaction_date).slice(0,10):'—')+'</td>'+
       '<td class="c">'+(d.metric_count||0)+'</td><td>'+badge(d.confidence)+'</td>'+
@@ -305,12 +306,14 @@ function init(){
   fillSelect(document.getElementById('fTech'), uniq(DATA.deals.map(d=>d.technology)), 'All tech');
   fillSelect(document.getElementById('fState'), uniq(DATA.deals.map(d=>d.state)), 'All states');
   fillSelect(document.getElementById('fType'), uniq(DATA.deals.map(d=>d.deal_type)), 'All deal types');
+  fillSelect(document.getElementById('fScheme'), uniq(DATA.deals.map(d=>d.scheme)), 'All schemes');
   document.getElementById('q').addEventListener('input',e=>{F.q=e.target.value;render();});
   document.getElementById('fCat').addEventListener('change',e=>{F.cat=e.target.value;render();});
   document.getElementById('fTech').addEventListener('change',e=>{F.tech=e.target.value;render();});
   document.getElementById('fState').addEventListener('change',e=>{F.state=e.target.value;render();});
   document.getElementById('fType').addEventListener('change',e=>{F.type=e.target.value;render();});
-  document.getElementById('clear').addEventListener('click',()=>{F.q=F.cat=F.tech=F.state=F.type='';document.getElementById('q').value='';['fCat','fTech','fState','fType'].forEach(id=>document.getElementById(id).value='');render();});
+  document.getElementById('fScheme').addEventListener('change',e=>{F.scheme=e.target.value;render();});
+  document.getElementById('clear').addEventListener('click',()=>{F.q=F.cat=F.tech=F.state=F.type=F.scheme='';document.getElementById('q').value='';['fCat','fTech','fState','fType','fScheme'].forEach(id=>document.getElementById(id).value='');render();});
   document.querySelectorAll('.toggle button').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.v;document.querySelectorAll('.toggle button').forEach(x=>x.classList.toggle('active',x===b));render();}));
   render();
 }
