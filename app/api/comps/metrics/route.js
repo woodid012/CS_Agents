@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { sql } from '../../../../lib/db';
-import { ensureCompsSchema, syncDealsAdditive } from '../../../../lib/compsDb';
+import { ensureCompsSchema } from '../../../../lib/compsDb';
 import { categoryForMetric } from '../../../../lib/compsTaxonomy';
 
 export const dynamic = 'force-dynamic';
@@ -10,7 +10,6 @@ export const dynamic = 'force-dynamic';
 export async function GET(req) {
   try {
     await ensureCompsSchema();
-    try { await syncDealsAdditive(); } catch (e) { console.error('comps additive sync skipped:', e.message); }
     const { searchParams } = new URL(req.url);
     const category = searchParams.get('category');
     const dealId = searchParams.get('deal_id');

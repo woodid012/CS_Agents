@@ -293,6 +293,12 @@ export default function CompsPage() {
         ))}
       </div>
 
+      {!loading && deals.length === 0 && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-lg px-4 py-3 mb-4">
+          No data loaded yet — click <span className="font-medium">↻ Refresh data</span> (top right) to pull the curated dataset into the database.
+        </div>
+      )}
+
       {showDealForm && <DealForm onSubmit={addDeal} onCancel={() => setShowDealForm(false)} />}
       {showMetricForm && <MetricForm deals={deals} onSubmit={addMetric} onCancel={() => setShowMetricForm(false)} />}
 
