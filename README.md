@@ -70,6 +70,13 @@ dataset:
 node scripts/build-standalone.js   # or: npm run build-comps-page
 ```
 
+**Data runner (two-tier)** — a cheap model scrapes candidate comps, a smart
+model gatekeeps before they enter the dataset. `comps-scraper` (Haiku) stages
+rows into `data/comps-candidates.json`; `comps-gatekeeper` (Opus) fact-checks,
+approves/rejects and merges. Deterministic scripts (`validate-candidates.js`,
+`merge-candidates.js`) enforce schema, sources and de-duplication. See
+**COMPS_PIPELINE.md**.
+
 > Note: M&A transaction values are public; per-project cost-stack detail
 > (AC/DC/EPC splits, system strength, land, rent, MLF) is largely confidential,
 > so those rows are CSIRO GenCost benchmarks, the NSW Benefit Sharing Guideline,

@@ -1,0 +1,7 @@
+{
+  "_meta": {
+    "description": "Staging inbox for the comps data runner. The cheap 'scraper' tier appends candidate deal objects here (review: 'pending'); the smart 'gatekeeper' tier reviews, sets review to 'approved'/'rejected' with a review_note, then merge-candidates.js promotes approved ones into data/comps-scrape.json. Candidate shape = a comps-scrape.json deal object + a review field.",
+    "workflow": "scripts/comps-runner — see COMPS_PIPELINE.md"
+  },
+  "candidates": []
+}
