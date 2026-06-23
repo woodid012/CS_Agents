@@ -7,7 +7,6 @@
     "build": "next build",
     "start": "next start",
     "scrape-comps": "node scripts/scrape-comps.js",
-    "build-comps-page": "node scripts/build-standalone.js",
     "validate-comps": "node scripts/validate-candidates.js",
     "merge-comps": "node scripts/merge-candidates.js"
   },

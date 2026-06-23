@@ -1,6 +1,6 @@
 ---
 name: comps-gatekeeper
-description: Smart quality gate for comps data. Reviews candidate rows in data/comps-candidates.json, fact-checks them against their sources, approves/rejects each with a reason, then merges approved rows into the live dataset (data/comps-scrape.json) and rebuilds the standalone page.
+description: Smart quality gate for comps data. Reviews candidate rows in data/comps-candidates.json, fact-checks them against their sources, approves/rejects each with a reason, then merges approved rows into the live dataset (data/comps-scrape.json) and syncs them to the online database.
 tools: WebSearch, WebFetch, Read, Write, Edit, Bash
 model: opus
 ---
@@ -31,7 +31,8 @@ dataset.
    reject (don't guess) when a figure can't be verified.
 5. Run `node scripts/merge-candidates.js`. It promotes approved rows into
    `data/comps-scrape.json`, archives processed candidates, keeps pending ones,
-   and rebuilds `public/comps.html`.
+   and syncs to the online database (`scrape-comps`) so the deployed `/comps`
+   page reflects them.
 6. Report a summary: promoted (names), rejected (names + reasons), anything
    left pending. Do NOT `git push` — leave committing to the human unless told
    otherwise.

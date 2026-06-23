@@ -7,8 +7,9 @@
 // moved into data/comps-scrape.json (review metadata stripped). Processed
 // candidates (approved + rejected) are appended to
 // data/comps-candidates-archive.json; "pending" candidates stay in the inbox.
-// On success, regenerates public/comps.html. This is the gatekeeper tier's
-// commit step — the cheap scraper never runs it.
+// On success, syncs the dataset to the online database (scrape-comps) so the
+// deployed /comps reflects it. This is the gatekeeper tier's commit step — the
+// cheap scraper never runs it.
 
 const fs = require('fs');
 const path = require('path');
@@ -68,10 +69,18 @@ function main() {
   cand.candidates = pending;
   fs.writeFileSync(CAND, JSON.stringify(cand, null, 2) + '\n');
 
-  // Rebuild the self-contained page.
-  console.log('\nRebuilding standalone page…');
-  execSync('node scripts/build-standalone.js', { cwd: ROOT, stdio: 'inherit' });
-  console.log(`\nDone. Dataset now has ${scrape.deals.length} deals.`);
+  console.log(`\nDataset now has ${scrape.deals.length} deals.`);
+
+  // Sync to the online database so the deployed /comps reflects the new rows.
+  // scrape-comps.js loads DATABASE_URL from .env.local; if absent it exits and
+  // we just print the manual step.
+  try {
+    console.log('\nSyncing to the online database (scrape-comps)…');
+    execSync('node scripts/scrape-comps.js', { cwd: ROOT, stdio: 'inherit' });
+    console.log('Online /comps updated.');
+  } catch {
+    console.log('DB sync skipped — set DATABASE_URL in .env.local, then run `npm run scrape-comps` to push these to the online /comps.');
+  }
 }
 
 main();

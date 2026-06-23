@@ -54,21 +54,16 @@ means a new comp type is just a new entry in the taxonomy — **no DB migration*
   rates) plus flagged illustrative archetypes. Each row has a source URL.
 - Deals carry a `program` field (e.g. "CIS Tender 3 — NEM Dispatchable") so
   awards can be filtered/tracked by scheme and tender round.
-- Loader / re-sync: `node scripts/scrape-comps.js` (or `npm run scrape-comps`)
-  pushes the JSON into Neon idempotently (match-by-name, delete + re-insert).
-- Tables also auto-create and seed on first visit to `/comps` from the same
-  JSON (see `lib/compsDb.js`), matching the `/api/projects` pattern. DDL lives
-  in `schema.sql`.
+- Tables auto-create and seed on first visit to `/comps` from the same JSON
+  (see `lib/compsDb.js`), matching the `/api/projects` pattern. DDL lives in
+  `schema.sql`.
+- To push the current dataset to the **online** DB (so the deployed `/comps`
+  shows the latest), run `npm run scrape-comps` (idempotent: match-by-name,
+  delete + re-insert). Needs `DATABASE_URL` in `.env.local`.
 
-**Standalone page** — `public/comps.html` is a single, fully self-contained
-file (embedded data + charts + filters, **no DB, server, or internet needed**).
-Open it directly from disk, or visit `/comps.html` when the app is running
-(also linked from `/comps` via "Standalone view"). Regenerate after editing the
-dataset:
-
-```bash
-node scripts/build-standalone.js   # or: npm run build-comps-page
-```
+The page renders everything in one place: the cost-comparison charts
+($/MW, $/MWh), the metrics/deals tables, filters, the schema reference, and
+add/edit forms.
 
 **Data runner (two-tier)** — a cheap model scrapes candidate comps, a smart
 model gatekeeps before they enter the dataset. `comps-scraper` (Haiku) stages

@@ -6,10 +6,10 @@ models only do what each is good at.
 
 ```
                  ┌─────────────────────┐         ┌──────────────────────────┐
-  web sources →  │  comps-scraper       │   →     │  comps-gatekeeper         │  →  live dataset
-                 │  (Haiku, cheap)      │ stage   │  (Opus, smart)            │     + standalone page
+  web sources →  │  comps-scraper       │   →     │  comps-gatekeeper         │  →  comps-scrape.json
+                 │  (Haiku, cheap)      │ stage   │  (Opus, smart)            │     → online DB (/comps)
                  │  searches, extracts  │         │  fact-checks, approves,   │
-                 │  → candidates.json   │         │  merges                   │
+                 │  → candidates.json   │         │  merges + syncs to DB     │
                  └─────────────────────┘         └──────────────────────────┘
                           │                                  │
                   validate-candidates.js  ◀── shared gate ──▶ merge-candidates.js
@@ -20,7 +20,7 @@ models only do what each is good at.
 |---|---|
 | `data/comps-candidates.json` | Staging inbox. Scraper appends candidates (`review: "pending"`). |
 | `scripts/validate-candidates.js` | Deterministic gate: schema, taxonomy membership, references, value sanity, duplicates. Both tiers run it. |
-| `scripts/merge-candidates.js` | Gatekeeper-only: promotes `review: "approved"` rows into `data/comps-scrape.json`, archives processed ones, rebuilds `public/comps.html`. |
+| `scripts/merge-candidates.js` | Gatekeeper-only: promotes `review: "approved"` rows into `data/comps-scrape.json`, archives processed ones, then syncs to the online DB (`scrape-comps`) so the deployed `/comps` updates. |
 | `data/comps-candidates-archive.json` | History of processed (approved + rejected) candidates. |
 | `.claude/agents/comps-scraper.md` | Haiku subagent — the scraper. |
 | `.claude/agents/comps-gatekeeper.md` | Opus subagent — the gatekeeper. |
@@ -46,7 +46,8 @@ claude -p --model opus  "Run the comps-gatekeeper workflow on data/comps-candida
 ```bash
 npm run validate-comps                 # validate the candidate inbox
 npm run merge-comps -- --dry           # preview what would be promoted
-npm run merge-comps                    # promote approved + rebuild page
+npm run merge-comps                    # promote approved + sync to online DB
+npm run scrape-comps                   # (re)sync data/comps-scrape.json -> online DB
 ```
 
 ## Guarantees
