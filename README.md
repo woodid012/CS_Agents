@@ -57,6 +57,16 @@ means a new comp type is just a new entry in the taxonomy — **no DB migration*
   JSON (see `lib/compsDb.js`), matching the `/api/projects` pattern. DDL lives
   in `schema.sql`.
 
+**Standalone page** — `public/comps.html` is a single, fully self-contained
+file (embedded data + charts + filters, **no DB, server, or internet needed**).
+Open it directly from disk, or visit `/comps.html` when the app is running
+(also linked from `/comps` via "Standalone view"). Regenerate after editing the
+dataset:
+
+```bash
+node scripts/build-standalone.js   # or: npm run build-comps-page
+```
+
 > Note: M&A transaction values are public; per-project cost-stack detail
 > (AC/DC/EPC splits, system strength, land, rent, MLF) is largely confidential,
 > so those rows are CSIRO GenCost benchmarks, the NSW Benefit Sharing Guideline,

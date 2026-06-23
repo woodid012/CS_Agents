@@ -354,6 +354,106 @@
         { "category": "offtake", "metric": "ppa_tenor", "value": 14, "unit": "years", "basis": "count", "confidence": "High", "notes": "ACT Government 100 MW contract; Flow Power 40 MW is 10-yr." }
       ]
     },
+    {
+      "name": "Iberdrola / Infigen Energy",
+      "counterparty": "Iberdrola",
+      "seller": "Infigen Energy shareholders",
+      "technology": "Wind",
+      "deal_type": "M&A",
+      "state": "National",
+      "capacity_mw": 670,
+      "status": "Completed",
+      "transaction_date": "2020-09-09",
+      "currency": "AUD",
+      "source": "pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2020/07/24/iberdrola-locks-in-improved-takeover-offer-for-infigen/",
+      "confidence": "High",
+      "notes": "A$893m (A$0.92/share). 670 MW wind + 268 MW firming (incl. 25 MW/52 MWh Tesla battery) + 246 MW PPA offtake + >1 GW pipeline. Iberdrola's platform entry into Australia (2020; just outside the 5-yr window but a key benchmark).",
+      "metrics": [
+        { "category": "valuation", "metric": "enterprise_value", "value": 893, "unit": "$m", "basis": "total", "confidence": "High" },
+        { "category": "valuation", "metric": "ev_per_mw", "value": 1333000, "unit": "$/MW", "basis": "per_mw", "confidence": "Low", "notes": "A$893m / 670 MW wind; also buys firming + pipeline." }
+      ]
+    },
+    {
+      "name": "Brookfield consortium / AusNet Services",
+      "counterparty": "Brookfield + Sunsuper, AIMCo, IMCO, HOOPP",
+      "seller": "AusNet Services shareholders",
+      "technology": "Platform",
+      "deal_type": "M&A",
+      "state": "VIC",
+      "status": "Completed",
+      "transaction_date": "2022-02-18",
+      "currency": "AUD",
+      "source": "Infrastructure Investor",
+      "source_url": "https://www.infrastructureinvestor.com/ausnet-accepts-brookfields-a10-2bn-takeover-bid/",
+      "confidence": "High",
+      "notes": "A$2.65/share. Victorian electricity transmission + electricity/gas distribution networks — grid infrastructure enabling the RE transition (not generation). Last listed AU electricity infra company to be privatised.",
+      "metrics": [
+        { "category": "valuation", "metric": "equity_value", "value": 10200, "unit": "$m", "basis": "total", "confidence": "High", "notes": "Equity value." },
+        { "category": "valuation", "metric": "enterprise_value", "value": 17800, "unit": "$m", "basis": "total", "confidence": "High", "notes": "Incl. assumed debt." }
+      ]
+    },
+    {
+      "name": "Collie Battery Stage 1 (Neoen)",
+      "counterparty": "Neoen",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "WA",
+      "capacity_mw": 219,
+      "capacity_mwh": 877,
+      "status": "Operating",
+      "transaction_date": "2024-10-01",
+      "currency": "AUD",
+      "source": "pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2024/05/03/perth-contractor-lands-160-million-contract-for-collie-battery/",
+      "confidence": "Medium",
+      "notes": "219 MW/877 MWh (4h) in WA's SWIS. A$160m EPC contract (Perth contractor). Part of Neoen's ~A$1.1bn portfolio financing. Capacity contract pays ~A$591k/MW/yr on 300 MW (~A$354m total).",
+      "metrics": [
+        { "category": "capex_split", "metric": "epc_cost", "value": 182000, "unit": "$/MWh", "basis": "per_mwh", "confidence": "Medium", "notes": "A$160m EPC / 877 MWh." },
+        { "category": "performance", "metric": "duration_hours", "value": 4, "unit": "hours", "basis": "count", "confidence": "High" }
+      ]
+    },
+    {
+      "name": "Hornsdale Power Reserve (Neoen / Tesla)",
+      "counterparty": "Neoen",
+      "technology": "BESS",
+      "deal_type": "Development benchmark",
+      "state": "SA",
+      "capacity_mw": 150,
+      "capacity_mwh": 194,
+      "status": "Operating",
+      "transaction_date": "2020-09-03",
+      "currency": "AUD",
+      "source": "pv magazine Australia",
+      "source_url": "https://www.pv-magazine-australia.com/2020/09/03/neoen-completes-hornsdale-big-battery-expansion/",
+      "confidence": "Low",
+      "notes": "Australia's first big battery. 150 MW/194 MWh after 2020 expansion (+50 MW/64.5 MWh cost ~A$82m/EUR53m; co-funded SA Govt A$15m + ARENA A$8m + CEFC A$50m loan). Original 100 MW/129 MWh ~A$90m (2017).",
+      "metrics": [
+        { "category": "capex", "metric": "capex_total", "value": 172, "unit": "$m", "basis": "total", "confidence": "Low", "notes": "Cumulative ~A$90m (2017) + ~A$82m (2020 expansion) across vintages; ~A$887k/MWh blended." },
+        { "category": "performance", "metric": "duration_hours", "value": 1.3, "unit": "hours", "basis": "count", "confidence": "High" }
+      ]
+    },
+    {
+      "name": "Stockyard Hill Wind Farm (Goldwind)",
+      "counterparty": "Goldwind Australia",
+      "seller": "Origin Energy (development)",
+      "technology": "Wind",
+      "deal_type": "Development benchmark",
+      "state": "VIC",
+      "capacity_mw": 530,
+      "status": "Operating",
+      "transaction_date": "2021-07-01",
+      "currency": "AUD",
+      "source": "RenewEconomy",
+      "source_url": "https://reneweconomy.com.au/origin-stuns-industry-with-record-low-price-for-530mw-wind-farm-70946/",
+      "confidence": "Low",
+      "notes": "530 MW, VIC. ~A$700m construction (Goldwind self-supplied turbines — outlier-low $/MW). Goldwind bought the development from Origin for A$110m (2017). Origin PPA set a record-low price <A$60/MWh.",
+      "metrics": [
+        { "category": "capex", "metric": "capex_total", "value": 700, "unit": "$m", "basis": "total", "confidence": "Low", "notes": "~A$1.32m/MW — implausibly low vs GenCost $3.2m/MW; Goldwind vertical integration, 2018 vintage." },
+        { "category": "offtake", "metric": "ppa_price", "value": 55, "unit": "$/MWh", "basis": "per_mwh", "confidence": "Medium", "notes": "Origin offtake <A$60/MWh (closer to $50) — record low at the time." },
+        { "category": "offtake", "metric": "ppa_tenor", "value": 11, "unit": "years", "basis": "count", "confidence": "Medium", "notes": "~2019/2021 to 2030." }
+      ]
+    },
 
     {
       "name": "CSIRO GenCost 2024-25 — Large-scale solar PV",

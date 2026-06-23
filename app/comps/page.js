@@ -190,7 +190,8 @@ export default function CompsPage() {
             Stored in a flexible per-metric schema so new comp types need no migration.
           </p>
         </div>
-        <div className="flex gap-2 shrink-0">
+        <div className="flex gap-2 shrink-0 items-center">
+          <a href="/comps.html" target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 border border-gray-300 text-gray-600 text-sm rounded hover:bg-gray-50">Standalone view ↗</a>
           <button onClick={() => setShowMetricForm((v) => !v)} className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">+ Metric</button>
           <button onClick={() => setShowDealForm((v) => !v)} className="px-3 py-1.5 bg-slate-700 text-white text-sm rounded hover:bg-slate-800">+ Deal</button>
         </div>
