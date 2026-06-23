@@ -17,6 +17,13 @@ const CONF_COLORS = {
 
 const MONEY_TOTAL = { '$bn': 1e9, '$m': 1e6, '$k': 1e3, '$': 1 };
 
+// Bar colours per metric category (mirrors the standalone palette).
+const CAT_HEX = {
+  valuation: '#6366f1', capex: '#10b981', capex_split: '#14b8a6', connection: '#0ea5e9',
+  opex: '#f59e0b', land: '#84cc16', community: '#f43f5e', offtake: '#8b5cf6',
+  financing: '#06b6d4', returns: '#d946ef', performance: '#64748b',
+};
+
 // Normalise an observation to $/MW and $/MWh where possible.
 function perUnit(row) {
   const v = Number(row.value);
@@ -79,6 +86,57 @@ function SourceLink({ source, url }) {
     <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700 hover:underline">{label} ↗</a>
   ) : (
     <span className="text-gray-400">{label}</span>
+  );
+}
+
+// Build the de-duplicated, sorted bar list for one normalisation key.
+function chartRows(metrics, key) {
+  const cand = metrics.map((m) => ({ m, pu: perUnit(m)[key] })).filter((x) => x.pu > 0);
+  // Prefer explicit per-unit metrics, then keep one bar per (deal, rounded value).
+  cand.sort((a, b) => ((a.m.unit === '$/MW' || a.m.unit === '$/MWh') ? 0 : 1) - ((b.m.unit === '$/MW' || b.m.unit === '$/MWh') ? 0 : 1));
+  const seen = new Set();
+  const uniq = [];
+  for (const x of cand) {
+    const k = `${x.m.deal_id}|${Math.round(x.pu / 1000)}`;
+    if (seen.has(k)) continue;
+    seen.add(k);
+    uniq.push(x);
+  }
+  return uniq.sort((a, b) => b.pu - a.pu).slice(0, 14);
+}
+
+function BarList({ rows }) {
+  if (!rows.length) return <div className="text-xs text-gray-400">No values in the current filter.</div>;
+  const max = Math.max(...rows.map((r) => r.pu));
+  return (
+    <div>
+      {rows.map((r) => (
+        <div key={r.m.id} className="flex items-center gap-2 my-0.5 text-[11px]">
+          <div className="w-44 shrink-0 truncate text-gray-600" title={`${r.m.deal_name} · ${metricLabel(r.m.metric)}`}>
+            {r.m.deal_name} · {metricLabel(r.m.metric)}
+          </div>
+          <div className="flex-1 bg-gray-100 rounded h-4">
+            <div className="h-4 rounded" style={{ width: `${Math.max(2, (r.pu / max) * 100)}%`, background: CAT_HEX[r.m.category] || '#64748b' }} />
+          </div>
+          <div className="w-16 text-right tabular-nums text-gray-700">{fmtMoneyPer(r.pu)}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function CostCharts({ metrics }) {
+  const mw = useMemo(() => chartRows(metrics, 'perMw'), [metrics]);
+  const mwh = useMemo(() => chartRows(metrics, 'perMwh'), [metrics]);
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+      <h2 className="text-sm font-semibold text-gray-700 mb-3">Cost comparison <span className="text-xs font-normal text-gray-400">(reflects filters)</span></h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div><div className="text-xs text-gray-400 mb-1.5">Per MW ($/MW)</div><BarList rows={mw} /></div>
+        <div><div className="text-xs text-gray-400 mb-1.5">Per MWh ($/MWh)</div><BarList rows={mwh} /></div>
+      </div>
+      <div className="text-[11px] text-gray-400 mt-3">Includes $/MW &amp; $/MWh metrics plus totals (capex, debt, EV) normalised by capacity. Coloured by category.</div>
+    </div>
   );
 }
 
@@ -270,6 +328,8 @@ export default function CompsPage() {
           {view === 'metrics' ? `${filteredMetrics.length} observations` : `${filteredDeals.length} deals`}
         </span>
       </div>
+
+      {!loading && <CostCharts metrics={filteredMetrics} />}
 
       {loading ? (
         <div className="text-center py-12 text-gray-400 text-sm">Loading…</div>

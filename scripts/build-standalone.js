@@ -17,8 +17,14 @@ const data = require(path.join(ROOT, 'data', 'comps-scrape.json'));
 const taxSrc = fs.readFileSync(path.join(ROOT, 'lib', 'compsTaxonomy.js'), 'utf8');
 
 // Category objects are the only ones with a `color:` immediately after `label:`.
-const categories = [...taxSrc.matchAll(/\{\s*key:\s*'([a-z_]+)',\s*label:\s*'([^']+)',\s*color:/g)]
-  .map((m) => ({ key: m[1], label: m[2] }));
+// Capture each category's metrics array too, for the schema reference.
+const categories = [...taxSrc.matchAll(/\{\s*key:\s*'([a-z_]+)',\s*label:\s*'([^']+)',\s*color:\s*'[^']+',\s*metrics:\s*\[([\s\S]*?)\]/g)]
+  .map((m) => ({
+    key: m[1],
+    label: m[2],
+    metrics: [...m[3].matchAll(/\{\s*key:\s*'([a-z_]+)',\s*label:\s*'([^']+)',\s*defaultUnit:\s*'([^']*)'/g)]
+      .map((x) => ({ key: x[1], label: x[2], unit: x[3] })),
+  }));
 
 // Every `{ key, label, defaultUnit, ... }` is a metric.
 const metricLabels = {};
@@ -146,6 +152,7 @@ const html = `<!DOCTYPE html>
 
   <div class="controls">
     <div class="toggle"><button data-v="metrics" class="active">metrics</button><button data-v="deals">deals</button></div>
+    <button class="link" id="schemaToggle">Show schema reference</button>
     <input type="text" id="q" placeholder="Search deal or metric…" />
     <select id="fCat"></select>
     <select id="fTech"></select>
@@ -156,6 +163,7 @@ const html = `<!DOCTYPE html>
     <span class="count" id="count"></span>
   </div>
 
+  <div id="schema" style="display:none"></div>
   <div id="content"></div>
 </main>
 <footer id="footer"></footer>
@@ -291,6 +299,15 @@ function renderDeals(){
     '</tbody></table></div>';
 }
 
+function renderSchema(){
+  return '<div class="panel"><div class="muted" style="font-size:11px;margin-bottom:10px">Tall schema — each row is one observation: <b>deal → category → metric → value + unit + basis</b>. Canonical taxonomy (lib/compsTaxonomy.js):</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px">'+
+    DATA.categories.map(c=>'<div style="border:1px solid var(--line);border-radius:8px;padding:10px">'+
+      '<span class="badge" style="background:'+(catColor[c.key]||"#64748b")+"22;color:"+(catColor[c.key]||"#334155")+';margin-bottom:6px;display:inline-block">'+esc(c.label)+'</span>'+
+      '<div style="font-size:11px;color:#475569">'+(c.metrics||[]).map(m=>'<div style="display:flex;justify-content:space-between;gap:6px;padding:1px 0"><span>'+esc(m.label)+'</span><span class="muted" style="white-space:nowrap">'+esc(m.unit)+'</span></div>').join('')+'</div>'+
+    '</div>').join('')+'</div></div>';
+}
+
 function render(){
   chart('chartMw','perMw'); chart('chartMwh','perMwh');
   document.getElementById('content').innerHTML = view==='metrics'?renderMetrics():renderDeals();
@@ -315,6 +332,14 @@ function init(){
   document.getElementById('fScheme').addEventListener('change',e=>{F.scheme=e.target.value;render();});
   document.getElementById('clear').addEventListener('click',()=>{F.q=F.cat=F.tech=F.state=F.type=F.scheme='';document.getElementById('q').value='';['fCat','fTech','fState','fType','fScheme'].forEach(id=>document.getElementById(id).value='');render();});
   document.querySelectorAll('.toggle button').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.v;document.querySelectorAll('.toggle button').forEach(x=>x.classList.toggle('active',x===b));render();}));
+  let schemaOpen=false;
+  document.getElementById('schemaToggle').addEventListener('click',()=>{
+    schemaOpen=!schemaOpen;
+    const el=document.getElementById('schema');
+    el.style.display=schemaOpen?'block':'none';
+    el.innerHTML=schemaOpen?renderSchema():'';
+    document.getElementById('schemaToggle').textContent=(schemaOpen?'Hide':'Show')+' schema reference';
+  });
   render();
 }
 init();
