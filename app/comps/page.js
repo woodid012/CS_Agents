@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
-  COMP_CATEGORIES, METRIC_BY_KEY, metricLabel,
+  COMP_CATEGORIES, CATEGORY_BY_KEY, METRIC_BY_KEY, metricLabel,
   UNITS, BASES, TECHNOLOGIES, STATES, DEAL_TYPES, STATUSES, CONFIDENCE, SCHEMES, PROGRAMS,
 } from '../../lib/compsTaxonomy';
 
@@ -150,8 +150,8 @@ export default function CompsPage() {
   const [deals, setDeals] = useState([]);
   const [metrics, setMetrics] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState('metrics'); // 'metrics' | 'deals'
-  const [showSchema, setShowSchema] = useState(false);
+  const [view, setView] = useState('metrics'); // 'metrics' | 'deals' (within Data tab)
+  const [tab, setTab] = useState('summary');   // 'summary' | 'data' | 'schema'
   const [showDealForm, setShowDealForm] = useState(false);
   const [showMetricForm, setShowMetricForm] = useState(false);
   const [resyncing, setResyncing] = useState(false);
@@ -278,7 +278,132 @@ export default function CompsPage() {
         </div>
       </div>
 
-      {/* Summary cards */}
+      {/* Sub-tabs */}
+      <div className="flex items-center gap-1 border-b border-gray-200 mb-4">
+        {[['summary', 'Summary'], ['data', 'Data'], ['schema', 'Schema']].map(([k, label]) => (
+          <button key={k} onClick={() => setTab(k)}
+            className={cn('px-4 py-2 text-sm font-medium -mb-px border-b-2 transition-colors',
+              tab === k ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-800')}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {!loading && deals.length === 0 && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-lg px-4 py-3 mb-4">
+          No data loaded yet — click <span className="font-medium">↻ Refresh data</span> (top right) to pull the curated dataset into the database.
+        </div>
+      )}
+
+      {loading ? (
+        <div className="text-center py-12 text-gray-400 text-sm">Loading…</div>
+      ) : tab === 'summary' ? (
+        <SummaryTab deals={deals} metrics={metrics} stats={stats} />
+      ) : tab === 'schema' ? (
+        <SchemaReference />
+      ) : (
+        <>
+          {/* Add forms */}
+          <div className="flex gap-2 mb-3">
+            <button onClick={() => setShowMetricForm((v) => !v)} className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">+ Metric</button>
+            <button onClick={() => setShowDealForm((v) => !v)} className="px-3 py-1.5 bg-slate-700 text-white text-sm rounded hover:bg-slate-800">+ Deal</button>
+          </div>
+          {showDealForm && <DealForm onSubmit={addDeal} onCancel={() => setShowDealForm(false)} />}
+          {showMetricForm && <MetricForm deals={deals} onSubmit={addMetric} onCancel={() => setShowMetricForm(false)} />}
+
+          {/* View toggle */}
+          <div className="flex items-center gap-2 mb-3">
+            <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden">
+              {['metrics', 'deals'].map((v) => (
+                <button key={v} onClick={() => setView(v)}
+                  className={cn('px-3 py-1.5 text-sm capitalize', view === v ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50')}>
+                  {v}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Filters */}
+          <div className="flex flex-wrap gap-2 mb-3 items-center">
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search deal or metric…"
+              className="border border-gray-300 rounded px-3 py-1.5 text-sm w-56" />
+            <select value={fCat} onChange={(e) => setFCat(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
+              <option value="">All categories</option>
+              {COMP_CATEGORIES.map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}
+            </select>
+            <select value={fTech} onChange={(e) => setFTech(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
+              <option value="">All tech</option>
+              {TECHNOLOGIES.map((t) => <option key={t}>{t}</option>)}
+            </select>
+            <select value={fState} onChange={(e) => setFState(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
+              <option value="">All states</option>
+              {STATES.map((s) => <option key={s}>{s}</option>)}
+            </select>
+            <select value={fType} onChange={(e) => setFType(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
+              <option value="">All deal types</option>
+              {DEAL_TYPES.map((t) => <option key={t}>{t}</option>)}
+            </select>
+            {schemesInData.length > 0 && (
+              <select value={fScheme} onChange={(e) => setFScheme(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
+                <option value="">All schemes</option>
+                {schemesInData.map((p) => <option key={p}>{p}</option>)}
+              </select>
+            )}
+            {anyFilter && <button onClick={clearFilters} className="text-sm text-gray-500 hover:text-gray-800 underline">Clear</button>}
+            <span className="ml-auto text-xs text-gray-400">
+              {view === 'metrics' ? `${filteredMetrics.length} observations` : `${filteredDeals.length} deals`}
+            </span>
+          </div>
+
+          {view === 'metrics' ? (
+            <MetricsView byCategory={byCategory} onDelete={delMetric} />
+          ) : (
+            <DealsView deals={filteredDeals} onDelete={delDeal} />
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+// ── Summary tab: stat cards + breakdown tables + cost charts ───────────────
+function countBy(arr, fn) {
+  const m = {};
+  for (const x of arr) { const k = fn(x) || '—'; m[k] = (m[k] || 0) + 1; }
+  return Object.entries(m).sort((a, b) => b[1] - a[1]);
+}
+
+function BreakdownTable({ title, rows }) {
+  const total = rows.reduce((s, [, v]) => s + v, 0);
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div className="px-4 py-2 text-sm font-semibold text-gray-700 border-b border-gray-200 bg-gray-50">{title}</div>
+      <table className="w-full text-sm">
+        <tbody className="divide-y divide-gray-100">
+          {rows.map(([k, v]) => (
+            <tr key={k} className="hover:bg-gray-50">
+              <td className="px-4 py-1.5 text-gray-700">{k}</td>
+              <td className="px-4 py-1.5 text-right tabular-nums text-gray-600 w-16">{v}</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr className="border-t border-gray-200 bg-gray-50 font-medium">
+            <td className="px-4 py-1.5 text-gray-600">Total</td>
+            <td className="px-4 py-1.5 text-right tabular-nums text-gray-700">{total}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  );
+}
+
+function SummaryTab({ deals, metrics, stats }) {
+  const byType = useMemo(() => countBy(deals, (d) => d.deal_type), [deals]);
+  const byCat = useMemo(() => countBy(metrics, (m) => CATEGORY_BY_KEY[m.category]?.label || m.category), [metrics]);
+  const byScheme = useMemo(() => countBy(deals.filter((d) => d.scheme), (d) => d.scheme), [deals]);
+  return (
+    <div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
         {[
           ['Deals tracked', stats.deals],
@@ -292,74 +417,12 @@ export default function CompsPage() {
           </div>
         ))}
       </div>
-
-      {!loading && deals.length === 0 && (
-        <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-lg px-4 py-3 mb-4">
-          No data loaded yet — click <span className="font-medium">↻ Refresh data</span> (top right) to pull the curated dataset into the database.
-        </div>
-      )}
-
-      {showDealForm && <DealForm onSubmit={addDeal} onCancel={() => setShowDealForm(false)} />}
-      {showMetricForm && <MetricForm deals={deals} onSubmit={addMetric} onCancel={() => setShowMetricForm(false)} />}
-
-      {/* View toggle + schema link */}
-      <div className="flex items-center gap-2 mb-3">
-        <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden">
-          {['metrics', 'deals'].map((v) => (
-            <button key={v} onClick={() => setView(v)}
-              className={cn('px-3 py-1.5 text-sm capitalize', view === v ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50')}>
-              {v}
-            </button>
-          ))}
-        </div>
-        <button onClick={() => setShowSchema((v) => !v)} className="text-sm text-gray-500 hover:text-gray-800 underline ml-1">
-          {showSchema ? 'Hide' : 'Show'} schema reference
-        </button>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+        <BreakdownTable title="Deals by type" rows={byType} />
+        <BreakdownTable title="Metrics by category" rows={byCat} />
+        <BreakdownTable title="Deals by scheme" rows={byScheme.length ? byScheme : [['(none tagged)', 0]]} />
       </div>
-
-      {showSchema && <SchemaReference />}
-
-      {/* Filters */}
-      <div className="flex flex-wrap gap-2 mb-3 items-center">
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search deal or metric…"
-          className="border border-gray-300 rounded px-3 py-1.5 text-sm w-56" />
-        <select value={fCat} onChange={(e) => setFCat(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
-          <option value="">All categories</option>
-          {COMP_CATEGORIES.map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}
-        </select>
-        <select value={fTech} onChange={(e) => setFTech(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
-          <option value="">All tech</option>
-          {TECHNOLOGIES.map((t) => <option key={t}>{t}</option>)}
-        </select>
-        <select value={fState} onChange={(e) => setFState(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
-          <option value="">All states</option>
-          {STATES.map((s) => <option key={s}>{s}</option>)}
-        </select>
-        <select value={fType} onChange={(e) => setFType(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
-          <option value="">All deal types</option>
-          {DEAL_TYPES.map((t) => <option key={t}>{t}</option>)}
-        </select>
-        {schemesInData.length > 0 && (
-          <select value={fScheme} onChange={(e) => setFScheme(e.target.value)} className="border border-gray-300 rounded px-2 py-1.5 text-sm">
-            <option value="">All schemes</option>
-            {schemesInData.map((p) => <option key={p}>{p}</option>)}
-          </select>
-        )}
-        {anyFilter && <button onClick={clearFilters} className="text-sm text-gray-500 hover:text-gray-800 underline">Clear</button>}
-        <span className="ml-auto text-xs text-gray-400">
-          {view === 'metrics' ? `${filteredMetrics.length} observations` : `${filteredDeals.length} deals`}
-        </span>
-      </div>
-
-      {!loading && <CostCharts metrics={filteredMetrics} />}
-
-      {loading ? (
-        <div className="text-center py-12 text-gray-400 text-sm">Loading…</div>
-      ) : view === 'metrics' ? (
-        <MetricsView byCategory={byCategory} onDelete={delMetric} />
-      ) : (
-        <DealsView deals={filteredDeals} onDelete={delDeal} />
-      )}
+      <CostCharts metrics={metrics} />
     </div>
   );
 }
