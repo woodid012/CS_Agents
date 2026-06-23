@@ -25,6 +25,29 @@ The platform tracks bidder engagement, offtaker relationships, AI-generated insi
 - **Price Curves** (`/market-data/price-curves`) — forward price curve data
 - **Capex / Opex** (`/market-data/capex-opex`) — capex and opex benchmarks
 
+### Comps Research (`/comps`)
+Curated stats & comparables tracked across deals — for internal benchmarking.
+
+- **Wide, open-ended scope**: valuations ($ total and per-unit), capex, capex
+  splits (AC/DC/EPC/BoS), connection & system-strength charges, opex, land &
+  rent, community contributions, offtake/PPA, returns and performance.
+- **Two views**: a per-metric table grouped by category (with automatic
+  $/MW and $/MWh normalisation), and a per-deal summary view.
+- **Filter** by technology, state, category and deal type; free-text search.
+- **Add deals & metrics** inline; the metric picker is driven by the taxonomy
+  and pre-fills the expected unit/basis.
+- **Self-documenting** — a "schema reference" panel lists the full taxonomy.
+
+Schema is intentionally **tall (entity–attribute–value)**: one `comp_deals`
+row per deal/asset/transaction, one `comp_metrics` row per observed stat. This
+means a new comp type is just a new entry in the taxonomy — **no DB migration**.
+
+- Canonical taxonomy: `lib/compsTaxonomy.js` (categories, metrics, units, basis)
+- Starter dataset: `lib/compsSeed.js` (real public M&A comps + flagged
+  illustrative build-cost benchmarks)
+- Tables auto-create and seed on first visit to `/comps` (see `lib/compsDb.js`),
+  matching the `/api/projects` pattern. DDL also lives in `schema.sql`.
+
 ### Other
 - **Development Tracker** (`/development-tracker`) — project pipeline tracking
 

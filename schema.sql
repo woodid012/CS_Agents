@@ -163,3 +163,56 @@ CREATE TABLE IF NOT EXISTS capex_opex (
   notes           TEXT,
   updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- Comps research
+--   Curated stats/comparables tracked across deals. Intentionally a TALL
+--   (entity–attribute–value) shape: one comp_deals row per deal/asset/
+--   transaction, and one comp_metrics row per observed stat. The set of
+--   metrics is open-ended (valuation, capex, AC/DC/EPC splits, connection &
+--   system-strength charges, opex, land/rent, community contributions, …) so a
+--   wide fixed-column table would need a migration every time a new comp type
+--   is added. The canonical metric taxonomy lives in lib/compsTaxonomy.js.
+--   The /api/comps routes create + seed these on first hit (see lib/compsDb.js).
+-- ─────────────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS comp_deals (
+  id               SERIAL PRIMARY KEY,
+  name             TEXT NOT NULL,
+  counterparty     TEXT,                 -- buyer / developer / owner
+  seller           TEXT,                 -- vendor (M&A comps)
+  technology       TEXT,                 -- Solar, Wind, BESS, Solar+BESS, Platform, ...
+  deal_type        TEXT,                 -- M&A, Asset acquisition, Development benchmark, EPC, ...
+  country          TEXT DEFAULT 'Australia',
+  state            TEXT,                 -- NSW, VIC, QLD, SA, WA, TAS, ...
+  capacity_mw      NUMERIC,              -- power capacity (for $/MW)
+  capacity_mwh     NUMERIC,              -- energy capacity (for $/MWh)
+  capacity_mwac    NUMERIC,              -- AC capacity (solar)
+  capacity_mwdc    NUMERIC,              -- DC capacity (solar; with MWac gives DC/AC ratio)
+  status           TEXT,                 -- Announced, Completed, FID, Operating, Benchmark, ...
+  transaction_date DATE,
+  currency         TEXT DEFAULT 'AUD',
+  source           TEXT,
+  confidence       TEXT,                 -- High / Medium / Low / Illustrative
+  notes            TEXT,
+  created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS comp_metrics (
+  id          SERIAL PRIMARY KEY,
+  deal_id     INTEGER NOT NULL REFERENCES comp_deals(id) ON DELETE CASCADE,
+  category    TEXT NOT NULL,             -- taxonomy category key (valuation, capex, connection, ...)
+  metric      TEXT NOT NULL,             -- taxonomy metric key (ev_per_mw, capex_per_mwh, ...)
+  value       NUMERIC,
+  unit        TEXT,                      -- $m, $/MW, $/MWh, $/MW/yr, %, x, ratio, ...
+  basis       TEXT,                      -- total, per_mw, per_mwh, per_mw_yr, one_off, percent, ...
+  source      TEXT,
+  confidence  TEXT,
+  notes       TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS comp_metrics_deal_idx   ON comp_metrics (deal_id);
+CREATE INDEX IF NOT EXISTS comp_metrics_cat_idx    ON comp_metrics (category);
+CREATE INDEX IF NOT EXISTS comp_metrics_metric_idx ON comp_metrics (metric);
