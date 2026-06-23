@@ -303,15 +303,7 @@ export default function CompsPage() {
         <SchemaReference />
       ) : (
         <>
-          {/* Add forms */}
-          <div className="flex gap-2 mb-3">
-            <button onClick={() => setShowMetricForm((v) => !v)} className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">+ Metric</button>
-            <button onClick={() => setShowDealForm((v) => !v)} className="px-3 py-1.5 bg-slate-700 text-white text-sm rounded hover:bg-slate-800">+ Deal</button>
-          </div>
-          {showDealForm && <DealForm onSubmit={addDeal} onCancel={() => setShowDealForm(false)} />}
-          {showMetricForm && <MetricForm deals={deals} onSubmit={addMetric} onCancel={() => setShowMetricForm(false)} />}
-
-          {/* View toggle */}
+          {/* View toggle + add buttons (same row) */}
           <div className="flex items-center gap-2 mb-3">
             <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden">
               {['metrics', 'deals'].map((v) => (
@@ -321,7 +313,11 @@ export default function CompsPage() {
                 </button>
               ))}
             </div>
+            <button onClick={() => setShowMetricForm((v) => !v)} className="ml-auto px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">+ Metric</button>
+            <button onClick={() => setShowDealForm((v) => !v)} className="px-3 py-1.5 bg-slate-700 text-white text-sm rounded hover:bg-slate-800">+ Deal</button>
           </div>
+          {showDealForm && <DealForm onSubmit={addDeal} onCancel={() => setShowDealForm(false)} />}
+          {showMetricForm && <MetricForm deals={deals} onSubmit={addMetric} onCancel={() => setShowMetricForm(false)} />}
 
           {/* Filters */}
           <div className="flex flex-wrap gap-2 mb-3 items-center">
