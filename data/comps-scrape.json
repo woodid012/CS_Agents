@@ -2086,6 +2086,108 @@
       "data_class": "Real"
     },
     {
+      "name": "Blackstone + CPP / AirTrunk",
+      "counterparty": "Blackstone + CPP Investments",
+      "seller": "Macquarie Asset Management + PSP",
+      "technology": "Data centre",
+      "deal_type": "M&A",
+      "state": "National",
+      "capacity_mw": 800,
+      "status": "Completed",
+      "transaction_date": "2024-12-01",
+      "date_added": "2026-06-23",
+      "data_class": "Real",
+      "currency": "AUD",
+      "source": "DataCenterDynamics",
+      "source_url": "https://www.datacenterdynamics.com/en/news/blackstone-and-cpp-to-acquire-apac-data-center-firm-airtrunk-for-au24bn/",
+      "confidence": "High",
+      "notes": "A$24bn EV — largest-ever data-centre deal globally and Australia's biggest 2024 transaction. APAC platform (AU/JP/MY/HK/SG). 800 MW+ committed load + land for 1 GW+. EV/MW ~A$30m per MW of load.",
+      "metrics": [
+        { "category": "valuation", "metric": "enterprise_value", "value": 24000, "unit": "$m", "basis": "total", "confidence": "High", "notes": "A$24bn; APAC-wide platform, not AU-only." },
+        { "category": "demand", "metric": "it_load", "value": 800, "unit": "MW", "basis": "total", "confidence": "High", "notes": "Committed to customers; 1 GW+ future land bank." }
+      ]
+    },
+    {
+      "name": "CDC Data Centres (Infratil)",
+      "counterparty": "Infratil (49.72%) + Future Fund",
+      "technology": "Data centre",
+      "deal_type": "Platform",
+      "state": "National",
+      "capacity_mw": 568,
+      "status": "Operating",
+      "transaction_date": "2026-03-31",
+      "date_added": "2026-06-23",
+      "data_class": "Real",
+      "currency": "AUD",
+      "source": "Infratil",
+      "source_url": "https://infratil.com/news/cdc-independent-valuation-31-march-2026/",
+      "confidence": "High",
+      "notes": "Independent valuation A$15.0bn (Mar 2026; range A$14.1–16.0bn). 568 MW installed across AU/NZ; >1 GW contracted (incl. a 555 MW US-customer contract — largest in AU history); target 1,820 MW by 2034.",
+      "metrics": [
+        { "category": "valuation", "metric": "enterprise_value", "value": 15000, "unit": "$m", "basis": "total", "confidence": "High", "notes": "Independent valuation midpoint; EV/MW ~A$26m per MW installed." },
+        { "category": "demand", "metric": "it_load", "value": 568, "unit": "MW", "basis": "total", "confidence": "High", "notes": "Installed capacity (AU/NZ)." },
+        { "category": "demand", "metric": "contracted_load", "value": 1000, "unit": "MW", "basis": "total", "confidence": "Medium", "notes": ">1 GW contracted incl. 555 MW US customer." }
+      ]
+    },
+    {
+      "name": "NEXTDC (platform)",
+      "counterparty": "NEXTDC (ASX:NXT)",
+      "technology": "Data centre",
+      "deal_type": "Platform",
+      "state": "National",
+      "capacity_mw": 667,
+      "status": "Operating",
+      "transaction_date": "2026-03-31",
+      "date_added": "2026-06-23",
+      "data_class": "Real",
+      "currency": "AUD",
+      "source": "NEXTDC / TechPartner",
+      "source_url": "https://www.nextdc.com/news/asx-utilisation-update",
+      "confidence": "Medium",
+      "notes": "Listed AU data-centre operator. Pro-forma contracted utilisation ~667 MW (Mar 2026), up from ~228 MW end-2024 on AI demand. Raised ~A$2.2bn equity to fund rollout.",
+      "metrics": [
+        { "category": "demand", "metric": "contracted_load", "value": 667, "unit": "MW", "basis": "total", "confidence": "Medium", "notes": "Pro-forma contracted utilisation, Mar 2026." }
+      ]
+    },
+    {
+      "name": "AWS Australia data-centre investment",
+      "counterparty": "Amazon Web Services",
+      "technology": "Data centre",
+      "deal_type": "Platform",
+      "state": "National",
+      "status": "Development",
+      "transaction_date": "2025-06-01",
+      "date_added": "2026-06-23",
+      "data_class": "Real",
+      "currency": "AUD",
+      "source": "Amazon",
+      "source_url": "https://www.aboutamazon.com/news/aws/amazon-data-center-investment-in-australia",
+      "confidence": "High",
+      "notes": "A$20bn capex commitment (2025–2029) to expand AU data-centre/cloud infrastructure (Sydney + Melbourne) — up from A$13.2bn (2023–2027). Largest tech-infrastructure investment in AU history; major new load driver.",
+      "metrics": [
+        { "category": "capex", "metric": "capex_total", "value": 20000, "unit": "$m", "basis": "total", "confidence": "High", "notes": "Multi-year capex commitment 2025–2029 (not a single asset)." }
+      ]
+    },
+    {
+      "name": "Goodman Group data-centre pipeline",
+      "counterparty": "Goodman Group",
+      "technology": "Data centre",
+      "deal_type": "Development benchmark",
+      "state": "National",
+      "status": "Development",
+      "transaction_date": "2026-02-19",
+      "date_added": "2026-06-23",
+      "data_class": "Real",
+      "currency": "AUD",
+      "source": "DataCenterDynamics / Goodman",
+      "source_url": "https://www.datacenterdynamics.com/en/news/australias-goodman-group-adds-1gw-to-power-bank-for-data-center-projects/",
+      "confidence": "Medium",
+      "notes": "Global data-centre 'power bank' reached 6.4 GW (3.6 GW secured + 2.8 GW in advanced procurement). Data centres ~73% of WIP; WIP ~A$18bn by Jun 2026. Global, AU-headquartered.",
+      "metrics": [
+        { "category": "demand", "metric": "load_pipeline", "value": 6400, "unit": "MW", "basis": "total", "confidence": "Medium", "notes": "Global power bank (6.4 GW); 3.6 GW secured." }
+      ]
+    },
+    {
       "name": "Utility solar — NSW ~200 MWac (illustrative archetype)",
       "technology": "Solar",
       "deal_type": "Development benchmark",
